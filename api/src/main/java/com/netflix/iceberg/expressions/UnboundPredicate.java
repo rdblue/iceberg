@@ -16,6 +16,7 @@
 
 package com.netflix.iceberg.expressions;
 
+import com.netflix.iceberg.Schema;
 import com.netflix.iceberg.exceptions.ValidationException;
 import com.netflix.iceberg.types.Types;
 
@@ -41,10 +42,10 @@ public class UnboundPredicate<T> extends Predicate<T, NamedReference> {
     return new UnboundPredicate<>(op().negate(), ref(), literal());
   }
 
-  public Expression bind(Types.StructType struct) {
-    Types.NestedField field = struct.field(ref().name());
+  public Expression bind(Schema schema) {
+    Types.NestedField field = schema.findField(ref().name());
     ValidationException.check(field != null,
-        "Cannot find field '%s' in struct: %s", ref().name(), struct);
+        "Cannot find field '%s' in schema: %s", ref().name(), schema.asStruct());
 
     if (literal() == null) {
       switch (op()) {
@@ -52,12 +53,12 @@ public class UnboundPredicate<T> extends Predicate<T, NamedReference> {
           if (field.isRequired()) {
             return Expressions.alwaysFalse();
           }
-          return new BoundPredicate<>(IS_NULL, new BoundReference<>(struct, field.fieldId()));
+          return new BoundPredicate<>(IS_NULL, new BoundReference<>(schema, field.fieldId()));
         case NOT_NULL:
           if (field.isRequired()) {
             return Expressions.alwaysTrue();
           }
-          return new BoundPredicate<>(NOT_NULL, new BoundReference<>(struct, field.fieldId()));
+          return new BoundPredicate<>(NOT_NULL, new BoundReference<>(schema, field.fieldId()));
         default:
           throw new ValidationException("Operation must be IS_NULL or NOT_NULL");
       }
@@ -100,6 +101,6 @@ public class UnboundPredicate<T> extends Predicate<T, NamedReference> {
 //          break;
       }
     }
-    return new BoundPredicate<>(op(), new BoundReference<>(struct, field.fieldId()), lit);
+    return new BoundPredicate<>(op(), new BoundReference<>(schema, field.fieldId()), lit);
   }
 }
