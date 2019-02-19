@@ -411,7 +411,7 @@ public class TableMetadata {
       }
     }
 
-    ValidationException.check(currentSnapshotId < 0 || // not set
+    ValidationException.check(currentSnapshotId < 0 || newSnapshotLog.isEmpty() || // not set
             Iterables.getLast(newSnapshotLog).snapshotId() == currentSnapshotId,
         "Cannot set invalid snapshot log: latest entry is not the current snapshot");
     return new TableMetadata(ops, null, uuid, location,
