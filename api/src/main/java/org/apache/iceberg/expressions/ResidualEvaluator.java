@@ -153,48 +153,50 @@ public class ResidualEvaluator implements Serializable {
 
     @Override
     public <T> Expression isNull(BoundReference<T> ref) {
-      return (ref.get(struct) == null) ? alwaysTrue() : alwaysFalse();
+      // return alwaysTrue or alwaysFalse because the strict projection always gives correct answers for isNull
+      return (ref.get(struct) == null) ? Expressions.alwaysTrue() : Expressions.alwaysFalse();
     }
 
     @Override
     public <T> Expression notNull(BoundReference<T> ref) {
-      return (ref.get(struct) != null) ? alwaysTrue() : alwaysFalse();
+      // return alwaysTrue or alwaysFalse because the strict projection always gives correct answers for notNull
+      return (ref.get(struct) != null) ? Expressions.alwaysTrue() : Expressions.alwaysFalse();
     }
 
     @Override
     public <T> Expression lt(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) < 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) < 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
     public <T> Expression ltEq(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) <= 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) <= 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
     public <T> Expression gt(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) > 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) > 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
     public <T> Expression gtEq(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) >= 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) >= 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
     public <T> Expression eq(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) == 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) == 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
     public <T> Expression notEq(BoundReference<T> ref, Literal<T> lit) {
       Comparator<T> cmp = lit.comparator();
-      return (cmp.compare(ref.get(struct), lit.value()) != 0) ? alwaysTrue() : alwaysFalse();
+      return (cmp.compare(ref.get(struct), lit.value()) != 0) ? Expressions.alwaysTrue() : null;
     }
 
     @Override
@@ -227,8 +229,15 @@ public class ResidualEvaluator implements Serializable {
 
         Expression bound = strictProjection.bind(spec.partitionType(), caseSensitive);
         if (bound instanceof BoundPredicate) {
-          // evaluate the bound predicate, which will return alwaysTrue or alwaysFalse
-          result = Expressions.or(result, super.predicate((BoundPredicate<?>) bound));
+          // evaluate the bound predicate, which will return alwaysTrue, alwaysFalse, or null
+          Expression strictResult = super.predicate((BoundPredicate<?>) bound);
+          if (strictResult != null) {
+            result = Expressions.or(result, strictResult);
+          } else {
+            // if the result was null, then the strict projection did not guarantee a result for all values, so the
+            // predicate must be included in the residual
+            result = Expressions.or(result, pred);
+          }
         } else {
           // update the result expression with the non-predicate residual (e.g. alwaysTrue)
           result = Expressions.or(result, bound);
