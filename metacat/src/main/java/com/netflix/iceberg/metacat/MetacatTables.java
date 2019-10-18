@@ -45,9 +45,9 @@ public class MetacatTables extends BaseMetastoreTables {
   }
 
   @Override
-  public Table create(Schema schema, PartitionSpec spec, Map<String, String> properties,
+  public Table create(Schema schema, PartitionSpec spec, String location, Map<String, String> properties,
                       String tableIdentifier) {
-    return metacatCatalog.createTable(toCatalogTableIdentifier(tableIdentifier), schema, spec, properties);
+    return metacatCatalog.createTable(toCatalogTableIdentifier(tableIdentifier), schema, spec, location, properties);
   }
 
   // BaseMetastoreTables methods
@@ -70,6 +70,12 @@ public class MetacatTables extends BaseMetastoreTables {
   @Override
   public Table create(Schema schema, PartitionSpec spec, Map<String, String> properties,
                       String database, String table) {
+    return create(schema, spec, null, properties, database, table);
+  }
+
+  @Override
+  public Table create(Schema schema, PartitionSpec spec, String location, Map<String, String> properties,
+                      String database, String table) {
     return metacatCatalog.createTable(TableIdentifier.of(catalogName, database, table), schema, spec, properties);
   }
 
@@ -81,8 +87,14 @@ public class MetacatTables extends BaseMetastoreTables {
   @Override
   public Transaction beginCreate(Schema schema, PartitionSpec spec, Map<String, String> properties,
                                  String database, String table) {
+    return beginCreate(schema, spec, null, properties, database, table);
+  }
+
+  @Override
+  public Transaction beginCreate(Schema schema, PartitionSpec spec, String location, Map<String, String> properties,
+                                 String database, String table) {
     return metacatCatalog.newCreateTableTransaction(
-        TableIdentifier.of(catalogName, database, table), schema, spec, properties);
+        TableIdentifier.of(catalogName, database, table), schema, spec, location, properties);
   }
 
   @Override

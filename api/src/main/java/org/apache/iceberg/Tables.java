@@ -37,10 +37,29 @@ public interface Tables {
     return create(schema, spec, ImmutableMap.of(), tableIdentifier);
   }
 
-  Table create(Schema schema,
-               PartitionSpec spec,
-               Map<String, String> properties,
-               String tableIdentifier);
+  default Table create(Schema schema,
+                       PartitionSpec spec,
+                       Map<String, String> properties,
+                       String tableIdentifier) {
+    return create(schema, spec, null, properties, tableIdentifier);
+  }
+
+  /**
+   * Create a table.
+   *
+   * @param schema a schema
+   * @param spec a partition spec
+   * @param location a location for the table; leave null if unspecified
+   * @param properties a string map of table properties
+   * @param tableIdentifier a table identifier
+   * @return a Table instance
+   */
+  Table create(
+      Schema schema,
+      PartitionSpec spec,
+      String location,
+      Map<String, String> properties,
+      String tableIdentifier);
 
   Table load(String tableIdentifier);
 }

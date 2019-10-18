@@ -35,10 +35,16 @@ public abstract class BaseMetastoreTables implements Tables {
   public abstract Table create(Schema schema, PartitionSpec spec, Map<String, String> properties,
                                String database, String table);
 
+  public abstract Table create(Schema schema, PartitionSpec spec, String location, Map<String, String> properties,
+                               String database, String table);
+
   public abstract Transaction beginCreate(Schema schema, PartitionSpec spec, String database, String table);
 
   public abstract Transaction beginCreate(Schema schema, PartitionSpec spec, Map<String, String> properties,
                                           String database, String table);
+
+  public abstract Transaction beginCreate(Schema schema, PartitionSpec spec, String location,
+                                          Map<String, String> properties, String database, String table);
 
   public abstract Transaction beginReplace(Schema schema, PartitionSpec spec, String database, String table);
 

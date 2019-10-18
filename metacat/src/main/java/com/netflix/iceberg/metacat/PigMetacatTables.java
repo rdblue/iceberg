@@ -35,7 +35,7 @@ public class PigMetacatTables implements Tables, Configurable {
     }
 
     @Override
-    public Table create(Schema schema, PartitionSpec spec,
+    public Table create(Schema schema, PartitionSpec spec, String location,
                         Map<String, String> properties, String tableIdentifier) {
         throw new UnsupportedOperationException("Pig does not support table creation.");
     }
