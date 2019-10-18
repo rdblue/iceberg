@@ -86,7 +86,7 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
     }
 
     // TODO, how to pass wapid?
-    return Optional.of(new Writer(table, options, true, lazySpark.sparkContext().applicationId()));
+    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, lazySpark.sparkContext().applicationId()));
   }
 
   protected Table findTable(DataSourceOptions options, Configuration conf) {

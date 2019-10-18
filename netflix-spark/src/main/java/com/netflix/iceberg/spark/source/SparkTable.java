@@ -130,7 +130,7 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
     }
 
     // TODO, how to pass wapid?
-    return Optional.of(new Writer(table, options, true, spark.sparkContext().applicationId()));
+    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, spark.sparkContext().applicationId()));
   }
 
   @Override
