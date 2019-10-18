@@ -86,7 +86,7 @@ class Writer implements DataSourceWriter {
   private final FileFormat format;
   private final FileIO fileIo;
   private final EncryptionManager encryptionManager;
-  private final boolean replacePartitions;
+  private boolean replacePartitions;
   private final String applicationId;
   private final String wapId;
 
@@ -160,6 +160,16 @@ class Writer implements DataSourceWriter {
     }
 
     commitOperation(append, numFiles, "append");
+  }
+
+  @Override
+  public boolean supportsReplacePartitions() {
+    return true;
+  }
+
+  @Override
+  public void replacePartitions() {
+    replacePartitions = true;
   }
 
   private void replacePartitions(WriterCommitMessage[] messages) {
