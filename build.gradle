@@ -17,27 +17,11 @@
  * under the License.
  */
 
-import groovy.transform.Memoized
-
 buildscript {
-  repositories {
-    jcenter()
-    gradlePluginPortal()
-    maven { url "http://palantir.bintray.com/releases" }
-    maven { url "https://plugins.gradle.org/m2/" }
-  }
   dependencies {
-    classpath 'com.github.jengelman.gradle.plugins:shadow:5.0.0'
-    classpath 'com.palantir.baseline:gradle-baseline-java:0.55.0'
-    classpath 'com.diffplug.spotless:spotless-plugin-gradle:3.14.0'
-    classpath 'gradle.plugin.org.inferred:gradle-processors:2.1.0'
+    classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
     classpath 'me.champeau.gradle:jmh-gradle-plugin:0.4.8'
   }
-}
-
-plugins {
-  id 'com.palantir.git-version' version '0.9.1'
-  id 'com.palantir.consistent-versions' version '1.9.2'
 }
 
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
@@ -45,23 +29,29 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 }
 
 allprojects {
-  group = "org.apache.iceberg"
-  apply plugin: 'com.palantir.baseline-idea'
-  version = getProjectVersion()
-  repositories {
-    maven { url  "http://palantir.bintray.com/releases" }
-    mavenCentral()
-    mavenLocal()
+  apply plugin: 'netflix.nebula'
+  apply plugin: 'nebula.release'
+
+  nebula {
+    moduleOwner = 'BigDataPlatform@netflix.com'
+    moduleEmail = 'BigDataPlatform@netflix.com'
   }
+
+  nebulaRelease {
+    releaseBranchPatterns = [/netflix\/0.7.0/, /netflix\/0.7.0-unstable/]
+  }
+
+  group = "org.apache.iceberg"
 }
 
-apply plugin: 'com.palantir.baseline-config'
+dependencyRecommendations {
+  propertiesFile file: rootProject.file('versions.props')
+}
 
 subprojects {
+  apply plugin: 'nebula.javadoc-jar'
+  apply plugin: 'nebula.source-jar'
   apply plugin: 'java'
-  apply plugin: 'maven' // make pom files for deployment
-  apply plugin: 'maven-publish'
-  apply plugin: 'signing'
 
   configurations {
     testCompile.extendsFrom compileOnly
@@ -100,19 +90,6 @@ subprojects {
     testCompile 'org.mockito:mockito-core'
   }
 
-
-  task sourceJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-    group 'build'
-  }
-
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-    group 'build'
-  }
-
   task testJar(type: Jar) {
     archiveClassifier = 'tests'
     from sourceSets.test.output
@@ -124,160 +101,9 @@ subprojects {
     archives testJar
     testArtifacts testJar
   }
-
-  // add LICENSE and NOTICE
-  [jar, sourceJar, javadocJar, testJar].each { task ->
-    task.from(rootDir) {
-      include 'LICENSE'
-      include 'NOTICE'
-    }
-  }
-
-  publishing {
-    publications {
-      apache(MavenPublication) {
-        from components.java
-
-        artifact sourceJar
-        artifact javadocJar
-        artifact testJar
-
-        versionMapping {
-          allVariants {
-            fromResolutionResult()
-          }
-        }
-
-        groupId = 'org.apache.iceberg'
-        pom {
-          name = 'Apache Iceberg (incubating)'
-          description = 'A table format for huge analytic datasets'
-          url = 'https://iceberg.apache.org'
-          licenses {
-            license {
-              name = 'The Apache Software License, Version 2.0'
-              url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            }
-          }
-          mailingLists {
-            mailingList {
-              name = 'Dev Mailing List'
-              post = 'dev@iceberg.apache.org'
-              subscribe = 'dev-subscribe@iceberg.apache.org'
-              unsubscribe = 'dev-unsubscribe@iceberg.apache.org'
-            }
-          }
-          issueManagement {
-            system = 'GitHub'
-            url = 'https://github.com/apache/incubator-iceberg/issues'
-          }
-        }
-      }
-    }
-
-    repositories {
-      maven {
-        credentials {
-          username project.hasProperty('mavenUser') ? "$mavenUser" : ""
-          password project.hasProperty('mavenPassword') ? "$mavenPassword" : ""
-        }
-        // upload to the releases repository using ./gradlew -Prelease publish
-        def snapshotsRepoUrl = 'https://repository.apache.org/content/repositories/snapshots'
-        def releasesRepoUrl = 'https://repository.apache.org/service/local/staging/deploy/maven2'
-        url = project.hasProperty('release') ? releasesRepoUrl : snapshotsRepoUrl
-      }
-    }
-  }
-
-  if (project.hasProperty('release')) {
-    signing {
-      useGpgCmd()
-      sign publishing.publications.apache
-    }
-  }
 }
 
-task aggregateJavadoc(type: Javadoc) {
-  project.rootProject.version = getJavadocVersion()
-
-  dependsOn subprojects.javadoc
-  source subprojects.javadoc.source
-  destinationDir project.rootProject.file("site/docs/javadoc/${getJavadocVersion()}")
-  classpath = project.rootProject.files(subprojects.javadoc.classpath)
-}
-
-task removeJavadoc(type: Exec) {
-  commandLine 'rm', '-rf', "site/docs/javadoc/${getJavadocVersion()}"
-}
-
-task refreshJavadoc(type: Exec) {
-  dependsOn aggregateJavadoc
-  dependsOn removeJavadoc
-  aggregateJavadoc.mustRunAfter removeJavadoc
-  commandLine 'git', 'add', "site/docs/javadoc/${getJavadocVersion()}"
-}
-
-task deploySite(type: Exec) {
-  workingDir 'site'
-  commandLine 'mkdocs', 'gh-deploy'
-}
-
-// The following code is temporary to allow for incrementally migrating projects to use Baseline.
-
-// We enable baseline-idea everywhere so that everyone can use IntelliJ to build code against the
-// Baseline style guide.
-def baselineProjects = [ project("iceberg-api"), project("iceberg-common"), project("iceberg-core"),
-                         project("iceberg-data"), project("iceberg-orc"), project("iceberg-spark"),
-                         project("iceberg-hive") ]
-
-
-configure(subprojects - baselineProjects) {
-  // error-prone is brought in with baseline-idea, but we're not prepared to handle error-prone
-  // linting errors everywhere yet.
-  pluginManager.withPlugin("com.palantir.baseline-error-prone") {
-    tasks.withType(JavaCompile).configureEach { task ->
-      options.errorprone.enabled = false
-    }
-  }
-}
-
-configure(baselineProjects) {
-  // Currently, if any subproject applies the blanket Baseline plugin, it forces the Baseline plugin
-  // to be applied to ALL projects. And we are not prepared to address all of the build errors that
-  // occur as a result at this time. Furthermore, baseline-format will not work out of the box for
-  // us - see below.
-
-  // Thus we concede to applying all of the Baseline plugins individually on all the projects we are
-  // ready to enforce linting on.
-  apply plugin: 'org.inferred.processors'
-  apply plugin: 'com.palantir.baseline-checkstyle'
-  apply plugin: 'com.palantir.baseline-error-prone'
-  apply plugin: 'com.palantir.baseline-scalastyle'
-  apply plugin: 'com.palantir.baseline-class-uniqueness'
-  apply plugin: 'com.palantir.baseline-reproducibility'
-  apply plugin: 'com.palantir.baseline-exact-dependencies'
-  apply plugin: 'com.palantir.baseline-release-compatibility'
-
-  // Can't use the built-in Baseline spotless format because it's opinionated about the import
-  // order of having static imports after non-static imports, and this cannot be overridden.
-
-  // So we apply Spotless manually to get a similar effect to baseline-format, but change the
-  // import order.
-  pluginManager.withPlugin('com.diffplug.gradle.spotless') {
-    spotless {
-      java {
-        target 'src/main/java/**/*.java', 'src/main/test/**/*.java'
-        removeUnusedImports()
-        importOrder(['', 'static '])
-        trimTrailingWhitespace()
-        indentWithSpaces 2
-        endWithNewline()
-      }
-    }
-  }
-}
-
-def jmhProjects = [ project("iceberg-spark") ]
+def jmhProjects = [project("iceberg-spark")]
 
 configure(jmhProjects) {
   apply plugin: 'me.champeau.gradle.jmh'
@@ -473,8 +299,8 @@ project(':iceberg-pig') {
 project(':iceberg-spark-runtime') {
   apply plugin: 'com.github.johnrengelman.shadow'
 
-  tasks.assemble.dependsOn tasks.shadowJar
-  tasks.install.dependsOn tasks.shadowJar
+//  tasks.assemble.dependsOn tasks.shadowJar
+//  tasks.install.dependsOn tasks.shadowJar
   tasks.javadocJar.dependsOn tasks.shadowJar
 
   configurations {
@@ -521,40 +347,5 @@ project(':iceberg-spark-runtime') {
     relocate 'io.airlift', 'org.apache.iceberg.shaded.io.airlift'
 
     archiveName = "iceberg-spark-runtime-${version}.${extension}"
-  }
-}
-
-@Memoized
-boolean isVersionFileExists() {
-  return file('version.txt').exists()
-}
-
-@Memoized
-String getVersionFromFile() {
-  return file('version.txt').text.trim()
-}
-
-String getProjectVersion() {
-  if (isVersionFileExists()) {
-    return getVersionFromFile()
-  }
-
-  try {
-    return gitVersion()
-  } catch (NullPointerException e) {
-    throw new Exception("Neither version.txt nor git version exists")
-  }
-}
-
-String getJavadocVersion() {
-  if (isVersionFileExists()) {
-    return getVersionFromFile()
-  }
-
-  try {
-    // use the branch name in place of version in Javadoc
-    return versionDetails().branchName
-  } catch (NullPointerException e) {
-    throw new Exception("Neither version.txt nor git version exists")
   }
 }
