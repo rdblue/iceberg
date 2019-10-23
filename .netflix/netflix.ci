@@ -6,7 +6,7 @@ GRADLE="./gradlew --info --stacktrace"
 ./gradlew clean
 
 if [ "$ROCKET_BRANCH" = "netflix/0.7.0-unstable" ]; then
-    $GRADLE candidate -Prelease.scope=patch
+    $GRADLE candidate
 
 elif [ "$ROCKET_BRANCH" = "netflix/0.7.0" ]; then
     $GRADLE final -Prelease.scope=patch
