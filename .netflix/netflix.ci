@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -efx
+
+GRADLE="./gradlew --info --stacktrace"
+./gradlew clean
+
+if [ "$ROCKET_BRANCH" = "netflix/0.7.0-unstable" ]; then
+    $GRADLE candidate -Prelease.scope=patch
+
+elif [ "$ROCKET_BRANCH" = "netflix/0.7.0" ]; then
+    $GRADLE final -Prelease.scope=patch
+
+else # something always safe to run here
+    $GRADLE check
+
+fi

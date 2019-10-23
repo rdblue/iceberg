@@ -1,0 +1,13 @@
+scm:
+  checkout:
+    prBuildMerge: true
+notifications:
+  email:
+  - to:
+    - jzhuge@netflix.com
+    rocketBranch: netflix/0\.7\..*
+    conditions:
+    - failure
+    - aborted
+publish:
+  junit: "build/*est-results/**/*.xml"
