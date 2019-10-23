@@ -10,4 +10,4 @@ notifications:
     - failure
     - aborted
 publish:
-  junit: "build/*est-results/**/*.xml"
+  junit: "*/build/*est-results/*.xml"
