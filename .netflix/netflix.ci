@@ -9,7 +9,7 @@ if [ "$ROCKET_BRANCH" = "netflix/0.7.0-unstable" ]; then
     $GRADLE candidate
 
 elif [ "$ROCKET_BRANCH" = "netflix/0.7.0" ]; then
-    $GRADLE final -Prelease.scope=patch
+    $GRADLE final
 
 else # something always safe to run here
     $GRADLE check
