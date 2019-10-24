@@ -20,8 +20,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import javax.security.auth.login.LoginException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
+import org.apache.hadoop.hive.shims.Utils;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.iceberg.BaseMetastoreTableOperations;
@@ -168,6 +170,9 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
             METADATA_LOCATION_PROP, newMetadataLocation
         ));
 
+        // set the table owner from the current user
+        newTableInfo.getSerde().setOwner(getUser());
+
         client.getApi().createTable(catalog, database, table, newTableInfo);
       }
 
@@ -200,6 +205,14 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
     }
 
     return fileIO;
+  }
+
+  private String getUser() {
+    try {
+      return Utils.getUGI().getUserName();
+    } catch (IOException | LoginException e) {
+      return System.getenv("USER");
+    }
   }
 
   private static final String FLINK_WATERMARK_PREFIX = "flink.watermark.";
