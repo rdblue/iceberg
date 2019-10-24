@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MetacatCatalog extends SparkCatalog
-{
+public class MetacatCatalog extends SparkCatalog {
   private static final String CATALOG_OPTION = "catalog";
 
   private final Cache<String, Table> tableCache = CacheBuilder.newBuilder().softValues().build();
