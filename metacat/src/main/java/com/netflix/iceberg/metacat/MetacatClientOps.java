@@ -2,11 +2,9 @@ package com.netflix.iceberg.metacat;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.netflix.metacat.client.Client;
 import com.netflix.metacat.common.QualifiedName;
-import com.netflix.metacat.common.dto.FieldDto;
 import com.netflix.metacat.common.dto.StorageDto;
 import com.netflix.metacat.common.dto.TableDto;
 import com.netflix.metacat.common.exception.MetacatBadRequestException;
@@ -16,12 +14,17 @@ import com.netflix.metacat.common.exception.MetacatPreconditionFailedException;
 import com.netflix.metacat.common.exception.MetacatUserMetadataException;
 import com.netflix.metacat.shaded.com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.netflix.metacat.shaded.com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.iceberg.BaseMetastoreTableOperations;
-import org.apache.iceberg.Schema;
 import org.apache.iceberg.TableMetadata;
 import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.NoSuchTableException;
@@ -29,19 +32,8 @@ import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.exceptions.ValidationException;
 import org.apache.iceberg.hadoop.HadoopFileIO;
 import org.apache.iceberg.io.FileIO;
-import org.apache.iceberg.types.Type;
-import org.apache.iceberg.types.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -208,67 +200,6 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
     }
 
     return fileIO;
-  }
-
-  public static List<FieldDto> fieldDtos(Schema schema) {
-    List<FieldDto> fields = Lists.newArrayList();
-
-    for (int i = 0; i < schema.columns().size(); i++) {
-      final Types.NestedField field = schema.columns().get(i);
-      FieldDto fieldInfo = new FieldDto();
-      fieldInfo.setPos(i);
-      fieldInfo.setName(field.name());
-      fieldInfo.setType(getMetacatTypeName(field.type()));
-      fieldInfo.setIsNullable(field.isOptional());
-
-      fields.add(fieldInfo);
-    }
-    return fields;
-  }
-
-  public static String getMetacatTypeName(Type type) {
-    switch (type.typeId()) {
-      case BOOLEAN:
-        return "boolean";
-      case INTEGER:
-        return "int";
-      case LONG:
-        return "bigint";
-      case FLOAT:
-        return "float";
-      case DOUBLE:
-        return "double";
-      case DATE:
-        return "date";
-      case TIME:
-        throw new UnsupportedOperationException("Metacat does not support time fields");
-      case TIMESTAMP:
-        return "timestamp";
-      case STRING:
-      case UUID:
-        return "string";
-      case FIXED:
-        return "binary";
-      case BINARY:
-        return "binary";
-      case DECIMAL:
-        final Types.DecimalType decimalType = (Types.DecimalType) type;
-        return format("decimal(%s,%s)", decimalType.precision(), decimalType.scale()); //TODO may be just decimal?
-      case STRUCT:
-        final Types.StructType structType = type.asStructType();
-        final String nameToType = structType.fields().stream().map(
-                f -> format("%s:%s", f.name(), getMetacatTypeName(f.type()))
-        ).collect(Collectors.joining(","));
-        return format("struct<%s>", nameToType);
-      case LIST:
-        final Types.ListType listType = type.asListType();
-        return format("array<%s>", getMetacatTypeName(listType.elementType()));
-      case MAP:
-        final Types.MapType mapType = type.asMapType();
-        return format("map<%s,%s>", getMetacatTypeName(mapType.keyType()), getMetacatTypeName(mapType.valueType()));
-      default:
-        throw new UnsupportedOperationException(type +" is not supported");
-    }
   }
 
   private static final String FLINK_WATERMARK_PREFIX = "flink.watermark.";
