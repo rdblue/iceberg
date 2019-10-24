@@ -147,7 +147,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
 
       String newUUID = newMetadata.get().uuid();
       if (currentMetadata != null) {
-        Preconditions.checkState(newUUID == null || newUUID.equals(currentMetadata.uuid()),
+        Preconditions.checkState(currentMetadata.uuid() == null || newUUID.equals(currentMetadata.uuid()),
             "Table UUID does not match: current=%s != refreshed=%s", currentMetadata.uuid(), newUUID);
       }
 
