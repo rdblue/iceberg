@@ -297,6 +297,7 @@ class Writer implements DataSourceWriter {
                   .setAll(properties)
                   .metricsConfig(metricsConfig)
                   .schema(schema)
+                  .overwrite()
                   .build();
 
             case AVRO:
@@ -304,6 +305,7 @@ class Writer implements DataSourceWriter {
                   .createWriterFunc(ignored -> new SparkAvroWriter(schema))
                   .setAll(properties)
                   .schema(schema)
+                  .overwrite()
                   .build();
 
             default:
