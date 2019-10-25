@@ -30,7 +30,7 @@ class TableRef {
   private static final Logger LOG = LoggerFactory.getLogger(TableRef.class);
 
   private static final Pattern TABLE_PATTERN = Pattern.compile(
-      "(?<table>(?:[^$@_]|_[^$@_])+)" +
+      "(?<table>[^$@]+?)" +
           "(?:(?:@|__)(?<ver1>\\d+))?" +
           "(?:(?:\\$|__)(?<type>(?:history|snapshots|manifests|partitions|files|entries))" +
           "(?:(?:@|__)(?<ver2>\\d+))?)?");

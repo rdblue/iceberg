@@ -84,6 +84,11 @@ public abstract class SparkCatalog implements TableCatalog {
       throws NoSuchTableException {
 
     org.apache.iceberg.catalog.TableIdentifier icebergTable = toIceberg(ident);
+    try {
+      return loadInternal(icebergTable);
+    } catch (NoSuchTableException e) {
+      // try to parse the identifier as a metadata or snapshot table
+    }
 
     TableRef ref = TableRef.parse(ident.table());
 

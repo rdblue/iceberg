@@ -210,9 +210,9 @@ public class TestTableRef {
   public void testAtAtWithUnderscores() {
     // cannot parse 1234 as a table name
     TableRef ref = TableRef.parse("table__1234__4567");
-    Assert.assertEquals("table__1234__4567", ref.table());
+    Assert.assertEquals("table__1234", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
-    Assert.assertNull(ref.at());
+    Assert.assertEquals(4567L, (long) ref.at());
   }
 
   @Test
@@ -289,6 +289,15 @@ public class TestTableRef {
     TableRef ref = TableRef.parse("table__parts");
     Assert.assertEquals("table__parts", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
+    Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testTableWithTwoSnapshots() {
+    String name = "cass_subscriberservice_1__subscriber_data__account_profiles__snapshots$snapshots";
+    TableRef ref = TableRef.parse(name);
+    Assert.assertEquals("cass_subscriberservice_1__subscriber_data__account_profiles__snapshots", ref.table());
+    Assert.assertEquals(TableType.SNAPSHOTS, ref.type());
     Assert.assertNull(ref.at());
   }
 
