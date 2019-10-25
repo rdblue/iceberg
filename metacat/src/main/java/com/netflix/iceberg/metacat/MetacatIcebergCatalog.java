@@ -98,11 +98,6 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
       throw new NoSuchTableException("Identifiers must be catalog.database.table: %s", tableIdentifier);
     }
 
-    if (purge) {
-      // TODO: ensure purge isn't set by default
-      throw new UnsupportedOperationException("Metacat does not support purging data");
-    }
-
     String catalog = tableIdentifier.namespace().level(0);
     String database = tableIdentifier.namespace().level(1);
     String tableName = tableIdentifier.name();
