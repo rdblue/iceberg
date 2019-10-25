@@ -3,6 +3,7 @@ package com.netflix.iceberg.metacat;
 import com.google.common.base.Preconditions;
 import com.netflix.iceberg.KSGatewayListener;
 import com.netflix.metacat.client.Client;
+import com.netflix.metacat.common.dto.DatabaseDto;
 import com.netflix.metacat.shaded.feign.Retryer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.BaseMetastoreCatalog;
@@ -30,6 +31,7 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
   private final String jobId;
   private final String user;
   private final String appName;
+  private final Client dbClient;
 
   public MetacatIcebergCatalog(Configuration conf, String appName) {
     this(conf, null, appName);
@@ -41,24 +43,35 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
     this.jobId = conf.get("genie.job.id");
     this.user = System.getProperty("user.name"); // TODO: BDC-42: use a better user name
     this.appName = appName;
+    this.dbClient = newClient();
+
     MetacatIcebergCatalog.initialize(appName, appId, conf);
   }
 
   @Override
   protected TableOperations newTableOps(TableIdentifier tableIdentifier) {
-    validateTableIdentifier(tableIdentifier);
+    validateTableIdentifier(tableIdentifier, true);
 
     String catalog = tableIdentifier.namespace().level(0);
     String database = tableIdentifier.namespace().level(1);
 
-    return new MetacatClientOps(conf, newClient(), catalog, database, tableIdentifier.name());
+    return new MetacatClientOps(conf, newClient(), catalog, database, tableIdentifier.toString());
   }
 
   @Override
   protected String defaultWarehouseLocation(TableIdentifier tableIdentifier) {
-    validateTableIdentifier(tableIdentifier);
+    validateTableIdentifier(tableIdentifier, false);
 
+    String catalog = tableIdentifier.namespace().level(0);
     String database = tableIdentifier.namespace().level(1);
+
+    DatabaseDto dbInfo = dbClient.getApi().getDatabase(catalog, database,
+        false, /* omit user metadata */
+        false /* omit table names */ );
+
+    if (dbInfo.getUri() != null) {
+      return dbInfo.getUri() + "/" + tableIdentifier.name();
+    }
 
     String warehouseLocation = conf.get("hive.metastore.warehouse.dir");
     Preconditions.checkNotNull(warehouseLocation, "Warehouse location is not set: hive.metastore.warehouse.dir=null");
@@ -67,7 +80,7 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
 
   @Override
   public boolean dropTable(TableIdentifier tableIdentifier, boolean purge) {
-    validateTableIdentifier(tableIdentifier);
+    validateTableIdentifier(tableIdentifier, true);
 
     if (purge) {
       // TODO: ensure purge isn't set by default
@@ -84,8 +97,8 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
 
   @Override
   public void renameTable(TableIdentifier from, TableIdentifier to) {
-    validateTableIdentifier(from);
-    validateTableIdentifier(to);
+    validateTableIdentifier(from, true);
+    validateTableIdentifier(to, false);
 
     String fromCatalog = from.namespace().level(0);
     String toCatalog = to.namespace().level(0);
@@ -106,9 +119,15 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
     newClient().getApi().renameTable(fromCatalog, fromDatabase, fromTableName, toTableName);
   }
 
-  private static void validateTableIdentifier(TableIdentifier tableIdentifier) {
+  private static void validateTableIdentifier(TableIdentifier tableIdentifier, boolean throwNoSuchTable) {
     if (!tableIdentifier.hasNamespace() || tableIdentifier.namespace().levels().length != 2) {
-      throw new NoSuchTableException("Identifiers must be catalog.database.table: %s", tableIdentifier);
+      if (throwNoSuchTable) {
+        throw new NoSuchTableException(
+            "Identifiers must be catalog.database.table: %s", tableIdentifier);
+      } else {
+        throw new IllegalArgumentException(
+            String.format("Identifiers must be catalog.database.table: %s", tableIdentifier));
+      }
     }
   }
 
