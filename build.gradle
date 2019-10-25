@@ -413,6 +413,7 @@ project(':iceberg-metacat') {
   dependencies {
     compile project(':iceberg-data')
     compile project(':iceberg-spark-netflix')
+    compile project(':bdp-view')
     compile "com.netflix.metacat:metacat-netflix-client:$metacatVersion"
     compile 'com.google.guava:guava'
 
@@ -429,7 +430,7 @@ project(':iceberg-metacat') {
   }
 }
 
-project(':iceberg-view') {
+project(':bdp-view') {
   apply plugin: 'netflix.spotbugs-ci'
 
   dependencies {
@@ -437,6 +438,8 @@ project(':iceberg-view') {
 
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "org.apache.hadoop:hadoop-common"
+    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.1'
   }
 }
 
@@ -472,9 +475,10 @@ project(':bdp-iceberg') {
       exclude group: 'it.unimi.dsi'
       exclude group: 'org.apache.spark'
       exclude group: 'org.apache.orc'
+      exclude group: 'org.apache.hadoop'
     }
 
-    shadow(project(':iceberg-view')) {
+    shadow(project(':bdp-view')) {
       exclude group: 'com.fasterxml.jackson.core'
       exclude group: 'org.apache.hadoop'
       exclude group: 'org.slf4j'
