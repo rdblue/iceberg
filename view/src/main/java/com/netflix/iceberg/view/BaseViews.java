@@ -1,4 +1,4 @@
-package com.netflix.bdp;
+package com.netflix.iceberg.view;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Data;

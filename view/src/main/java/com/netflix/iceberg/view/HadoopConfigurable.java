@@ -1,4 +1,4 @@
-package com.netflix.bdp;
+package com.netflix.iceberg.view;
 
 import java.util.Map;
 

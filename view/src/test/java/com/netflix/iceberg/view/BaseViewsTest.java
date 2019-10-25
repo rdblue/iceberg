@@ -1,4 +1,4 @@
-package com.netflix.bdp;
+package com.netflix.iceberg.view;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.conf.Configuration;

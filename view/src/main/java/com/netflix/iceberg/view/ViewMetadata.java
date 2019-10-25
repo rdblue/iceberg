@@ -1,4 +1,4 @@
-package com.netflix.bdp;
+package com.netflix.iceberg.view;
 
 import lombok.Builder;
 import lombok.Value;

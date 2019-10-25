@@ -1,4 +1,4 @@
-package com.netflix.bdp;
+package com.netflix.iceberg.view;
 
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.NotFoundException;
