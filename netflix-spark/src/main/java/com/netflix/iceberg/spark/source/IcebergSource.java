@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
@@ -69,24 +70,11 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
   @Override
   public Optional<DataSourceWriter> createWriter(String jobId, StructType dfStruct, SaveMode mode,
                                                  DataSourceOptions options) {
-    Preconditions.checkArgument(mode == SaveMode.Append, "Save mode %s is not supported", mode);
     Configuration conf = new Configuration(lazyBaseConf());
     Table table = getTableAndResolveHadoopConfiguration(options, conf);
 
-    Schema dfSchema = SparkSchemaUtil.convert(table.schema(), dfStruct);
-    List<String> errors = CheckCompatibility.writeCompatibilityErrors(table.schema(), dfSchema);
-    if (!errors.isEmpty()) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Cannot write incompatible dataframe to table with schema:\n")
-          .append(table.schema()).append("\nProblems:");
-      for (String error : errors) {
-        sb.append("\n* ").append(error);
-      }
-      throw new IllegalArgumentException(sb.toString());
-    }
-
-    // TODO, how to pass wapid?
-    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, lazySpark.sparkContext().applicationId()));
+    return new SparkTable(table, lazySparkSession())
+        .createWriter(UUID.randomUUID().toString(), dfStruct, mode, options);
   }
 
   protected Table findTable(DataSourceOptions options, Configuration conf) {

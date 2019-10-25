@@ -115,8 +115,6 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   @Override
   public Optional<DataSourceWriter> createWriter(String writeUUID, StructType writeSchema,
                                                  SaveMode mode, DataSourceOptions options) {
-    Preconditions.checkArgument(mode == SaveMode.Append, "Save mode %s is not supported", mode);
-
     Schema dfSchema = SparkSchemaUtil.convert(table.schema(), writeSchema);
     List<String> errors = CheckCompatibility.writeCompatibilityErrors(table.schema(), dfSchema);
     if (!errors.isEmpty()) {
@@ -129,8 +127,8 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
       throw new IllegalArgumentException(sb.toString());
     }
 
-    // TODO, how to pass wapid?
-    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, spark.sparkContext().applicationId()));
+    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite,
+        spark.sparkContext().applicationId(), spark.conf().get("spark.wap.id", null)));
   }
 
   @Override
