@@ -50,7 +50,8 @@ import static org.apache.iceberg.spark.SparkSchemaUtil.convert;
 public class SparkPartitionsTable extends StaticTable<SparkPartitionsTable.Partition> {
 
   public SparkPartitionsTable(Table table, Long snapshotId, Long asOfTimestamp) {
-    super(schema(table.spec().partitionType()),
+    super(table.toString() + ".partitions",
+        schema(table.spec().partitionType()),
         partitions(table, snapshotId, asOfTimestamp),
         converter(table.spec().partitionType()));
   }

@@ -19,6 +19,7 @@
 
 package com.netflix.iceberg.spark.source;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -37,10 +38,12 @@ import org.apache.spark.sql.sources.v2.reader.InputPartitionReader;
 import org.apache.spark.sql.types.StructType;
 
 public class StaticTable<T> implements Table, ReadSupport {
+  private final String tableName;
   private final StructType schema;
   private final InternalRow[] rows;
 
-  public StaticTable(StructType schema, Iterable<T> values, Function<T, InternalRow> transform) {
+  public StaticTable(String tableName, StructType schema, Iterable<T> values, Function<T, InternalRow> transform) {
+    this.tableName = tableName;
     this.schema = schema;
     this.rows = Lists.newArrayList(Iterables.transform(values, transform::apply))
         .toArray(new InternalRow[0]);
@@ -59,6 +62,11 @@ public class StaticTable<T> implements Table, ReadSupport {
   @Override
   public List<PartitionTransform> partitioning() {
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return tableName;
   }
 
   @Override
