@@ -6,7 +6,6 @@ import com.netflix.iceberg.metacat.MetacatCatalog;
 import com.netflix.iceberg.metacat.MetacatIcebergCatalog;
 import java.util.Optional;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalog.v2.CatalogProvider;
@@ -14,8 +13,7 @@ import org.apache.spark.sql.catalog.v2.TableCatalog;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import scala.Option;
 
-public class IcebergMetacatSource extends IcebergSource
-{
+public class IcebergMetacatSource extends IcebergSource {
   private static final String CATALOG_OPTION = "catalog";
   private static final String DATABASE_OPTION = "database";
   private static final String TABLE_OPTION = "table";
@@ -46,9 +44,8 @@ public class IcebergMetacatSource extends IcebergSource
       return sparkCatalog.load(db, table.get());
     }
 
-    // if no table catalog was found, fall back to loading the table with a new MetacatTables
-    Namespace namespace = Namespace.of(catalog, db);
-    TableIdentifier identifier = TableIdentifier.of(namespace, table.get());
+    // if no table catalog was found, fall back to loading the table with a new MetacatIcebergCatalog
+    TableIdentifier identifier = TableIdentifier.of(catalog, db, table.get());
     MetacatIcebergCatalog icebergCatalog = new MetacatIcebergCatalog(conf, session.sparkContext().applicationId());
     return icebergCatalog.loadTable(identifier);
   }
