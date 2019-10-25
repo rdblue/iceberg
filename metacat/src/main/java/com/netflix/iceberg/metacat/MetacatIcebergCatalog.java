@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.BaseMetastoreCatalog;
 import org.apache.iceberg.TableOperations;
 import org.apache.iceberg.catalog.TableIdentifier;
+import org.apache.iceberg.exceptions.NoSuchTableException;
 
 public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
 
@@ -106,10 +107,9 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
   }
 
   private static void validateTableIdentifier(TableIdentifier tableIdentifier) {
-    Preconditions.checkArgument(tableIdentifier.hasNamespace(),
-        "Table identifier should have namespace: %s", tableIdentifier);
-    Preconditions.checkArgument(tableIdentifier.namespace().levels().length == 2,
-        "Table identifier should be catalog and database: %s", tableIdentifier);
+    if (!tableIdentifier.hasNamespace() || tableIdentifier.namespace().levels().length != 2) {
+      throw new NoSuchTableException("Identifiers must be catalog.database.table: %s", tableIdentifier);
+    }
   }
 
   private Client newClient() {
