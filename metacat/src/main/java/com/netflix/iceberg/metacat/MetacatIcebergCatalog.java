@@ -41,7 +41,7 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
     this.conf = conf;
     this.metacatHost = conf.get("netflix.metacat.host");
     this.jobId = conf.get("genie.job.id");
-    this.user = System.getProperty("user.name"); // TODO: BDC-42: use a better user name
+    this.user = Util.getUser();
     this.appName = appName;
     this.dbClient = newClient();
 

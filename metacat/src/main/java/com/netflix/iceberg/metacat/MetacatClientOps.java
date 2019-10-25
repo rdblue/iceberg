@@ -171,7 +171,7 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
         ));
 
         // set the table owner from the current user
-        newTableInfo.getSerde().setOwner(getUser());
+        newTableInfo.getSerde().setOwner(Util.getUser());
 
         client.getApi().createTable(catalog, database, table, newTableInfo);
       }
@@ -205,14 +205,6 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
     }
 
     return fileIO;
-  }
-
-  private String getUser() {
-    try {
-      return Utils.getUGI().getUserName();
-    } catch (IOException | LoginException e) {
-      return System.getenv("USER");
-    }
   }
 
   private static final String FLINK_WATERMARK_PREFIX = "flink.watermark.";
