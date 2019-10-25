@@ -19,8 +19,6 @@
 
 package com.netflix.iceberg.spark.source;
 
-import com.netflix.iceberg.spark.source.SparkCatalog.TableRef;
-import com.netflix.iceberg.spark.source.SparkCatalog.TableType;
 import org.junit.Assert;
 import org.junit.Test;
 

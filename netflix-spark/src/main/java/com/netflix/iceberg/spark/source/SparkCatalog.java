@@ -21,11 +21,10 @@ package com.netflix.iceberg.spark.source;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
@@ -33,6 +32,7 @@ import org.apache.iceberg.Transaction;
 import org.apache.iceberg.UpdateProperties;
 import org.apache.iceberg.UpdateSchema;
 import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.spark.SparkSchemaUtil;
 import org.apache.iceberg.types.Type;
 import org.apache.spark.sql.SparkSession;
@@ -47,19 +47,8 @@ import org.apache.spark.sql.catalyst.TableIdentifier;
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException;
 import org.apache.spark.sql.catalyst.analysis.TableAlreadyExistsException;
 import org.apache.spark.sql.types.StructType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SparkCatalog implements TableCatalog {
-  enum TableType {
-    DATA,
-    FILES,
-    ENTRIES,
-    HISTORY,
-    SNAPSHOTS,
-    MANIFESTS,
-    PARTITIONS
-  }
 
   protected abstract Catalog catalog();
 
@@ -75,16 +64,16 @@ public abstract class SparkCatalog implements TableCatalog {
     return spark;
   }
 
-  private SparkTable loadInternal(TableIdentifier ident) throws NoSuchTableException {
+  private SparkTable loadInternal(org.apache.iceberg.catalog.TableIdentifier ident) throws NoSuchTableException {
     Table table;
     try {
-      table = catalog().loadTable(toIceberg(ident));
+      table = catalog().loadTable(ident);
     } catch (org.apache.iceberg.exceptions.NoSuchTableException e) {
-      throw new NoSuchTableException(ident.database().get(), ident.table());
+      throw new NoSuchTableException(ident.namespace().toString(), ident.name());
     }
 
     if (table == null) {
-      throw new NoSuchTableException(ident.database().get(), ident.table());
+      throw new NoSuchTableException(ident.namespace().toString(), ident.name());
     }
 
     return new SparkTable(table, lazySparkSession());
@@ -94,38 +83,50 @@ public abstract class SparkCatalog implements TableCatalog {
   public org.apache.spark.sql.catalog.v2.Table loadTable(TableIdentifier ident)
       throws NoSuchTableException {
 
+    org.apache.iceberg.catalog.TableIdentifier icebergTable = toIceberg(ident);
+
     TableRef ref = TableRef.parse(ident.table());
-    SparkTable sourceTable = loadInternal(new TableIdentifier(ref.table(), ident.database()));
-    Long snapshotId = null;
-    Long asOfTimestamp = null;
-    if (ref.at() != null) {
-      if (sourceTable.table().snapshot(ref.at()) != null) {
-        snapshotId = ref.at();
-      } else {
-        Preconditions.checkArgument(ref.at() < System.currentTimeMillis(),
-            "Invalid timestamp: %s is in the future", ref.at());
-        asOfTimestamp = ref.at();
-      }
-    }
+
+    org.apache.iceberg.catalog.TableIdentifier sourceTableIdent =
+        org.apache.iceberg.catalog.TableIdentifier.of(icebergTable.namespace(), ref.table());
+
+    SparkTable sourceTable = loadInternal(sourceTableIdent);
+    Preconditions.checkArgument(ref.at() == null || sourceTable.table().snapshot(ref.at()) != null,
+        "Cannot find snapshot ID %s for table: %s", ref.at(), sourceTableIdent);
 
     switch (ref.type()) {
       case DATA:
         if (ref.at() != null) {
-          return new SparkTable(sourceTable.table(), lazySparkSession(), snapshotId, asOfTimestamp);
+          return new SparkTable(sourceTable.table(), lazySparkSession(), ref.at(), null);
         } else {
           return sourceTable;
         }
-      case PARTITIONS:
-        return new SparkPartitionsTable(sourceTable.table(), snapshotId, asOfTimestamp);
+      case FILES:
+      case ENTRIES:
       case MANIFESTS:
-        return new SparkManifestsTable(sourceTable.table(), snapshotId, asOfTimestamp);
+        SparkTable metadataTable = loadInternal(metadataIdentifier(sourceTableIdent, ref.type()));
+        if (ref.at() != null) {
+          return new SparkTable(metadataTable.table(), lazySparkSession(), ref.at(), null);
+        } else {
+          return metadataTable;
+        }
+      case PARTITIONS:
+        return new SparkPartitionsTable(sourceTable.table(), ref.at(), null);
       case HISTORY:
-        return new SparkHistoryTable(sourceTable.table());
       case SNAPSHOTS:
-        return new SparkSnapshotsTable(sourceTable.table());
+        return loadInternal(metadataIdentifier(sourceTableIdent, ref.type()));
       default:
         throw new IllegalArgumentException("Unknown table type: " + ref.type());
     }
+  }
+
+  private org.apache.iceberg.catalog.TableIdentifier metadataIdentifier(
+      org.apache.iceberg.catalog.TableIdentifier ident, TableType metadataTable) {
+    int namespaceLength = ident.namespace().levels().length;
+    String[] newNamespace = Arrays.copyOf(ident.namespace().levels(), namespaceLength + 1);
+    newNamespace[namespaceLength] = ident.name();
+    return org.apache.iceberg.catalog.TableIdentifier.of(
+        Namespace.of(newNamespace), metadataTable.name().toLowerCase(Locale.ROOT));
   }
 
   @Override
@@ -133,7 +134,7 @@ public abstract class SparkCatalog implements TableCatalog {
     // refresh the table in Spark's catalog
     lazySparkSession().catalog().refreshTable(ident.quotedString());
     // refresh the Iceberg table
-    SparkTable table = loadInternal(ident);
+    SparkTable table = loadInternal(toIceberg(ident));
     table.table().refresh();
     return table;
   }
@@ -177,7 +178,7 @@ public abstract class SparkCatalog implements TableCatalog {
       }
     }
 
-    SparkTable table = loadInternal(ident);
+    SparkTable table = loadInternal(toIceberg(ident));
 
     // if updating the table snapshot, perform that update first in case it fails
     if (setSnapshotId != null) {
@@ -314,82 +315,4 @@ public abstract class SparkCatalog implements TableCatalog {
     return "IcebergCatalog(name=" + name + ")";
   }
 
-  static class TableRef {
-    private static final Logger LOG = LoggerFactory.getLogger(TableRef.class);
-
-    private static final Pattern TABLE_PATTERN = Pattern.compile(
-        "(?<table>(?:[^$@_]|_[^$@_])+)" +
-            "(?:(?:@|__)(?<ver1>\\d+))?" +
-            "(?:(?:\\$|__)(?<type>(?:history|snapshots|manifests|partitions|files|entries))" +
-            "(?:(?:@|__)(?<ver2>\\d+))?)?");
-
-    static TableRef parse(String rawName) {
-      Matcher match = TABLE_PATTERN.matcher(rawName);
-      if (match.matches()) {
-        try {
-          String table = match.group("table");
-          String typeStr = match.group("type");
-          String ver1 = match.group("ver1");
-          String ver2 = match.group("ver2");
-
-          TableType type;
-          if (typeStr != null) {
-            type = TableType.valueOf(typeStr.toUpperCase(Locale.ROOT));
-          } else {
-            type = TableType.DATA;
-          }
-
-          Long version;
-          if (type == TableType.DATA ||
-              type == TableType.PARTITIONS ||
-              type == TableType.MANIFESTS ||
-              type == TableType.FILES ||
-              type == TableType.ENTRIES) {
-            Preconditions.checkArgument(ver1 == null || ver2 == null,
-                "Cannot specify two versions");
-            if (ver1 != null) {
-              version = Long.parseLong(ver1);
-            } else if (ver2 != null) {
-              version = Long.parseLong(ver2);
-            } else {
-              version = null;
-            }
-          } else {
-            Preconditions.checkArgument(ver1 == null && ver2 == null,
-                "Cannot use version with table type %s: %s", typeStr, rawName);
-            version = null;
-          }
-
-          return new TableRef(table, type, version);
-
-        } catch (IllegalArgumentException e) {
-          LOG.warn("Failed to parse table name, using {}: {}", rawName, e.getMessage());
-        }
-      }
-
-      return new TableRef(rawName, TableType.DATA, null);
-    }
-
-    private final String table;
-    private final TableType type;
-    private final Long at;
-
-    private TableRef(String table, TableType type, Long at) {
-      this.table = table;
-      this.type = type;
-      this.at = at;
-    }
-
-    public String table() {
-      return table;
-    }
-
-    public TableType type() {
-      return type;
-    }
-
-    public Long at() {
-      return at;
-    }
-  }
 }

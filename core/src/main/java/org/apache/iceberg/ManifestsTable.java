@@ -31,12 +31,12 @@ public class ManifestsTable extends BaseMetadataTable {
   private static final Schema SNAPSHOT_SCHEMA = new Schema(
       Types.NestedField.required(1, "path", Types.StringType.get()),
       Types.NestedField.required(2, "length", Types.LongType.get()),
-      Types.NestedField.required(3, "partition_spec_id", Types.IntegerType.get()),
-      Types.NestedField.required(4, "added_snapshot_id", Types.LongType.get()),
-      Types.NestedField.required(5, "added_data_files_count", Types.IntegerType.get()),
-      Types.NestedField.required(6, "existing_data_files_count", Types.IntegerType.get()),
-      Types.NestedField.required(7, "deleted_data_files_count", Types.IntegerType.get()),
-      Types.NestedField.required(8, "partition_summaries", Types.ListType.ofRequired(9, Types.StructType.of(
+      Types.NestedField.optional(3, "partition_spec_id", Types.IntegerType.get()),
+      Types.NestedField.optional(4, "added_snapshot_id", Types.LongType.get()),
+      Types.NestedField.optional(5, "added_data_files_count", Types.IntegerType.get()),
+      Types.NestedField.optional(6, "existing_data_files_count", Types.IntegerType.get()),
+      Types.NestedField.optional(7, "deleted_data_files_count", Types.IntegerType.get()),
+      Types.NestedField.optional(8, "partition_summaries", Types.ListType.ofRequired(9, Types.StructType.of(
           Types.NestedField.required(10, "contains_null", Types.BooleanType.get()),
           Types.NestedField.optional(11, "lower_bound", Types.StringType.get()),
           Types.NestedField.optional(12, "upper_bound", Types.StringType.get())
