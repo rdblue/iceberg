@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
 public abstract class SparkCatalog implements TableCatalog {
   enum TableType {
     DATA,
+    FILES,
+    ENTRIES,
     HISTORY,
     SNAPSHOTS,
     MANIFESTS,
@@ -318,7 +320,8 @@ public abstract class SparkCatalog implements TableCatalog {
     private static final Pattern TABLE_PATTERN = Pattern.compile(
         "(?<table>(?:[^$@_]|_[^$@_])+)" +
             "(?:(?:@|__)(?<ver1>\\d+))?" +
-            "(?:(?:\\$|__)(?<type>(?:history|snapshots|manifests|partitions))(?:(?:@|__)(?<ver2>\\d+))?)?");
+            "(?:(?:\\$|__)(?<type>(?:history|snapshots|manifests|partitions|files|entries))" +
+            "(?:(?:@|__)(?<ver2>\\d+))?)?");
 
     static TableRef parse(String rawName) {
       Matcher match = TABLE_PATTERN.matcher(rawName);
@@ -339,7 +342,9 @@ public abstract class SparkCatalog implements TableCatalog {
           Long version;
           if (type == TableType.DATA ||
               type == TableType.PARTITIONS ||
-              type == TableType.MANIFESTS) {
+              type == TableType.MANIFESTS ||
+              type == TableType.FILES ||
+              type == TableType.ENTRIES) {
             Preconditions.checkArgument(ver1 == null || ver2 == null,
                 "Cannot specify two versions");
             if (ver1 != null) {

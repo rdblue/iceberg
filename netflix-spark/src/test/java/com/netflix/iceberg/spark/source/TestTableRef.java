@@ -111,7 +111,7 @@ public class TestTableRef {
 
   @Test
   public void testSnapshotsAt() {
-    // history is not compatible with at
+    // snapshots is not compatible with at
     TableRef ref = TableRef.parse("table$snapshots@1234");
     Assert.assertEquals("table$snapshots@1234", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
@@ -120,7 +120,7 @@ public class TestTableRef {
 
   @Test
   public void testAtSnapshots() {
-    // history is not compatible with at
+    // snapshots is not compatible with at
     TableRef ref = TableRef.parse("table@1234$snapshots");
     Assert.assertEquals("table@1234$snapshots", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
@@ -129,7 +129,6 @@ public class TestTableRef {
 
   @Test
   public void testPartitionsAt() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table$partitions@1234");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.PARTITIONS, ref.type());
@@ -138,7 +137,6 @@ public class TestTableRef {
 
   @Test
   public void testAtPartitions() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table@1234$partitions");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.PARTITIONS, ref.type());
@@ -147,7 +145,6 @@ public class TestTableRef {
 
   @Test
   public void testManifestsAt() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table$manifests@1234");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.MANIFESTS, ref.type());
@@ -156,7 +153,6 @@ public class TestTableRef {
 
   @Test
   public void testAtManifests() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table@1234$manifests");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.MANIFESTS, ref.type());
@@ -241,7 +237,7 @@ public class TestTableRef {
 
   @Test
   public void testSnapshotsAtWithUnderscores() {
-    // history is not compatible with at
+    // snapshots is not compatible with at
     TableRef ref = TableRef.parse("table__snapshots__1234");
     Assert.assertEquals("table__snapshots__1234", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
@@ -250,7 +246,7 @@ public class TestTableRef {
 
   @Test
   public void testAtSnapshotsWithUnderscores() {
-    // history is not compatible with at
+    // snapshots is not compatible with at
     TableRef ref = TableRef.parse("table__1234__snapshots");
     Assert.assertEquals("table__1234__snapshots", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
@@ -259,7 +255,6 @@ public class TestTableRef {
 
   @Test
   public void testPartitionsAtWithUnderscores() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table__partitions__1234");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.PARTITIONS, ref.type());
@@ -268,7 +263,6 @@ public class TestTableRef {
 
   @Test
   public void testAtPartitionsWithUnderscores() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table__1234__partitions");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.PARTITIONS, ref.type());
@@ -277,7 +271,6 @@ public class TestTableRef {
 
   @Test
   public void testManifestsAtWithUnderscores() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table__manifests__1234");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.MANIFESTS, ref.type());
@@ -286,7 +279,6 @@ public class TestTableRef {
 
   @Test
   public void testAtManifestsWithUnderscores() {
-    // history is not compatible with at
     TableRef ref = TableRef.parse("table__1234__manifests");
     Assert.assertEquals("table", ref.table());
     Assert.assertEquals(TableType.MANIFESTS, ref.type());
@@ -300,5 +292,101 @@ public class TestTableRef {
     Assert.assertEquals("table__parts", ref.table());
     Assert.assertEquals(TableType.DATA, ref.type());
     Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testEntriesTableNameParsing() {
+    TableRef ref = TableRef.parse("table$entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testEntriesAt() {
+    TableRef ref = TableRef.parse("table$entries@1234");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testAtEntries() {
+    TableRef ref = TableRef.parse("table@1234$entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testEntriesTableNameParsingWithUnderscores() {
+    TableRef ref = TableRef.parse("table__entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testEntriesAtWithUnderscores() {
+    TableRef ref = TableRef.parse("table__entries__1234");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testAtEntriesWithUnderscores() {
+    TableRef ref = TableRef.parse("table__1234__entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testFilesTableNameParsing() {
+    TableRef ref = TableRef.parse("table$entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testFilesAt() {
+    TableRef ref = TableRef.parse("table$entries@1234");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testAtFiles() {
+    TableRef ref = TableRef.parse("table@1234$entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testFilesTableNameParsingWithUnderscores() {
+    TableRef ref = TableRef.parse("table__entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertNull(ref.at());
+  }
+
+  @Test
+  public void testFilesAtWithUnderscores() {
+    TableRef ref = TableRef.parse("table__entries__1234");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
+  }
+
+  @Test
+  public void testAtFilesWithUnderscores() {
+    TableRef ref = TableRef.parse("table__1234__entries");
+    Assert.assertEquals("table", ref.table());
+    Assert.assertEquals(TableType.ENTRIES, ref.type());
+    Assert.assertEquals(1234L, (long) ref.at());
   }
 }
