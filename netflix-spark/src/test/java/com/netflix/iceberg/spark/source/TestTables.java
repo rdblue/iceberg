@@ -21,6 +21,7 @@ package com.netflix.iceberg.spark.source;
 
 import com.google.common.collect.Maps;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.iceberg.BaseTable;
@@ -29,8 +30,12 @@ import org.apache.iceberg.LocationProviders;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Snapshot;
+import org.apache.iceberg.Table;
 import org.apache.iceberg.TableMetadata;
 import org.apache.iceberg.TableOperations;
+import org.apache.iceberg.Transaction;
+import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.RuntimeIOException;
@@ -38,6 +43,7 @@ import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.io.InputFile;
 import org.apache.iceberg.io.LocationProvider;
 import org.apache.iceberg.io.OutputFile;
+import org.junit.rules.TemporaryFolder;
 
 // TODO: Use the copy of this from core.
 class TestTables {
@@ -64,6 +70,57 @@ class TestTables {
   static boolean drop(String name) {
     synchronized (METADATA) {
       return METADATA.remove(name) != null;
+    }
+  }
+
+  static final Catalog CATALOG_INSTANCE = new TestCatalog();
+  static Catalog asCatalog() {
+    return CATALOG_INSTANCE;
+  }
+
+  private static class TestCatalog implements Catalog {
+    @Override
+    public Table createTable(TableIdentifier identifier, Schema schema, PartitionSpec spec,
+                             String location, Map<String, String> properties) {
+      File tableLocation;
+      if (location != null) {
+        tableLocation = new File(location);
+      } else {
+        try {
+          tableLocation = File.createTempFile(identifier.namespace().toString(), identifier.name());
+          tableLocation.delete();
+        } catch (IOException e) {
+          throw new RuntimeIOException(e);
+        }
+      }
+      return create(tableLocation, identifier.toString(), schema, spec);
+    }
+
+    @Override
+    public Transaction newCreateTableTransaction(TableIdentifier identifier, Schema schema, PartitionSpec spec,
+                                                 String location, Map<String, String> properties) {
+      return null;
+    }
+
+    @Override
+    public Transaction newReplaceTableTransaction(TableIdentifier identifier, Schema schema, PartitionSpec spec,
+                                                  String location, Map<String, String> properties, boolean orCreate) {
+      return null;
+    }
+
+    @Override
+    public boolean dropTable(TableIdentifier identifier, boolean purge) {
+      return drop(identifier.toString());
+    }
+
+    @Override
+    public void renameTable(TableIdentifier from, TableIdentifier to) {
+      throw new UnsupportedOperationException("Not implemented for tests");
+    }
+
+    @Override
+    public Table loadTable(TableIdentifier identifier) {
+      return load(identifier.toString());
     }
   }
 

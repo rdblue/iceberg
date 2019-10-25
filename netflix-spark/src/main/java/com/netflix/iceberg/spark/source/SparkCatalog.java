@@ -32,6 +32,7 @@ import org.apache.iceberg.Table;
 import org.apache.iceberg.Transaction;
 import org.apache.iceberg.UpdateProperties;
 import org.apache.iceberg.UpdateSchema;
+import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.spark.SparkSchemaUtil;
 import org.apache.iceberg.types.Type;
 import org.apache.spark.sql.SparkSession;
@@ -58,17 +59,12 @@ public abstract class SparkCatalog implements TableCatalog {
     PARTITIONS
   }
 
+  protected abstract Catalog catalog();
+
+  protected abstract org.apache.iceberg.catalog.TableIdentifier toIceberg(TableIdentifier ident);
+
   private String name = null;
   private SparkSession spark = null;
-
-  protected abstract Table create(TableIdentifier ident,
-                                  Schema schema,
-                                  PartitionSpec spec,
-                                  Map<String, String> properties);
-
-  protected abstract Table load(TableIdentifier ident);
-
-  protected abstract boolean drop(TableIdentifier ident);
 
   protected SparkSession lazySparkSession() {
     if (spark == null) {
@@ -80,7 +76,7 @@ public abstract class SparkCatalog implements TableCatalog {
   private SparkTable loadInternal(TableIdentifier ident) throws NoSuchTableException {
     Table table;
     try {
-      table = load(ident);
+      table = catalog().loadTable(toIceberg(ident));
     } catch (org.apache.iceberg.exceptions.NoSuchTableException e) {
       throw new NoSuchTableException(ident.database().get(), ident.table());
     }
@@ -144,18 +140,14 @@ public abstract class SparkCatalog implements TableCatalog {
   public SparkTable createTable(TableIdentifier ident, StructType tableType,
                                 List<PartitionTransform> partitions,
                                 Map<String, String> properties) throws TableAlreadyExistsException {
-    try {
-      if (load(ident) != null) {
-        throw new TableAlreadyExistsException(ident.database().get(), ident.table());
-      }
-    } catch (org.apache.iceberg.exceptions.NoSuchTableException e) {
-      // this is expected, continue to create the table
+    if (tableExists(ident)) {
+      throw new TableAlreadyExistsException(ident.database().get(), ident.table());
     }
 
     Schema schema = SparkSchemaUtil.convert(tableType);
     PartitionSpec spec = convert(schema, partitions);
 
-    return new SparkTable(create(ident, schema, spec, properties), lazySparkSession());
+    return new SparkTable(catalog().createTable(toIceberg(ident), schema, spec, properties), lazySparkSession());
   }
 
   @Override
@@ -271,7 +263,7 @@ public abstract class SparkCatalog implements TableCatalog {
 
   @Override
   public boolean dropTable(TableIdentifier ident) {
-    return drop(ident);
+    return catalog().dropTable(toIceberg(ident));
   }
 
   @Override

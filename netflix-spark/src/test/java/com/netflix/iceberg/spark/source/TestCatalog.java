@@ -19,37 +19,27 @@
 
 package com.netflix.iceberg.spark.source;
 
-import java.io.File;
-import java.util.Map;
-import org.apache.iceberg.PartitionSpec;
-import org.apache.iceberg.Schema;
-import org.apache.iceberg.Table;
+import org.apache.iceberg.catalog.Catalog;
 import org.apache.spark.sql.catalog.v2.CaseInsensitiveStringMap;
 import org.apache.spark.sql.catalyst.TableIdentifier;
 
 public class TestCatalog extends SparkCatalog {
-  private File catalogPath = null;
-
   @Override
-  protected Table create(TableIdentifier ident, Schema schema, PartitionSpec spec,
-                         Map<String, String> properties) {
-    File location = new File(catalogPath, ident.unquotedString());
-    return TestTables.create(location, ident.unquotedString(), schema, spec);
+  protected Catalog catalog() {
+    return TestTables.asCatalog();
   }
 
   @Override
-  protected Table load(TableIdentifier ident) {
-    return TestTables.load(ident.unquotedString());
-  }
-
-  @Override
-  protected boolean drop(TableIdentifier ident) {
-    return TestTables.drop(ident.unquotedString());
+  protected org.apache.iceberg.catalog.TableIdentifier toIceberg(TableIdentifier ident) {
+    if (ident.database().isDefined()) {
+      return org.apache.iceberg.catalog.TableIdentifier.of(ident.database().get(), ident.table());
+    } else {
+      return org.apache.iceberg.catalog.TableIdentifier.of(ident.table());
+    }
   }
 
   @Override
   public void initialize(String name, CaseInsensitiveStringMap options) {
     super.initialize(name, options);
-    this.catalogPath = new File(options.get("path"));
   }
 }
