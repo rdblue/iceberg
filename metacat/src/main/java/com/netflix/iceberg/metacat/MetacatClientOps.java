@@ -62,7 +62,7 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
   }
 
   @Override
-  public synchronized TableMetadata refresh() {
+  public synchronized void doRefresh() {
     String metadataLocation = null;
     try {
       TableDto tableInfo = client.getApi().getTable(catalog, database, table,
@@ -91,23 +91,10 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
     }
 
     refreshFromMetadataLocation(metadataLocation, RETRY_IF, 20);
-
-    return current();
   }
 
   @Override
-  public synchronized void commit(TableMetadata base, TableMetadata metadata) {
-    // if the metadata is already out of date, reject it
-    if (base != current()) {
-      throw new CommitFailedException("Cannot commit changes based on stale table metadata");
-    }
-
-    // if the metadata is not changed, return early
-    if (base == metadata) {
-      LOG.info("Nothing to commit.");
-      return;
-    }
-
+  public synchronized void doCommit(TableMetadata base, TableMetadata metadata) {
     String newMetadataLocation = writeNewMetadata(metadata, currentVersion() + 1);
     ObjectNode watermarks = flinkWatermarkProperties(base, metadata);
 
@@ -194,8 +181,6 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
         io().deleteFile(newMetadataLocation);
       }
     }
-
-    requestRefresh();
   }
 
   @Override
