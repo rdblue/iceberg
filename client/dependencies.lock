@@ -1,0 +1,3646 @@
+{
+    "annotationProcessor": {
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6"
+        }
+    },
+    "compile": {
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1"
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre"
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25"
+        }
+    },
+    "compileClasspath": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j"
+            ]
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "compileOnly": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j"
+            ]
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "default": {
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1"
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre"
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25"
+        }
+    },
+    "repositoryContentDescriptorMavenModules": {
+        "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
+            "locked": "0.6.0"
+        }
+    },
+    "runtime": {
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1"
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre"
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25"
+        }
+    },
+    "runtimeClasspath": {
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1"
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre"
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25"
+        }
+    },
+    "shadow": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j"
+            ]
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "testAnnotationProcessor": {
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6"
+        }
+    },
+    "testCompile": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "junit:junit": {
+            "locked": "4.12"
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.hamcrest:hamcrest-core": {
+            "locked": "1.3",
+            "transitive": [
+                "junit:junit",
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.mockito:mockito-core": {
+            "locked": "1.10.19"
+        },
+        "org.objenesis:objenesis": {
+            "locked": "2.1",
+            "transitive": [
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j",
+                "org.slf4j:slf4j-simple"
+            ]
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.25"
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "testCompileClasspath": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "junit:junit": {
+            "locked": "4.12"
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.hamcrest:hamcrest-core": {
+            "locked": "1.3",
+            "transitive": [
+                "junit:junit"
+            ]
+        },
+        "org.mockito:mockito-core": {
+            "locked": "1.10.19"
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j",
+                "org.slf4j:slf4j-simple"
+            ]
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.25"
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "testCompileOnly": {
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        }
+    },
+    "testRuntime": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "junit:junit": {
+            "locked": "4.12"
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.hamcrest:hamcrest-core": {
+            "locked": "1.3",
+            "transitive": [
+                "junit:junit",
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.mockito:mockito-core": {
+            "locked": "1.10.19"
+        },
+        "org.objenesis:objenesis": {
+            "locked": "2.1",
+            "transitive": [
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j",
+                "org.slf4j:slf4j-simple"
+            ]
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.25"
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.amazonaws:aws-java-sdk-core": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-kms": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-s3"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-s3": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.amazonaws:aws-java-sdk-sts": {
+            "locked": "1.11.147",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "com.amazonaws:jmespath-java": {
+            "locked": "1.11.147",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-kms",
+                "com.amazonaws:aws-java-sdk-s3",
+                "com.amazonaws:aws-java-sdk-sts"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-annotations": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-core": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.fasterxml.jackson.core:jackson-databind",
+                "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.core:jackson-databind": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.amazonaws:jmespath-java",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor": {
+            "locked": "2.9.10",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "com.github.ben-manes.caffeine:caffeine": {
+            "locked": "2.7.0",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "com.github.stephenc.findbugs:findbugs-annotations": {
+            "locked": "1.3.9-1",
+            "requested": "1.3.9-1",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.code.findbugs:jsr305": {
+            "locked": "3.0.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.3",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:guava": {
+            "locked": "28.0-jre",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.iceberg:iceberg-metacat",
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "netflix:bdp-emr-credentials",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-common",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
+        },
+        "com.netflix.iceberg:iceberg-metacat": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-spark-netflix": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.metacat:metacat-netflix-client": {
+            "locked": "1.3.6",
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.thoughtworks.paranamer:paranamer": {
+            "locked": "2.7",
+            "transitive": [
+                "org.apache.avro:avro"
+            ]
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "transitive": [
+                "commons-httpclient:commons-httpclient",
+                "org.apache.hadoop:hadoop-auth",
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.httpcomponents:httpclient",
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "commons-collections:commons-collections": {
+            "locked": "3.2.2",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-configuration:commons-configuration": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-io:commons-io": {
+            "locked": "2.4",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-lang:commons-lang": {
+            "locked": "2.6",
+            "transitive": [
+                "commons-configuration:commons-configuration",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-logging:commons-logging": {
+            "locked": "1.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "commons-net:commons-net": {
+            "locked": "3.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "commons-pool:commons-pool": {
+            "locked": "1.6",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "joda-time:joda-time": {
+            "locked": "2.8.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core",
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "junit:junit": {
+            "locked": "4.12"
+        },
+        "netflix:bdp-emr-credentials": {
+            "locked": "1.5.3"
+        },
+        "org.apache.avro:avro": {
+            "locked": "1.8.2",
+            "transitive": [
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.commons:commons-compress": {
+            "locked": "1.8.1",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.commons:commons-math3": {
+            "locked": "3.1.1",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-annotations": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common",
+                "org.apache.hadoop:hadoop-mapreduce-client-core"
+            ]
+        },
+        "org.apache.hadoop:hadoop-auth": {
+            "locked": "2.7.3",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        },
+        "org.apache.hadoop:hadoop-common": {
+            "locked": "2.7.3",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.apache.hadoop:hadoop-mapreduce-client-core": {
+            "locked": "2.7.3"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "org.apache.httpcomponents:httpcore": {
+            "locked": "4.4.4",
+            "transitive": [
+                "org.apache.httpcomponents:httpclient"
+            ]
+        },
+        "org.apache.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-core"
+            ]
+        },
+        "org.apache.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix",
+                "org.apache.iceberg:iceberg-data",
+                "org.apache.iceberg:iceberg-orc",
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.iceberg:iceberg-data": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "org.apache.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark-netflix"
+            ]
+        },
+        "org.apache.parquet:parquet-avro": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.iceberg:iceberg-parquet"
+            ]
+        },
+        "org.apache.parquet:parquet-column": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-common": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column",
+                "org.apache.parquet:parquet-encoding"
+            ]
+        },
+        "org.apache.parquet:parquet-encoding": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-column"
+            ]
+        },
+        "org.apache.parquet:parquet-format": {
+            "locked": "2.4.0",
+            "transitive": [
+                "org.apache.parquet:parquet-avro",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.apache.parquet:parquet-hadoop": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-avro"
+            ]
+        },
+        "org.apache.parquet:parquet-jackson": {
+            "locked": "1.10.1",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.github.ben-manes.caffeine:caffeine",
+                "com.google.guava:guava"
+            ]
+        },
+        "org.codehaus.jackson:jackson-core-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "org.codehaus.jackson:jackson-mapper-asl"
+            ]
+        },
+        "org.codehaus.jackson:jackson-mapper-asl": {
+            "locked": "1.9.13",
+            "transitive": [
+                "netflix:bdp-emr-credentials"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "org.hamcrest:hamcrest-core": {
+            "locked": "1.3",
+            "transitive": [
+                "junit:junit",
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.mockito:mockito-core": {
+            "locked": "1.10.19"
+        },
+        "org.objenesis:objenesis": {
+            "locked": "2.1",
+            "transitive": [
+                "org.mockito:mockito-core"
+            ]
+        },
+        "org.openjdk.jol:jol-core": {
+            "locked": "0.1",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.projectlombok:lombok": {
+            "locked": "1.18.6",
+            "requested": "1.18.6"
+        },
+        "org.slf4j:jcl-over-slf4j": {
+            "locked": "1.7.25"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.25",
+            "transitive": [
+                "netflix:bdp-emr-credentials",
+                "org.apache.avro:avro",
+                "org.apache.iceberg:iceberg-api",
+                "org.apache.iceberg:iceberg-core",
+                "org.apache.iceberg:iceberg-parquet",
+                "org.apache.parquet:parquet-common",
+                "org.apache.parquet:parquet-format",
+                "org.slf4j:jcl-over-slf4j",
+                "org.slf4j:slf4j-simple"
+            ]
+        },
+        "org.slf4j:slf4j-simple": {
+            "locked": "1.7.25"
+        },
+        "org.weakref:jmxutils": {
+            "locked": "1.19",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.1.2.6",
+            "transitive": [
+                "org.apache.avro:avro",
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
+        "software.amazon.ion:ion-java": {
+            "locked": "1.0.2",
+            "transitive": [
+                "com.amazonaws:aws-java-sdk-core"
+            ]
+        },
+        "xmlenc:xmlenc": {
+            "locked": "0.52",
+            "transitive": [
+                "org.apache.hadoop:hadoop-common"
+            ]
+        }
+    }
+}

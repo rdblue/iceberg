@@ -1,0 +1,27 @@
+{
+    "nebulaRecommenderBom": {
+        "com.netflix.bdp:bdc-dependency-recommendations": {
+            "locked": "1.0.1",
+            "requested": "latest.release"
+        },
+        "netflix.bom:runtime-platform-recommendations": {
+            "locked": "4.7.83",
+            "requested": "latest.release"
+        }
+    },
+    "repositoryContentDescriptorMavenModules": {
+        "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
+            "locked": "0.6.0"
+        }
+    },
+    "resolutionRules": {
+        "com.netflix.nebula:gradle-resolution-rules": {
+            "locked": "0.60.0",
+            "requested": "latest.release"
+        },
+        "netflix.nebula.resolutionrules:resolution-rules": {
+            "locked": "0.143.1",
+            "requested": "latest.release"
+        }
+    }
+}
