@@ -52,6 +52,11 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
   }
 
   @Override
+  protected boolean isValidIdentifier(TableIdentifier tableIdentifier) {
+    return tableIdentifier.hasNamespace() && tableIdentifier.namespace().levels().length == 2;
+  }
+
+  @Override
   protected TableOperations newTableOps(TableIdentifier tableIdentifier) {
     String catalog = tableIdentifier.namespace().level(0);
     String database = tableIdentifier.namespace().level(1);
@@ -74,22 +79,6 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
     String warehouseLocation = conf.get("hive.metastore.warehouse.dir");
     Preconditions.checkNotNull(warehouseLocation, "Warehouse location is not set: hive.metastore.warehouse.dir=null");
     return String.format("%s/%s.db/%s", warehouseLocation, database, tableIdentifier.name());
-  }
-
-  @Override
-  public org.apache.iceberg.Table createTable(
-      TableIdentifier identifier, Schema schema, PartitionSpec spec, String location, Map<String, String> properties) {
-    Preconditions.checkArgument(isValidIdentifier(identifier),
-        "Identifiers must be catalog.database.table: %s", identifier);
-    return super.createTable(identifier, schema, spec, location, properties);
-  }
-
-  @Override
-  public org.apache.iceberg.Table loadTable(TableIdentifier identifier) {
-    if (!isValidIdentifier(identifier)) {
-      throw new NoSuchTableException("Identifiers must be catalog.database.table: %s", identifier);
-    }
-    return super.loadTable(identifier);
   }
 
   @Override
@@ -130,10 +119,6 @@ public class MetacatIcebergCatalog extends BaseMetastoreCatalog {
     }
 
     newClient().getApi().renameTable(fromCatalog, fromDatabase, fromTableName, toTableName);
-  }
-
-  private boolean isValidIdentifier(TableIdentifier tableIdentifier) {
-    return tableIdentifier.hasNamespace() && tableIdentifier.namespace().levels().length == 2;
   }
 
   private Client newClient() {
