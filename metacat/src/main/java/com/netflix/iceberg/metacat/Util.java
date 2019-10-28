@@ -19,19 +19,17 @@
 
 package com.netflix.iceberg.metacat;
 
-import java.io.IOException;
-import javax.security.auth.login.LoginException;
-import org.apache.hadoop.hive.shims.Utils;
-
 class Util {
   private Util() {
   }
 
   static String getUser() {
-    try {
-      return Utils.getUGI().getUserName();
-    } catch (IOException | LoginException e) {
+    if (System.getenv("HADOOP_USER_NAME") != null) {
+      return System.getenv("HADOOP_USER_NAME");
+    } else if (System.getenv("USER") != null) {
       return System.getenv("USER");
+    } else {
+      return System.getProperty("user.name");
     }
   }
 }
