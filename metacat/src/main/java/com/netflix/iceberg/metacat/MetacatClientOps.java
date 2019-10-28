@@ -146,7 +146,7 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
             newTableInfo.setDefinitionMetadata(table.getDefinitionMetadata());
 
           } catch (MetacatNotFoundException e) {
-            LOG.warn("Cannot find backup table %s.%s.%s, not copying definition metadata",
+            LOG.warn("Cannot find backup table {}.{}.{}, not copying definition metadata",
                 catalog, database, backupTableName);
           }
         }
