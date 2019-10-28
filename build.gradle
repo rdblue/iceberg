@@ -47,7 +47,7 @@ allprojects {
 
 dependencyRecommendations {
   mavenBom module: 'netflix.bom:runtime-platform-recommendations:latest.release'
-  mavenBom module: 'com.netflix.bdp:bdc-dependency-recommendations:latest.release'
+  mavenBom module: 'netflix.bom:bdc-recommendations:latest.release'
   propertiesFile file: rootProject.file('versions.props')
 }
 
