@@ -37,7 +37,6 @@ import java.util.function.Function;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.expressions.And;
 import org.apache.iceberg.expressions.Expression;
-import org.apache.iceberg.expressions.Expression.Operation;
 import org.apache.iceberg.expressions.Expressions;
 import org.apache.iceberg.expressions.Literal;
 import org.apache.iceberg.expressions.NamedReference;
@@ -48,6 +47,9 @@ import org.apache.iceberg.types.Types;
 import org.apache.iceberg.util.Pair;
 
 public class ScanSummary {
+  private static final Set<String> IGNORED_OPERATIONS = Sets.newHashSet(
+      DataOperations.DELETE, DataOperations.REPLACE);
+
   private ScanSummary() {
   }
 
@@ -74,6 +76,7 @@ public class ScanSummary {
     private int limit = Integer.MAX_VALUE;
     private boolean throwIfLimited = false;
     private List<UnboundPredicate<Long>> timeFilters = Lists.newArrayList();
+    private boolean forceUseManifests = false;
 
     public Builder(TableScan scan) {
       this.scan = scan;
@@ -121,8 +124,14 @@ public class ScanSummary {
       return this;
     }
 
+    Builder useManifests() {
+      // for testing, allow
+      this.forceUseManifests = true;
+      return this;
+    }
+
     private void removeTimeFilters(List<Expression> expressions, Expression expression) {
-      if (expression.op() == Operation.AND) {
+      if (expression.op() == Expression.Operation.AND) {
         And and = (And) expression;
         removeTimeFilters(expressions, and.left());
         removeTimeFilters(expressions, and.right());
@@ -157,80 +166,79 @@ public class ScanSummary {
       removeTimeFilters(filters, Expressions.rewriteNot(scan.filter()));
       Expression rowFilter = joinFilters(filters);
 
-      Iterable<ManifestFile> manifests = table.currentSnapshot().manifests();
-
-      boolean filterByTimestamp = !timeFilters.isEmpty();
-      Set<Long> snapshotsInTimeRange = Sets.newHashSet();
-      if (filterByTimestamp) {
-        Pair<Long, Long> range = timestampRange(timeFilters);
-        long minTimestamp = range.first();
-        long maxTimestamp = range.second();
-
-        Snapshot oldestSnapshot = table.currentSnapshot();
-        for (Map.Entry<Long, Long> entry : snapshotTimestamps.entrySet()) {
-          long snapshotId = entry.getKey();
-          long timestamp = entry.getValue();
-
-          if (timestamp < oldestSnapshot.timestampMillis()) {
-            oldestSnapshot = ops.current().snapshot(snapshotId);
-          }
-
-          if (timestamp >= minTimestamp && timestamp <= maxTimestamp) {
-            snapshotsInTimeRange.add(snapshotId);
-          }
-        }
-
-        // if oldest known snapshot is in the range, then there may be an expired snapshot that has
-        // been removed that matched the range. because the timestamp of that snapshot is unknown,
-        // it can't be included in the results and the results are not reliable.
-        if (snapshotsInTimeRange.contains(oldestSnapshot.snapshotId()) &&
-            minTimestamp < oldestSnapshot.timestampMillis()) {
-          throw new IllegalArgumentException(
-              "Cannot satisfy time filters: time range may include expired snapshots");
-        }
-
-        // filter down to the the set of manifest files that were added after the start of the
-        // time range. manifests after the end of the time range must be included because
-        // compaction may create a manifest after the time range that includes files added in the
-        // range.
-        manifests = Iterables.filter(manifests, manifest -> {
-          if (manifest.snapshotId() == null) {
-            return true; // can't tell when the manifest was written, so it may contain matches
-          }
-
-          Long timestamp = snapshotTimestamps.get(manifest.snapshotId());
-          // if the timestamp is null, then its snapshot has expired. the check for the oldest
-          // snapshot ensures that all expired snapshots are not in the time range.
-          return timestamp != null && timestamp >= minTimestamp;
-        });
+      if (timeFilters.isEmpty()) {
+        return fromManifestScan(table.currentSnapshot().manifests(), rowFilter);
       }
 
-      return computeTopPartitionMetrics(rowFilter, manifests, filterByTimestamp, snapshotsInTimeRange);
+      Pair<Long, Long> range = timestampRange(timeFilters);
+      long minTimestamp = range.first();
+      long maxTimestamp = range.second();
+
+      Snapshot oldestSnapshot = table.currentSnapshot();
+      for (Map.Entry<Long, Long> entry : snapshotTimestamps.entrySet()) {
+        if (entry.getValue() < oldestSnapshot.timestampMillis()) {
+          oldestSnapshot = ops.current().snapshot(entry.getKey());
+        }
+      }
+
+      // if oldest known snapshot is in the range, then there may be an expired snapshot that has
+      // been removed that matched the range. because the timestamp of that snapshot is unknown,
+      // it can't be included in the results and the results are not reliable.
+      if (oldestSnapshot.timestampMillis() >= minTimestamp &&
+          oldestSnapshot.timestampMillis() <= maxTimestamp) {
+        throw new IllegalArgumentException(
+            "Cannot satisfy time filters: time range may include expired snapshots");
+      }
+
+      Iterable<Snapshot> snapshots = Iterables.filter(
+          snapshotsInTimeRange(ops.current(), minTimestamp, maxTimestamp),
+          snap -> !IGNORED_OPERATIONS.contains(snap.operation()));
+
+      Map<String, PartitionMetrics> result = fromPartitionSummaries(snapshots);
+      if (result != null && !forceUseManifests) {
+        return result;
+      }
+
+      // filter down to the the set of manifest files that were created in the time range, ignoring
+      // the snapshots created by delete or replace operations. this is complete because it finds
+      // files in the snapshot where they were added to the dataset in either an append or an
+      // overwrite. if those files are later compacted with a replace or deleted, those changes are
+      // ignored.
+      List<ManifestFile> manifestsToScan = Lists.newArrayList();
+      Set<Long> snapshotIds = Sets.newHashSet();
+      for (Snapshot snap : snapshots) {
+        snapshotIds.add(snap.snapshotId());
+        for (ManifestFile manifest : snap.manifests()) {
+          // get all manifests added in the snapshot
+          if (manifest.snapshotId() == null || manifest.snapshotId() == snap.snapshotId()) {
+            manifestsToScan.add(manifest);
+          }
+        }
+      }
+
+      return fromManifestScan(manifestsToScan, rowFilter, true /* ignore existing entries */ );
     }
 
-    private Map<String, PartitionMetrics> computeTopPartitionMetrics(
-        Expression rowFilter,
-        Iterable<ManifestFile> manifests,
-        boolean filterByTimestamp,
-        Set<Long> snapshotsInTimeRange) {
+    private Map<String, PartitionMetrics> fromManifestScan(Iterable<ManifestFile> manifests,
+                                                           Expression rowFilter) {
+      return fromManifestScan(manifests, rowFilter, false /* all entries */ );
+    }
+
+    private Map<String, PartitionMetrics> fromManifestScan(
+        Iterable<ManifestFile> manifests, Expression rowFilter, boolean ignoreExisting) {
       TopN<String, PartitionMetrics> topN = new TopN<>(
           limit, throwIfLimited, Comparators.charSequences());
 
       try (CloseableIterable<ManifestEntry> entries = new ManifestGroup(ops, manifests)
           .filterData(rowFilter)
           .ignoreDeleted()
+          .ignoreExisting(ignoreExisting)
           .select(SCAN_SUMMARY_COLUMNS)
           .entries()) {
 
         PartitionSpec spec = table.spec();
         for (ManifestEntry entry : entries) {
           Long timestamp = snapshotTimestamps.get(entry.snapshotId());
-
-          // if filtering, skip timestamps that are outside the range
-          if (filterByTimestamp && !snapshotsInTimeRange.contains(entry.snapshotId())) {
-            continue;
-          }
-
           String partition = spec.partitionToPath(entry.file().partition());
           topN.update(partition, metrics -> (metrics == null ? new PartitionMetrics() : metrics)
               .updateFromFile(entry.file(), timestamp));
@@ -242,6 +250,52 @@ public class ScanSummary {
 
       return topN.get();
     }
+
+    private Map<String, PartitionMetrics> fromPartitionSummaries(Iterable<Snapshot> snapshots) {
+      // try to build the result from snapshot metadata, but fall back if:
+      // * any snapshot has no summary
+      // * any snapshot has
+      TopN<String, PartitionMetrics> topN = new TopN<>(
+          limit, throwIfLimited, Comparators.charSequences());
+
+      for (Snapshot snap : snapshots) {
+        if (snap.operation() == null || snap.summary() == null ||
+            !Boolean.valueOf(snap.summary().getOrDefault(SnapshotSummary.PARTITION_SUMMARY_PROP, "false"))) {
+          // the snapshot summary is missing or does not include partition-level data. fall back.
+          return null;
+        }
+
+        for (Map.Entry<String, String> entry : snap.summary().entrySet()) {
+          if (entry.getKey().startsWith(SnapshotSummary.CHANGED_PARTITION_PREFIX)) {
+            String key = entry.getKey().substring(SnapshotSummary.CHANGED_PARTITION_PREFIX.length());
+            Map<String, String> part = SnapshotSummary.MAP_SPLITTER.split(entry.getValue());
+            int addedFiles = Integer.parseInt(part.getOrDefault(SnapshotSummary.ADDED_FILES_PROP, "0"));
+            long addedRecords = Long.parseLong(part.getOrDefault(SnapshotSummary.ADDED_RECORDS_PROP, "0"));
+            long addedSize = Long.parseLong(part.getOrDefault(SnapshotSummary.ADDED_FILE_SIZE_PROP, "0"));
+            topN.update(key, metrics -> (metrics == null ? new PartitionMetrics() : metrics)
+                .updateFromCounts(addedFiles, addedRecords, addedSize, snap.timestampMillis()));
+          }
+        }
+      }
+
+      return topN.get();
+    }
+  }
+
+  private static Iterable<Snapshot> snapshotsInTimeRange(TableMetadata meta,
+                                                         long minTimestamp, long maxTimestamp) {
+    ImmutableList.Builder<Snapshot> snapshots = ImmutableList.builder();
+
+    for (Snapshot current = meta.currentSnapshot();
+         current != null && current.timestampMillis() >= minTimestamp;
+         current = meta.snapshot(current.parentId())) {
+
+      if (current.timestampMillis() <= maxTimestamp) {
+        snapshots.add(current);
+      }
+    }
+
+    return snapshots.build().reverse();
   }
 
   public static class PartitionMetrics {
@@ -277,7 +331,7 @@ public class ScanSummary {
       return this;
     }
 
-    private PartitionMetrics updateFromFile(DataFile file, Long timestampMillis) {
+    PartitionMetrics updateFromFile(DataFile file, Long timestampMillis) {
       this.fileCount += 1;
       this.recordCount += file.recordCount();
       this.totalSize += file.fileSizeInBytes();
