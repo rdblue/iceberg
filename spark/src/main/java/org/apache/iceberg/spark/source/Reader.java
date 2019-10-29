@@ -91,7 +91,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.JavaConverters;
 
-class Reader implements DataSourceReader, SupportsPushDownFilters, SupportsPushDownRequiredColumns,
+public class Reader implements DataSourceReader, SupportsPushDownFilters, SupportsPushDownRequiredColumns,
     SupportsReportStatistics {
   private static final Logger LOG = LoggerFactory.getLogger(Reader.class);
 
@@ -278,7 +278,7 @@ class Reader implements DataSourceReader, SupportsPushDownFilters, SupportsPushD
         table, lazySchema().asStruct(), filterExpressions, caseSensitive);
   }
 
-  private static class ReadTask implements InputPartition<InternalRow>, Serializable {
+  public static class ReadTask implements InputPartition<InternalRow>, Serializable {
     private final CombinedScanTask task;
     private final String tableSchemaString;
     private final String expectedSchemaString;
@@ -289,7 +289,7 @@ class Reader implements DataSourceReader, SupportsPushDownFilters, SupportsPushD
     private transient Schema tableSchema = null;
     private transient Schema expectedSchema = null;
 
-    private ReadTask(
+    public ReadTask(
         CombinedScanTask task, String tableSchemaString, String expectedSchemaString, FileIO fileIo,
         EncryptionManager encryptionManager, boolean caseSensitive) {
       this.task = task;

@@ -79,7 +79,7 @@ import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DEFAULT;
 
 // TODO: parameterize DataSourceWriter with subclass of WriterCommitMessage
-class Writer implements DataSourceWriter {
+public class Writer implements DataSourceWriter {
   private static final Logger LOG = LoggerFactory.getLogger(Writer.class);
 
   private final Table table;
@@ -222,7 +222,7 @@ class Writer implements DataSourceWriter {
   }
 
 
-  private static class TaskCommit implements WriterCommitMessage {
+  public static class TaskCommit implements WriterCommitMessage {
     private final DataFile[] files;
 
     TaskCommit() {
@@ -237,12 +237,12 @@ class Writer implements DataSourceWriter {
       this.files = files.toArray(new DataFile[files.size()]);
     }
 
-    DataFile[] files() {
+    public DataFile[] files() {
       return files;
     }
   }
 
-  private static class WriterFactory implements DataWriterFactory<InternalRow> {
+  public static class WriterFactory implements DataWriterFactory<InternalRow> {
     private final PartitionSpec spec;
     private final FileFormat format;
     private final LocationProvider locations;
@@ -251,7 +251,7 @@ class Writer implements DataSourceWriter {
     private final EncryptionManager encryptionManager;
     private final long targetFileSize;
 
-    WriterFactory(PartitionSpec spec, FileFormat format, LocationProvider locations,
+    protected WriterFactory(PartitionSpec spec, FileFormat format, LocationProvider locations,
                   Map<String, String> properties, FileIO fileIo, EncryptionManager encryptionManager,
                   long targetFileSize) {
       this.spec = spec;
