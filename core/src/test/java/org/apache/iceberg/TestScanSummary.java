@@ -21,10 +21,15 @@ package org.apache.iceberg;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import java.util.Map;
+import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static org.apache.iceberg.ScanSummary.timestampRange;
 import static org.apache.iceberg.ScanSummary.toMillis;
 import static org.apache.iceberg.expressions.Expressions.equal;
@@ -77,7 +82,275 @@ public class TestScanSummary extends TableTestBase {
 
     AssertHelpers.assertThrows("Should fail summary because range may include expired snapshots",
         IllegalArgumentException.class, "may include expired snapshots",
+        () -> new ScanSummary.Builder(scan).useManifests().build());
+
+    AssertHelpers.assertThrows("Should fail summary because range may include expired snapshots",
+        IllegalArgumentException.class, "may include expired snapshots",
         () -> new ScanSummary.Builder(scan).build());
+  }
+
+  @Test
+  public void testManifestScanSummary() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    long timestamp = table.currentSnapshot().timestampMillis();
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan)
+        .useManifests()
+        .build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1"), partitions.keySet());
+    Assert.assertEquals(1, partitions.get("data_bucket=0").fileCount());
+    Assert.assertEquals(1, partitions.get("data_bucket=0").recordCount());
+    Assert.assertEquals(0, partitions.get("data_bucket=0").totalSize());
+    Assert.assertEquals((Long) timestamp, partitions.get("data_bucket=0").dataTimestampMillis());
+  }
+
+  @Test
+  public void testScanSummarySkipsMergeAndDelete() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    table.newRewrite()
+        .rewriteFiles(Sets.newHashSet(FILE_A, FILE_B), Sets.newHashSet(FILE_D))
+        .commit();
+
+    table.newDelete()
+        .deleteFile(FILE_D.path())
+        .commit();
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan)
+        .useManifests()
+        .build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1", "data_bucket=2"), partitions.keySet());
+  }
+
+  @Test
+  public void testScanSummaryHandlesManifestCompaction() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    // trigger manifest compaction on every commit
+    table.updateProperties()
+        .set(TableProperties.MANIFEST_MIN_MERGE_COUNT, "0")
+        .commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    table.newRewrite()
+        .rewriteFiles(Sets.newHashSet(FILE_A, FILE_B), Sets.newHashSet(FILE_D))
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    table.newDelete()
+        .deleteFile(FILE_D.path())
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan)
+        .useManifests()
+        .build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1", "data_bucket=2"), partitions.keySet());
+  }
+
+  @Test
+  public void testScanSummaryCountsAfterManifestCompaction() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    // trigger manifest compaction on every commit
+    table.updateProperties()
+        .set(TableProperties.MANIFEST_MIN_MERGE_COUNT, "0")
+        .commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    Assert.assertEquals(1, table.currentSnapshot().manifests().size());
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    // to produce the summary, the builder will scan the manifest where A and B were added and the
+    // manifest where C was added. because compaction is turned on, the manifest where C was added
+    // contains A and B as existing entries. the files should be ignored as existing and should not
+    // be counted twice.
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan)
+        .useManifests()
+        .build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1", "data_bucket=2"), partitions.keySet());
+    Assert.assertEquals(1, partitions.get("data_bucket=0").fileCount());
+  }
+
+  @Test
+  public void testMetadataOnlyScanSummary() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    // delete the manifest files to ensure they are not read
+    FileIO io = table.ops().io();
+    Sets.newHashSet(concat(transform(table.snapshots(), snap -> snap.manifests())))
+        .forEach(manifest -> io.deleteFile(manifest.path()));
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan).build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1"), partitions.keySet());
+    Assert.assertEquals(1, partitions.get("data_bucket=0").fileCount());
+    Assert.assertEquals(1, partitions.get("data_bucket=0").recordCount());
+    Assert.assertEquals(0, partitions.get("data_bucket=0").totalSize());
+  }
+
+  @Test
+  public void testMetadataOnlyScanSummarySkipsMergeAndDelete() {
+    // create an initial snapshot
+    table.newAppend().commit();
+
+    long t0 = System.currentTimeMillis();
+
+    table.newAppend()
+        .appendFile(FILE_A) // data_bucket=0
+        .appendFile(FILE_B) // data_bucket=1
+        .commit();
+
+    table.newRewrite()
+        .rewriteFiles(Sets.newHashSet(FILE_A, FILE_B), Sets.newHashSet(FILE_D))
+        .commit();
+
+    table.newDelete()
+        .deleteFile(FILE_D.path())
+        .commit();
+
+    table.newAppend()
+        .appendFile(FILE_C) // data_bucket=2
+        .commit();
+
+    long t1 = System.currentTimeMillis();
+    while (t1 <= table.currentSnapshot().timestampMillis()) {
+      t1 = System.currentTimeMillis();
+    }
+
+    // delete the manifest files to ensure they are not read
+    FileIO io = table.ops().io();
+    Sets.newHashSet(concat(transform(table.snapshots(), snap -> snap.manifests())))
+        .forEach(manifest -> io.deleteFile(manifest.path()));
+
+    TableScan scan = table.newScan()
+        .filter(greaterThanOrEqual("dateCreated", t0))
+        .filter(lessThan("dateCreated", t1));
+
+    Map<String, ScanSummary.PartitionMetrics> partitions = new ScanSummary.Builder(scan).build();
+
+    Assert.assertEquals("Should produce a summary of the changed partitions",
+        Sets.newHashSet("data_bucket=0", "data_bucket=1", "data_bucket=2"), partitions.keySet());
   }
 
   @Test
