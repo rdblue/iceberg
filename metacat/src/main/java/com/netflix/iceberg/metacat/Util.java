@@ -19,14 +19,30 @@
 
 package com.netflix.iceberg.metacat;
 
+import java.io.IOException;
+import org.apache.hadoop.security.UserGroupInformation;
+
 class Util {
   private Util() {
   }
 
   static String getUser() {
+    // Match the behavior of Hive's Utils.getUser. If HADOOP_USER_NAME is set, Hive will proxy using the session
+    // credentials using doAs, so the effective user is HADOOP_USER_NAME. Otherwise, Hive will use the current
+    // credentials to get a username.
     if (System.getenv("HADOOP_USER_NAME") != null) {
       return System.getenv("HADOOP_USER_NAME");
-    } else if (System.getenv("USER") != null) {
+    }
+
+    // Use the current credentials to get a username. This is the call made to determine user in Presto, too.
+    try {
+      return UserGroupInformation.getCurrentUser().getUserName();
+    } catch (IOException e) {
+      // use the USER environment variable instead
+    }
+
+    // If Hadoop environment credentials aren't available, try USER or the Java user.name system property.
+    if (System.getenv("USER") != null) {
       return System.getenv("USER");
     } else {
       return System.getProperty("user.name");
