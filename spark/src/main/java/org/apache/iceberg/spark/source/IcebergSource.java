@@ -20,23 +20,14 @@
 package org.apache.iceberg.spark.source;
 
 import com.google.common.base.Preconditions;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.iceberg.PartitionField;
-import org.apache.iceberg.PartitionSpec;
-import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.hadoop.HadoopTables;
 import org.apache.iceberg.hive.HiveCatalog;
 import org.apache.iceberg.hive.HiveCatalogs;
-import org.apache.iceberg.spark.SparkSchemaUtil;
-import org.apache.iceberg.transforms.Transform;
-import org.apache.iceberg.transforms.UnknownTransform;
-import org.apache.iceberg.types.CheckCompatibility;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.execution.streaming.StreamExecution;
@@ -78,8 +69,8 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
         "Save mode %s is not supported", mode);
     Configuration conf = new Configuration(lazyBaseConf());
     Table table = getTableAndResolveHadoopConfiguration(options, conf);
-    validateWriteSchema(table.schema(), dsStruct);
-    validatePartitionTransforms(table.spec());
+    ValidationUtil.validateWriteSchema(table.schema(), dsStruct);
+    ValidationUtil.validatePartitionTransforms(table.spec());
     String appId = lazySparkSession().sparkContext().applicationId();
     String wapId = lazySparkSession().conf().get("spark.wap.id", null);
     return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, appId, wapId));
@@ -93,8 +84,8 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
         "Output mode %s is not supported", mode);
     Configuration conf = new Configuration(lazyBaseConf());
     Table table = getTableAndResolveHadoopConfiguration(options, conf);
-    validateWriteSchema(table.schema(), dsStruct);
-    validatePartitionTransforms(table.spec());
+    ValidationUtil.validateWriteSchema(table.schema(), dsStruct);
+    ValidationUtil.validatePartitionTransforms(table.spec());
     // Spark 2.4.x passes runId to createStreamWriter instead of real queryId,
     // so we fetch it directly from sparkContext to make writes idempotent
     String queryId = lazySparkSession().sparkContext().getLocalProperty(StreamExecution.QUERY_ID_KEY());
@@ -147,33 +138,5 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
     options.keySet().stream()
         .filter(key -> key.startsWith("hadoop."))
         .forEach(key -> baseConf.set(key.replaceFirst("hadoop.", ""), options.get(key)));
-  }
-
-  public static void validateWriteSchema(Schema tableSchema, StructType dsStruct) {
-    Schema dsSchema = SparkSchemaUtil.convert(tableSchema, dsStruct);
-    List<String> errors = CheckCompatibility.writeCompatibilityErrors(tableSchema, dsSchema);
-    if (!errors.isEmpty()) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Cannot write incompatible dataset to table with schema:\n")
-          .append(tableSchema)
-          .append("\nProblems:");
-      for (String error : errors) {
-        sb.append("\n* ").append(error);
-      }
-      throw new IllegalArgumentException(sb.toString());
-    }
-  }
-
-  public static void validatePartitionTransforms(PartitionSpec spec) {
-    if (spec.fields().stream().anyMatch(field -> field.transform() instanceof UnknownTransform)) {
-      String unsupported = spec.fields().stream()
-          .map(PartitionField::transform)
-          .filter(transform -> transform instanceof UnknownTransform)
-          .map(Transform::toString)
-          .collect(Collectors.joining(", "));
-
-      throw new UnsupportedOperationException(
-          String.format("Cannot write using unsupported transforms: %s", unsupported));
-    }
   }
 }

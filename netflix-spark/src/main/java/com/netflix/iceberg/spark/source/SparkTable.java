@@ -44,8 +44,8 @@ import org.apache.spark.sql.sources.v2.reader.DataSourceReader;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.types.StructType;
 
-import static org.apache.iceberg.spark.source.IcebergSource.validatePartitionTransforms;
-import static org.apache.iceberg.spark.source.IcebergSource.validateWriteSchema;
+import static org.apache.iceberg.spark.source.ValidationUtil.validatePartitionTransforms;
+import static org.apache.iceberg.spark.source.ValidationUtil.validateWriteSchema;
 
 class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   private final org.apache.iceberg.Table table;
