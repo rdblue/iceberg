@@ -39,20 +39,16 @@ import org.apache.iceberg.transforms.UnknownTransform;
 import org.apache.iceberg.types.CheckCompatibility;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.execution.streaming.StreamExecution;
 import org.apache.spark.sql.sources.DataSourceRegister;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.DataSourceV2;
 import org.apache.spark.sql.sources.v2.ReadSupport;
-import org.apache.spark.sql.sources.v2.StreamWriteSupport;
 import org.apache.spark.sql.sources.v2.WriteSupport;
 import org.apache.spark.sql.sources.v2.reader.DataSourceReader;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
-import org.apache.spark.sql.sources.v2.writer.streaming.StreamWriter;
-import org.apache.spark.sql.streaming.OutputMode;
 import org.apache.spark.sql.types.StructType;
 
-public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, DataSourceRegister, StreamWriteSupport {
+public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, DataSourceRegister {
 
   private SparkSession lazySpark = null;
   private Configuration lazyConf = null;
@@ -68,7 +64,7 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
     Table table = getTableAndResolveHadoopConfiguration(options, conf);
     String caseSensitive = lazySparkSession().conf().get("spark.sql.caseSensitive", "true");
 
-    return new Reader(table, Boolean.valueOf(caseSensitive), options);
+    return new Reader(table, Boolean.parseBoolean(caseSensitive), options);
   }
 
   @Override
@@ -83,23 +79,6 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
     String appId = lazySparkSession().sparkContext().applicationId();
     String wapId = lazySparkSession().conf().get("spark.wap.id", null);
     return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, appId, wapId));
-  }
-
-  @Override
-  public StreamWriter createStreamWriter(String runId, StructType dsStruct,
-                                         OutputMode mode, DataSourceOptions options) {
-    Preconditions.checkArgument(
-        mode == OutputMode.Append() || mode == OutputMode.Complete(),
-        "Output mode %s is not supported", mode);
-    Configuration conf = new Configuration(lazyBaseConf());
-    Table table = getTableAndResolveHadoopConfiguration(options, conf);
-    validateWriteSchema(table.schema(), dsStruct);
-    validatePartitionTransforms(table.spec());
-    // Spark 2.4.x passes runId to createStreamWriter instead of real queryId,
-    // so we fetch it directly from sparkContext to make writes idempotent
-    String queryId = lazySparkSession().sparkContext().getLocalProperty(StreamExecution.QUERY_ID_KEY());
-    String appId = lazySparkSession().sparkContext().applicationId();
-    return new StreamingWriter(table, options, queryId, mode, appId);
   }
 
   protected Table findTable(DataSourceOptions options, Configuration conf) {
