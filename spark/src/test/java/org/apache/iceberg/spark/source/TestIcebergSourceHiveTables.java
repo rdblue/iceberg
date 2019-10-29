@@ -413,26 +413,32 @@ public class TestIcebergSourceHiveTables {
               .set("parent_id", null)
               .set("operation", "append")
               .set("manifest_list", firstManifestList)
-              .set("summary", ImmutableMap.of(
-                  "added-records", "1",
-                  "added-data-files", "1",
-                  "changed-partition-count", "1",
-                  "total-data-files", "1",
-                  "total-records", "1"
-              ))
+              .set("summary", ImmutableMap.<String, String>builder()
+                  .put("added-records", "1")
+                  .put("added-data-files", "1")
+                  .put("changed-partition-count", "1")
+                  .put("total-data-files", "1")
+                  .put("total-records", "1")
+                  .put("partition-summaries-included", "true")
+                  .put("partitions.", "added-data-files=1,added-records=1,added-files-size=562")
+                  .build()
+              )
               .build(),
           builder.set("committed_at", secondSnapshotTimestamp * 1000)
               .set("snapshot_id", secondSnapshotId)
               .set("parent_id", firstSnapshotId)
               .set("operation", "delete")
               .set("manifest_list", secondManifestList)
-              .set("summary", ImmutableMap.of(
-                  "deleted-records", "1",
-                  "deleted-data-files", "1",
-                  "changed-partition-count", "1",
-                  "total-records", "0",
-                  "total-data-files", "0"
-              ))
+              .set("summary", ImmutableMap.<String, String>builder()
+                  .put("deleted-records", "1")
+                  .put("deleted-data-files", "1")
+                  .put("changed-partition-count", "1")
+                  .put("total-records", "0")
+                  .put("total-data-files", "0")
+                  .put("partition-summaries-included", "true")
+                  .put("partitions.", "deleted-data-files=1,deleted-records=1")
+                  .build()
+              )
               .build()
       );
 

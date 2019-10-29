@@ -25,7 +25,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Splitter.MapSplitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.Map;
+import java.util.Set;
 import org.apache.hadoop.conf.Configuration;
 
 public class SnapshotSummary {
@@ -53,7 +55,8 @@ public class SnapshotSummary {
 
   public static class Builder {
     // commit summary tracking
-    private Map<String, ScanSummary.PartitionMetrics> changedPartitions = Maps.newHashMap();
+    private Map<String, ScanSummary.PartitionMetrics> addedByPartition = Maps.newHashMap();
+    private Map<String, ScanSummary.PartitionMetrics> deletedByPartition = Maps.newHashMap();
     private long addedFiles = 0L;
     private long deletedFiles = 0L;
     private long deletedDuplicateFiles = 0L;
@@ -62,7 +65,7 @@ public class SnapshotSummary {
     private Map<String, String> properties = Maps.newHashMap();
 
     public void clear() {
-      changedPartitions.clear();
+      addedByPartition.clear();
       this.addedFiles = 0L;
       this.deletedFiles = 0L;
       this.deletedDuplicateFiles = 0L;
@@ -90,26 +93,52 @@ public class SnapshotSummary {
       properties.put(property, value);
     }
 
+    private Set<String> changedPartitionKeys() {
+      Set<String> changedPartitionKeys = Sets.newHashSet();
+      changedPartitionKeys.addAll(addedByPartition.keySet());
+      changedPartitionKeys.addAll(deletedByPartition.keySet());
+      return changedPartitionKeys;
+    }
+
     private void updatePartitions(PartitionSpec spec, DataFile file, boolean isAddition) {
       String key = spec.partitionToPath(file.partition());
 
-      ScanSummary.PartitionMetrics metrics = changedPartitions.get(key);
+      if (isAddition) {
+        updatePartitionMetrics(addedByPartition, key, file);
+      } else {
+        updatePartitionMetrics(deletedByPartition, key, file);
+      }
+    }
+
+    private void updatePartitionMetrics(Map<String, ScanSummary.PartitionMetrics> metricsMap,
+                                        String key, DataFile file) {
+      ScanSummary.PartitionMetrics metrics = metricsMap.get(key);
       if (metrics == null) {
         metrics = new ScanSummary.PartitionMetrics();
       }
 
-      if (isAddition) {
-        // only add partition metrics for additions
-        changedPartitions.put(key, metrics.updateFromFile(file, null));
-      }
+      // only add partition metrics for additions
+      metricsMap.put(key, metrics.updateFromFile(file, null));
     }
 
     public void merge(SnapshotSummary.Builder builder) {
-      for (Map.Entry<String, ScanSummary.PartitionMetrics> entry : builder.changedPartitions.entrySet()) {
-        ScanSummary.PartitionMetrics metrics = changedPartitions.get(entry.getKey());
+      for (Map.Entry<String, ScanSummary.PartitionMetrics> entry : builder.addedByPartition.entrySet()) {
+        ScanSummary.PartitionMetrics metrics = addedByPartition.get(entry.getKey());
         if (metrics == null) {
           metrics = new ScanSummary.PartitionMetrics();
-          changedPartitions.put(entry.getKey(), metrics);
+          addedByPartition.put(entry.getKey(), metrics);
+        }
+
+        ScanSummary.PartitionMetrics newMetrics = entry.getValue();
+
+        metrics.updateFromCounts(
+            newMetrics.fileCount(), newMetrics.recordCount(), newMetrics.totalSize(), newMetrics.dataTimestampMillis());
+      }
+      for (Map.Entry<String, ScanSummary.PartitionMetrics> entry : builder.deletedByPartition.entrySet()) {
+        ScanSummary.PartitionMetrics metrics = deletedByPartition.get(entry.getKey());
+        if (metrics == null) {
+          metrics = new ScanSummary.PartitionMetrics();
+          deletedByPartition.put(entry.getKey(), metrics);
         }
 
         ScanSummary.PartitionMetrics newMetrics = entry.getValue();
@@ -138,21 +167,39 @@ public class SnapshotSummary {
       setIf(deletedDuplicateFiles > 0, builder, DELETED_DUPLICATE_FILES, deletedDuplicateFiles);
       setIf(addedRecords > 0, builder, ADDED_RECORDS_PROP, addedRecords);
       setIf(deletedRecords > 0, builder, DELETED_RECORDS_PROP, deletedRecords);
+
+      Set<String> changedPartitions = changedPartitionKeys();
       setIf(true, builder, CHANGED_PARTITION_COUNT_PROP, changedPartitions.size());
 
       if (changedPartitions.size() < 100) {
         setIf(true, builder, PARTITION_SUMMARY_PROP, "true");
-        for (Map.Entry<String, ScanSummary.PartitionMetrics> entry : changedPartitions.entrySet()) {
-          String key = entry.getKey();
-          ScanSummary.PartitionMetrics metrics = entry.getValue();
-          setIf(true, builder, CHANGED_PARTITION_PREFIX + key, MAP_JOINER.join(ImmutableMap.of(
-              ADDED_FILES_PROP, metrics.fileCount(),
-              ADDED_RECORDS_PROP, metrics.recordCount(),
-              ADDED_FILE_SIZE_PROP, metrics.totalSize())));
+        for (String key : changedPartitions) {
+          setIf(key != null, builder, CHANGED_PARTITION_PREFIX + key, partitionSummary(key));
         }
       }
 
       return builder.build();
+    }
+
+    private String partitionSummary(String key) {
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+
+      ScanSummary.PartitionMetrics addMetrics = addedByPartition.get(key);
+      ScanSummary.PartitionMetrics deleteMetrics = deletedByPartition.get(key);
+
+      int addedPartFiles = addMetrics != null ? addMetrics.fileCount() : 0;
+      long addedPartRecords = addMetrics != null ? addMetrics.recordCount() : 0;
+      long addedPartSize = addMetrics != null ? addMetrics.totalSize() : 0;
+      int deletedPartFiles = deleteMetrics != null ? deleteMetrics.fileCount() : 0;
+      long deletedPartRecords = deleteMetrics != null ? deleteMetrics.recordCount() : 0;
+
+      setIf(addedPartFiles > 0, builder, ADDED_FILES_PROP, addedPartFiles);
+      setIf(addedPartRecords > 0, builder, ADDED_RECORDS_PROP, addedPartRecords);
+      setIf(addedPartSize > 0, builder, ADDED_FILE_SIZE_PROP, addedPartSize);
+      setIf(deletedPartFiles > 0, builder, DELETED_FILES_PROP, deletedPartFiles);
+      setIf(deletedPartRecords > 0, builder, DELETED_RECORDS_PROP, deletedPartRecords);
+
+      return MAP_JOINER.join(builder.build());
     }
 
     private static void setIf(boolean expression, ImmutableMap.Builder<String, String> builder,
