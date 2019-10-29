@@ -71,6 +71,14 @@ public class IcebergGenerics {
     }
 
     public Iterable<Record> build() {
+      return buildScan();
+    }
+
+    public Iterable<Iterable<Record>> buildFiles() {
+      return buildScan().fileIterable();
+    }
+
+    private TableScanIterable buildScan() {
       return new TableScanIterable(
         table
           .newScan()

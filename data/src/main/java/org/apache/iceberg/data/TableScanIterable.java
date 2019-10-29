@@ -20,6 +20,7 @@
 package org.apache.iceberg.data;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.io.Closeable;
@@ -49,7 +50,7 @@ class TableScanIterable extends CloseableGroup implements CloseableIterable<Reco
   private final Schema projection;
   private final boolean reuseContainers;
   private final boolean caseSensitive;
-  private final CloseableIterable<CombinedScanTask> tasks;
+  private final CloseableIterable<FileScanTask> tasks;
 
   TableScanIterable(TableScan scan, boolean reuseContainers) {
     Preconditions.checkArgument(scan.table() instanceof HasTableOperations,
@@ -60,7 +61,7 @@ class TableScanIterable extends CloseableGroup implements CloseableIterable<Reco
     this.caseSensitive = scan.isCaseSensitive();
 
     // start planning tasks in the background
-    this.tasks = scan.planTasks();
+    this.tasks = scan.planFiles();
   }
 
   @Override
@@ -68,6 +69,39 @@ class TableScanIterable extends CloseableGroup implements CloseableIterable<Reco
     ScanIterator iter = new ScanIterator(tasks, caseSensitive);
     addCloseable(iter);
     return iter;
+  }
+
+  CloseableIterable<Iterable<Record>> fileIterable() {
+    return new CloseableIterable<Iterable<Record>>() {
+      @Override
+      public void close() throws IOException {
+        tasks.close();
+        TableScanIterable.this.close();
+      }
+
+      @Override
+      public Iterator<Iterable<Record>> iterator() {
+        Iterator<FileScanTask> files = tasks.iterator();
+
+        return new Iterator<Iterable<Record>>() {
+          @Override
+          public boolean hasNext() {
+            return files.hasNext();
+          }
+
+          @Override
+          public Iterable<Record> next() {
+            FileScanTask task = files.next();
+
+            return () -> {
+              ScanIterator iter = new ScanIterator(CloseableIterable.withNoopClose(task), caseSensitive);
+              addCloseable(iter);
+              return iter;
+            };
+          }
+        };
+      }
+    };
   }
 
   private CloseableIterable<Record> open(FileScanTask task) {
@@ -117,9 +151,8 @@ class TableScanIterable extends CloseableGroup implements CloseableIterable<Reco
     private Closeable currentCloseable = null;
     private Iterator<Record> currentIterator = Collections.emptyIterator();
 
-    private ScanIterator(CloseableIterable<CombinedScanTask> tasks, boolean caseSensitive) {
-      this.tasks = Lists.newArrayList(Iterables.concat(
-          CloseableIterable.transform(tasks, CombinedScanTask::files))).iterator();
+    private ScanIterator(CloseableIterable<FileScanTask> tasks, boolean caseSensitive) {
+      this.tasks = tasks.iterator();
       this.caseSensitive = caseSensitive;
     }
 

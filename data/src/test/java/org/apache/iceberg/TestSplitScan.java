@@ -96,6 +96,24 @@ public class TestSplitScan {
     }
   }
 
+  @Test
+  public void testFiles() {
+    Assert.assertEquals(
+        "There should be 4 tasks created since file size is approximately close to 64MB and split size 16MB",
+        4, Lists.newArrayList(table.newScan().planTasks()).size());
+
+    List<Record> records = Lists.newArrayList();
+
+    for(Iterable<Record> fileScan : IcebergGenerics.read(table).buildFiles()) {
+      records.addAll((Lists.newArrayList(fileScan)));
+    }
+
+    Assert.assertEquals(expectedRecords.size(), records.size());
+    for (int i = 0; i < expectedRecords.size(); i++) {
+      Assert.assertEquals(expectedRecords.get(i), records.get(i));
+    }
+  }
+
   private void setupTable() throws IOException {
     table = TABLES.create(SCHEMA, tableLocation.toString());
     table.updateProperties()
@@ -147,4 +165,5 @@ public class TestSplitScan {
     }
     return file;
   }
+
 }
