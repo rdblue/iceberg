@@ -1,7 +1,8 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "compile": {
@@ -301,7 +302,8 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
@@ -618,7 +620,8 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0"
+            "locked": "0.6.0",
+            "requested": "latest.release"
         }
     },
     "runtime": {
@@ -973,7 +976,8 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "testCompile": {
