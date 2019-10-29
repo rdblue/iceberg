@@ -271,7 +271,7 @@ class Writer implements DataSourceWriter {
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, int attemptNumber) {
-      return createDataWriter(partitionId, attemptNumber);
+      return createDataWriter(partitionId, attemptNumber, 0);
     }
   }
 }
