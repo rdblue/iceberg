@@ -149,7 +149,7 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
         .forEach(key -> baseConf.set(key.replaceFirst("hadoop.", ""), options.get(key)));
   }
 
-  private void validateWriteSchema(Schema tableSchema, StructType dsStruct) {
+  public static void validateWriteSchema(Schema tableSchema, StructType dsStruct) {
     Schema dsSchema = SparkSchemaUtil.convert(tableSchema, dsStruct);
     List<String> errors = CheckCompatibility.writeCompatibilityErrors(tableSchema, dsSchema);
     if (!errors.isEmpty()) {
@@ -164,7 +164,7 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
     }
   }
 
-  private void validatePartitionTransforms(PartitionSpec spec) {
+  public static void validatePartitionTransforms(PartitionSpec spec) {
     if (spec.fields().stream().anyMatch(field -> field.transform() instanceof UnknownTransform)) {
       String unsupported = spec.fields().stream()
           .map(PartitionField::transform)

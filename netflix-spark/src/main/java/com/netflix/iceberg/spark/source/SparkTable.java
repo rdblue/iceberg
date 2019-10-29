@@ -19,21 +19,17 @@
 
 package com.netflix.iceberg.spark.source;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.PartitionSpec;
-import org.apache.iceberg.Schema;
 import org.apache.iceberg.expressions.Expression;
 import org.apache.iceberg.expressions.Expressions;
 import org.apache.iceberg.spark.SparkFilters;
 import org.apache.iceberg.spark.SparkSchemaUtil;
 import org.apache.iceberg.transforms.PartitionSpecVisitor;
-import org.apache.iceberg.types.CheckCompatibility;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalog.v2.PartitionTransform;
@@ -48,6 +44,9 @@ import org.apache.spark.sql.sources.v2.reader.DataSourceReader;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.types.StructType;
 
+import static org.apache.iceberg.spark.source.IcebergSource.validatePartitionTransforms;
+import static org.apache.iceberg.spark.source.IcebergSource.validateWriteSchema;
+
 class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   private final org.apache.iceberg.Table table;
   private final SparkSession spark;
@@ -56,7 +55,6 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   private Map<String, String> lazyProperties = null;
   private StructType lazySchema = null;
   private List<PartitionTransform> lazyPartitioning = null;
-  private Configuration lazyConf = null;
 
   SparkTable(org.apache.iceberg.Table table, SparkSession spark) {
     this(table, spark, null, null);
@@ -99,33 +97,17 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
     return lazyPartitioning;
   }
 
-  private Configuration lazyConf() {
-    if (lazyConf == null) {
-      SparkSession session = SparkSession.builder().getOrCreate();
-      this.lazyConf = session.sparkContext().hadoopConfiguration();
-    }
-    return lazyConf;
-  }
-
   @Override
   public DataSourceReader createReader(DataSourceOptions options) {
-    return new Reader(table, lazyConf(), options, spark, snapshotId, asOfTimestamp);
+    String caseSensitive = spark.conf().get("spark.sql.caseSensitive", "true");
+    return new Reader(table, Boolean.parseBoolean(caseSensitive), options, snapshotId, asOfTimestamp);
   }
 
   @Override
   public Optional<DataSourceWriter> createWriter(String writeUUID, StructType writeSchema,
                                                  SaveMode mode, DataSourceOptions options) {
-    Schema dfSchema = SparkSchemaUtil.convert(table.schema(), writeSchema);
-    List<String> errors = CheckCompatibility.writeCompatibilityErrors(table.schema(), dfSchema);
-    if (!errors.isEmpty()) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Cannot write incompatible dataframe to table with schema:\n")
-          .append(table.schema()).append("\nProblems:");
-      for (String error : errors) {
-        sb.append("\n* ").append(error);
-      }
-      throw new IllegalArgumentException(sb.toString());
-    }
+    validateWriteSchema(table.schema(), writeSchema);
+    validatePartitionTransforms(table.spec());
 
     return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite,
         spark.sparkContext().applicationId(), spark.conf().get("spark.wap.id", null)));

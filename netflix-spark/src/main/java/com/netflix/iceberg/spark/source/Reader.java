@@ -73,6 +73,10 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
   private StructType type = null; // cached because Spark accesses it multiple times
   private List<CombinedScanTask> tasks = null; // lazy cache of tasks
 
+  Reader(Table table, boolean caseSensitive, DataSourceOptions options) {
+    this(table, caseSensitive, options, null, null);
+  }
+
   Reader(Table table, boolean caseSensitive, DataSourceOptions options, Long snapshotId, Long asOfTimestamp) {
     this.table = table;
     this.snapshotId = options.get("snapshot-id").map(Long::parseLong).orElse(snapshotId);

@@ -20,16 +20,12 @@
 package com.netflix.iceberg.spark.source;
 
 import com.google.common.base.Preconditions;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.iceberg.Schema;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.hadoop.HadoopTables;
-import org.apache.iceberg.spark.SparkSchemaUtil;
-import org.apache.iceberg.types.CheckCompatibility;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.sources.DataSourceRegister;
@@ -63,8 +59,9 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
   public DataSourceReader createReader(DataSourceOptions options) {
     Configuration conf = new Configuration(lazyBaseConf());
     Table table = getTableAndResolveHadoopConfiguration(options, conf);
+    String caseSensitive = lazySparkSession().conf().get("spark.sql.caseSensitive", "true");
 
-    return new Reader(table, conf, options, lazySparkSession());
+    return new Reader(table, Boolean.parseBoolean(caseSensitive), options);
   }
 
   @Override
