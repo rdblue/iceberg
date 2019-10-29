@@ -28,6 +28,7 @@ import org.apache.iceberg.CombinedScanTask;
 import org.apache.iceberg.FileScanTask;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.SchemaParser;
+import org.apache.iceberg.Snapshot;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.TableProperties;
 import org.apache.iceberg.TableScan;
@@ -77,10 +78,10 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
     this(table, caseSensitive, options, null, null);
   }
 
-  Reader(Table table, boolean caseSensitive, DataSourceOptions options, Long snapshotId, Long asOfTimestamp) {
+  Reader(Table table, boolean caseSensitive, DataSourceOptions options, Long snapshotId, String wapId) {
     this.table = table;
-    this.snapshotId = options.get("snapshot-id").map(Long::parseLong).orElse(snapshotId);
-    this.asOfTimestamp = options.get("as-of-timestamp").map(Long::parseLong).orElse(asOfTimestamp);
+    this.snapshotId = options.get("snapshot-id").map(Long::parseLong).orElse(findSnapshot(snapshotId, wapId));
+    this.asOfTimestamp = options.get("as-of-timestamp").map(Long::parseLong).orElse(null);
     this.options = options.asMap();
     if (snapshotId != null && asOfTimestamp != null) {
       throw new IllegalArgumentException(
@@ -96,6 +97,22 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
     this.fileIo = table.io();
     this.encryptionManager = table.encryption();
     this.caseSensitive = caseSensitive;
+  }
+
+  private Long findSnapshot(Long snapshotId, String wapId) {
+    if (snapshotId != null) {
+      return snapshotId;
+    }
+
+    if (wapId != null) {
+      for (Snapshot snapshot : table.snapshots()) {
+        if (wapId.equals(snapshot.summary().get("wap.id"))) {
+          return snapshot.snapshotId();
+        }
+      }
+    }
+
+    return null;
   }
 
   private Schema lazySchema() {

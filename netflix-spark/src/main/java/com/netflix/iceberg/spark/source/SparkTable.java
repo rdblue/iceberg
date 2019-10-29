@@ -51,22 +51,18 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   private final org.apache.iceberg.Table table;
   private final SparkSession spark;
   private final Long snapshotId;
-  private final Long asOfTimestamp;
   private Map<String, String> lazyProperties = null;
   private StructType lazySchema = null;
   private List<PartitionTransform> lazyPartitioning = null;
 
   SparkTable(org.apache.iceberg.Table table, SparkSession spark) {
-    this(table, spark, null, null);
+    this(table, spark, null);
   }
 
-  SparkTable(
-      org.apache.iceberg.Table table, SparkSession spark,
-      Long snapshotId, Long asOfTimestamp) {
+  SparkTable(org.apache.iceberg.Table table, SparkSession spark, Long snapshotId) {
     this.table = table;
     this.spark = spark;
     this.snapshotId = snapshotId;
-    this.asOfTimestamp = asOfTimestamp;
   }
 
   public org.apache.iceberg.Table table() {
@@ -100,7 +96,8 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
   @Override
   public DataSourceReader createReader(DataSourceOptions options) {
     String caseSensitive = spark.conf().get("spark.sql.caseSensitive", "true");
-    return new Reader(table, Boolean.parseBoolean(caseSensitive), options, snapshotId, asOfTimestamp);
+    String wapId = spark.conf().get("spark.wap.id", null);
+    return new Reader(table, Boolean.parseBoolean(caseSensitive), options, snapshotId, wapId);
   }
 
   @Override
@@ -108,9 +105,7 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
                                                  SaveMode mode, DataSourceOptions options) {
     validateWriteSchema(table.schema(), writeSchema);
     validatePartitionTransforms(table.spec());
-
-    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite,
-        spark.sparkContext().applicationId(), spark.conf().get("spark.wap.id", null)));
+    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, appId(), wapId()));
   }
 
   @Override
@@ -118,6 +113,14 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
     table.newDelete()
         .deleteFromRowFilter(convert(filters))
         .commit();
+  }
+
+  private String wapId() {
+    return spark.conf().get("spark.wap.id", null);
+  }
+
+  private String appId() {
+    return spark.sparkContext().applicationId();
   }
 
   @Override

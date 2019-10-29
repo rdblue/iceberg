@@ -102,7 +102,7 @@ public abstract class SparkCatalog implements TableCatalog {
     switch (ref.type()) {
       case DATA:
         if (ref.at() != null) {
-          return new SparkTable(sourceTable.table(), lazySparkSession(), ref.at(), null);
+          return new SparkTable(sourceTable.table(), lazySparkSession(), ref.at());
         } else {
           return sourceTable;
         }
@@ -111,7 +111,7 @@ public abstract class SparkCatalog implements TableCatalog {
       case MANIFESTS:
         SparkTable metadataTable = loadInternal(metadataIdentifier(sourceTableIdent, ref.type()));
         if (ref.at() != null) {
-          return new SparkTable(metadataTable.table(), lazySparkSession(), ref.at(), null);
+          return new SparkTable(metadataTable.table(), lazySparkSession(), ref.at());
         } else {
           return metadataTable;
         }

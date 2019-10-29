@@ -50,28 +50,20 @@ public class IcebergSource implements DataSourceV2, ReadSupport, WriteSupport, D
   }
 
   @Override
-  public org.apache.spark.sql.catalog.v2.Table createTable(DataSourceOptions options) {
+  public SparkTable createTable(DataSourceOptions options) {
     Configuration conf = new Configuration(lazyBaseConf());
     return new SparkTable(getTableAndResolveHadoopConfiguration(options, conf), lazySparkSession());
   }
 
   @Override
   public DataSourceReader createReader(DataSourceOptions options) {
-    Configuration conf = new Configuration(lazyBaseConf());
-    Table table = getTableAndResolveHadoopConfiguration(options, conf);
-    String caseSensitive = lazySparkSession().conf().get("spark.sql.caseSensitive", "true");
-
-    return new Reader(table, Boolean.parseBoolean(caseSensitive), options);
+    return createTable(options).createReader(options);
   }
 
   @Override
   public Optional<DataSourceWriter> createWriter(String jobId, StructType dfStruct, SaveMode mode,
                                                  DataSourceOptions options) {
-    Configuration conf = new Configuration(lazyBaseConf());
-    Table table = getTableAndResolveHadoopConfiguration(options, conf);
-
-    return new SparkTable(table, lazySparkSession())
-        .createWriter(UUID.randomUUID().toString(), dfStruct, mode, options);
+    return createTable(options).createWriter(UUID.randomUUID().toString(), dfStruct, mode, options);
   }
 
   protected Table findTable(DataSourceOptions options, Configuration conf) {
