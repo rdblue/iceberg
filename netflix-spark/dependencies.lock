@@ -4157,6 +4157,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "3.0.3",
             "transitive": [
@@ -5826,6 +5829,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -5963,6 +5967,9 @@
                 "netflix:dse-metric",
                 "org.apache.spark:spark-core_2.11"
             ]
+        },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
         },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "3.0.3",
@@ -7624,6 +7631,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -7768,6 +7776,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "3.0.3",
             "transitive": [
@@ -9437,6 +9448,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -9575,6 +9587,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "3.0.3",
             "transitive": [
@@ -11244,6 +11259,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",

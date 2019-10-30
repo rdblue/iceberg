@@ -1923,6 +1923,9 @@
                 "com.google.inject:guice"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -2555,6 +2558,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -2620,6 +2624,9 @@
             "transitive": [
                 "com.google.inject:guice"
             ]
+        },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
@@ -3239,6 +3246,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -3311,6 +3319,9 @@
                 "com.google.inject:guice"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -3943,6 +3954,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -4009,6 +4021,9 @@
                 "com.google.inject:guice"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -4641,6 +4656,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",

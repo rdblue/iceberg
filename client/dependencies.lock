@@ -1708,6 +1708,9 @@
                 "com.amazonaws:aws-java-sdk-sts"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -2146,6 +2149,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "netflix:bdp-emr-credentials",
                 "org.apache.avro:avro",
                 "org.apache.iceberg:iceberg-api",
@@ -2221,6 +2225,9 @@
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts"
             ]
+        },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
@@ -2653,6 +2660,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "netflix:bdp-emr-credentials",
                 "org.apache.avro:avro",
                 "org.apache.iceberg:iceberg-api",
@@ -2735,6 +2743,9 @@
                 "com.amazonaws:aws-java-sdk-sts"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -3173,6 +3184,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "netflix:bdp-emr-credentials",
                 "org.apache.avro:avro",
                 "org.apache.iceberg:iceberg-api",
@@ -3249,6 +3261,9 @@
                 "com.amazonaws:aws-java-sdk-sts"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -3687,6 +3702,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "netflix:bdp-emr-credentials",
                 "org.apache.avro:avro",
                 "org.apache.iceberg:iceberg-api",

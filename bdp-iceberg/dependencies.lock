@@ -899,6 +899,9 @@
         }
     },
     "testCompile": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1145,6 +1148,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.slf4j:slf4j-simple"
             ]
         },
@@ -1159,6 +1163,9 @@
         }
     },
     "testCompileClasspath": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1398,6 +1405,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.slf4j:slf4j-simple"
             ]
         },
@@ -1418,6 +1426,9 @@
         }
     },
     "testRuntime": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1664,6 +1675,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.slf4j:slf4j-simple"
             ]
         },
@@ -1678,6 +1690,9 @@
         }
     },
     "testRuntimeClasspath": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1924,6 +1939,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "org.slf4j:slf4j-simple"
             ]
         },

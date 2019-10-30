@@ -690,6 +690,9 @@
         }
     },
     "testCompile": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -956,6 +959,9 @@
         }
     },
     "testCompileClasspath": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1221,6 +1227,9 @@
         }
     },
     "testRuntime": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [
@@ -1487,6 +1496,9 @@
         }
     },
     "testRuntimeClasspath": {
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.fasterxml.jackson.core:jackson-annotations": {
             "locked": "2.9.10",
             "transitive": [

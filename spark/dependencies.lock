@@ -3492,6 +3492,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
             "transitive": [
@@ -5091,6 +5094,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -5242,6 +5246,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
             "transitive": [
@@ -6841,6 +6848,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -7537,6 +7545,9 @@
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
+        },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
         },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
@@ -9144,6 +9155,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -9294,6 +9306,9 @@
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
+        },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
         },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
@@ -10891,6 +10906,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -11048,6 +11064,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
             "transitive": [
@@ -12654,6 +12673,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
@@ -12805,6 +12825,9 @@
                 "org.apache.spark:spark-core_2.11"
             ]
         },
+        "com.codahale.metrics:metrics-core": {
+            "locked": "3.0.1"
+        },
         "com.esotericsoftware:kryo-shaded": {
             "locked": "4.0.2",
             "transitive": [
@@ -14411,6 +14434,7 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.codahale.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-core",
                 "io.dropwizard.metrics:metrics-graphite",
                 "io.dropwizard.metrics:metrics-json",
