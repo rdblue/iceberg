@@ -17,20 +17,7 @@
  * under the License.
  */
 
-package org.apache.iceberg.catalog;
-
-import org.apache.iceberg.AppendFiles;
-import org.apache.iceberg.DeleteFiles;
-import org.apache.iceberg.ExpireSnapshots;
-import org.apache.iceberg.OverwriteFiles;
-import org.apache.iceberg.ReplacePartitions;
-import org.apache.iceberg.RewriteFiles;
-import org.apache.iceberg.RewriteManifests;
-import org.apache.iceberg.Table;
-import org.apache.iceberg.Transaction;
-import org.apache.iceberg.UpdateLocation;
-import org.apache.iceberg.UpdateProperties;
-import org.apache.iceberg.UpdateSchema;
+package org.apache.iceberg;
 
 class CommitCallbackTransaction implements Transaction {
   static Transaction addCallback(Transaction txn, Runnable callback) {

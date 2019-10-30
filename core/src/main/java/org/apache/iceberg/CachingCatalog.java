@@ -17,19 +17,15 @@
  * under the License.
  */
 
-package org.apache.iceberg.catalog;
+package org.apache.iceberg;
 
-import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.iceberg.PartitionSpec;
-import org.apache.iceberg.Schema;
-import org.apache.iceberg.Table;
-import org.apache.iceberg.Transaction;
+import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 
 public class CachingCatalog implements Catalog {
@@ -38,7 +34,10 @@ public class CachingCatalog implements Catalog {
     return new CachingCatalog(catalog);
   }
 
-  private final Cache<TableIdentifier, Table> tableCache = CacheBuilder.newBuilder().softValues().build();
+  private final Cache<TableIdentifier, Table> tableCache = Caffeine.newBuilder()
+      .softValues()
+      .expireAfterAccess(1, TimeUnit.MINUTES)
+      .build();
   private final Catalog catalog;
 
   private CachingCatalog(Catalog catalog) {
@@ -47,28 +46,17 @@ public class CachingCatalog implements Catalog {
 
   @Override
   public Table loadTable(TableIdentifier ident) {
-    try {
-      return tableCache.get(ident, () -> catalog.loadTable(ident));
-    } catch (UncheckedExecutionException | ExecutionException e) {
-      Throwables.propagateIfInstanceOf(e.getCause(), RuntimeException.class);
-      throw new RuntimeException("Failed to load table: " + ident, e.getCause());
-    }
+    return tableCache.get(ident, catalog::loadTable);
   }
 
   @Override
   public Table createTable(TableIdentifier ident, Schema schema, PartitionSpec spec, String location,
                            Map<String, String> properties) {
     AtomicBoolean created = new AtomicBoolean(false);
-    Table table;
-    try {
-      table = tableCache.get(ident, () -> {
-        created.set(true);
-        return catalog.createTable(ident, schema, spec, location, properties);
-      });
-    } catch (UncheckedExecutionException | ExecutionException e) {
-      Throwables.propagateIfInstanceOf(e.getCause(), RuntimeException.class);
-      throw new RuntimeException("Failed to load table: " + ident, e.getCause());
-    }
+    Table table = tableCache.get(ident, (identifier) -> {
+      created.set(true);
+      return catalog.createTable(identifier, schema, spec, location, properties);
+    });
 
     if (!created.get()) {
       throw new AlreadyExistsException("Table already exists: %s", ident);
