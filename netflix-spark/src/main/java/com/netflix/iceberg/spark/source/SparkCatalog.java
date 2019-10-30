@@ -80,22 +80,26 @@ public abstract class SparkCatalog implements TableCatalog {
   }
 
   @Override
-  public org.apache.spark.sql.catalog.v2.Table loadTable(TableIdentifier ident)
+  public SparkTable loadTable(TableIdentifier ident)
       throws NoSuchTableException {
 
     org.apache.iceberg.catalog.TableIdentifier icebergTable = toIceberg(ident);
+    TableRef ref;
     try {
       return loadInternal(icebergTable);
     } catch (NoSuchTableException e) {
       // try to parse the identifier as a metadata or snapshot table
+      ref = TableRef.parse(ident.table());
+      if (ident.table().equals(ref.table())) {
+        // ref is not different, so throw the original NoSuchTableException
+        throw e;
+      }
     }
-
-    TableRef ref = TableRef.parse(ident.table());
 
     org.apache.iceberg.catalog.TableIdentifier sourceTableIdent =
         org.apache.iceberg.catalog.TableIdentifier.of(icebergTable.namespace(), ref.table());
 
-    SparkTable sourceTable = loadInternal(sourceTableIdent);
+    SparkTable sourceTable = loadTable(TableIdentifier.apply(ref.table(), ident.database()));
     Preconditions.checkArgument(ref.at() == null || sourceTable.table().snapshot(ref.at()) != null,
         "Cannot find snapshot ID %s for table: %s", ref.at(), sourceTableIdent);
 
@@ -109,14 +113,13 @@ public abstract class SparkCatalog implements TableCatalog {
       case FILES:
       case ENTRIES:
       case MANIFESTS:
+      case PARTITIONS:
         SparkTable metadataTable = loadInternal(metadataIdentifier(sourceTableIdent, ref.type()));
         if (ref.at() != null) {
           return new SparkTable(metadataTable.table(), lazySparkSession(), ref.at());
         } else {
           return metadataTable;
         }
-      case PARTITIONS:
-        return new SparkPartitionsTable(sourceTable.table(), ref.at(), null);
       case HISTORY:
       case SNAPSHOTS:
         return loadInternal(metadataIdentifier(sourceTableIdent, ref.type()));
@@ -139,7 +142,7 @@ public abstract class SparkCatalog implements TableCatalog {
     // refresh the table in Spark's catalog
     lazySparkSession().catalog().refreshTable(ident.quotedString());
     // refresh the Iceberg table
-    SparkTable table = loadInternal(toIceberg(ident));
+    SparkTable table = loadTable(ident);
     table.table().refresh();
     return table;
   }
