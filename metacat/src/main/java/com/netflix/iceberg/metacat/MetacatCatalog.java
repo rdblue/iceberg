@@ -3,7 +3,7 @@ package com.netflix.iceberg.metacat;
 import com.netflix.iceberg.spark.source.SparkCatalog;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.Table;
-import org.apache.iceberg.catalog.CachingCatalog;
+import org.apache.iceberg.CachingCatalog;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.spark.sql.SparkSession;
