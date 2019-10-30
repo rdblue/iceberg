@@ -1,8 +1,7 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         }
     },
     "compile": {
@@ -129,6 +128,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -139,6 +144,12 @@
             "locked": "0.10",
             "transitive": [
                 "org.apache.orc:orc-core"
+            ]
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.avro:avro": {
@@ -206,27 +217,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -240,13 +251,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -278,8 +289,7 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         },
         "org.slf4j:slf4j-api": {
             "project": true
@@ -360,6 +370,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -370,6 +386,12 @@
             "locked": "0.10",
             "transitive": [
                 "org.apache.orc:orc-core"
+            ]
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.avro:avro": {
@@ -437,27 +459,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -471,13 +493,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -563,8 +585,7 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0",
-            "requested": "latest.release"
+            "locked": "0.6.0"
         }
     },
     "runtime": {
@@ -665,8 +686,7 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         }
     },
     "testCompile": {
@@ -745,6 +765,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -759,6 +785,12 @@
         },
         "junit:junit": {
             "locked": "4.12"
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
         },
         "org.apache.avro:avro": {
             "locked": "1.8.2",
@@ -825,27 +857,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -859,13 +891,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -999,6 +1031,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -1013,6 +1051,12 @@
         },
         "junit:junit": {
             "locked": "4.12"
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
         },
         "org.apache.avro:avro": {
             "locked": "1.8.2",
@@ -1079,27 +1123,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -1113,13 +1157,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -1252,6 +1296,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -1266,6 +1316,12 @@
         },
         "junit:junit": {
             "locked": "4.12"
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
         },
         "org.apache.avro:avro": {
             "locked": "1.8.2",
@@ -1332,27 +1388,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -1366,13 +1422,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -1506,6 +1562,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.netflix.bdp:metrics": {
+            "locked": "0.3.4",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
+        },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
             "transitive": [
@@ -1520,6 +1582,12 @@
         },
         "junit:junit": {
             "locked": "4.12"
+        },
+        "netflix:brotli-codec": {
+            "locked": "0.1.8",
+            "transitive": [
+                "org.apache.parquet:parquet-hadoop"
+            ]
         },
         "org.apache.avro:avro": {
             "locked": "1.8.2",
@@ -1586,27 +1654,27 @@
             ]
         },
         "org.apache.parquet:parquet-avro": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
@@ -1620,13 +1688,13 @@
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-avro"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.10.1",
+            "locked": "1.10.1-nflx-1",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
