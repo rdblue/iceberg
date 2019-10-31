@@ -357,7 +357,7 @@ project(':iceberg-spark-runtime') {
     relocate 'org.apache.orc', 'org.apache.iceberg.shaded.org.apache.orc'
     relocate 'io.airlift', 'org.apache.iceberg.shaded.io.airlift'
 
-    archiveName = "iceberg-spark-runtime-${version}.${extension}"
+    archiveClassifier = null
   }
 }
 
@@ -495,7 +495,7 @@ project(':bdp-iceberg') {
     // Metacat needs com.fasterxml relocated, which is already done above
     relocate 'com.netflix.metacat', "${relocationPrefix}.com.netflix.metacat"
 
-    archiveName = "bdp-iceberg-${version}.${extension}"
+    archiveClassifier = null
   }
 }
 
@@ -651,7 +651,7 @@ project(':bdp-iceberg-client') {
     // Metacat needs com.fasterxml relocated, which is already done above
     relocate 'com.netflix.metacat', "${relocationPrefix}.com.netflix.metacat"
 
-    archiveName = "bdp-iceberg-client-${version}.${extension}"
+    archiveClassifier = null
   }
 }
 
@@ -722,6 +722,6 @@ project(':iceberg-pig-storage') {
     // Metacat needs com.fasterxml relocated, which is already done above
     relocate 'com.netflix.metacat', "${relocationPrefix}.com.netflix.metacat"
 
-    archiveName = "iceberg-pig-storage-${version}.${extension}"
+    archiveClassifier = null
   }
 }
