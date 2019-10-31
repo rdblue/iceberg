@@ -31,14 +31,18 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 allprojects {
   apply plugin: 'netflix.nebula'
   apply plugin: 'netflix.lombok'
+  apply plugin: 'nebula.release'
 
   nebula {
     moduleOwner = 'BigDataPlatform@netflix.com'
     moduleEmail = 'BigDataPlatform@netflix.com'
   }
 
+  nebulaRelease {
+    releaseBranchPatterns = [/netflix\/0.7.0/, /netflix\/0.7.0-unstable/]
+  }
+
   group = "org.apache.iceberg"
-  version = System.getenv('BUILD_VERSION') ?: '0.7.0-0'
 }
 
 dependencyRecommendations {

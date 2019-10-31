@@ -6,10 +6,7 @@ next_version() {
     local prefix=$1
     local last_version=$(git describe --tags --always --first-parent --abbrev=0 --match "$prefix*")
     [[ -z "${last_version}" ]] && return 1
-    # Remove the prefix to get the sequence number
-    local seq="${last_version#${prefix}}"
-    ((seq++))
-    echo "${prefix}${seq}"
+    perl -pe 's/(\d+)(?!.*\d+)/$1+1/e' <<<"${last_version}"
 }
 
 push_tag() {
@@ -19,23 +16,20 @@ push_tag() {
     git push origin "${version}"
 }
 
-set_version_and_tag() {
-    local prefix=$1
-    export BUILD_VERSION=$(next_version "${prefix}")
-    echo "Building version ${BUILD_VERSION}"
-    push_tag "${BUILD_VERSION}"
-}
-
 GRADLE="./gradlew --info --stacktrace"
 ./gradlew clean
 
 if [ "$ROCKET_BRANCH" = "netflix/0.7.0-unstable" ]; then
-    set_version_and_tag "v0.7.0-rc."
-    $GRADLE publish -Pstatus=candidate
+    verion=$(next_version "v0.7.0-rc.")
+    echo "Building version ${version}"
+    push_tag "${version}"
+    $GRADLE candidate -Prelease.version=${version}
 
 elif [ "$ROCKET_BRANCH" = "netflix/0.7.0" ]; then
-    set_version_and_tag "v0.7.0-nflx-"
-    $GRADLE publish -Pstatus=release
+    verion=$(next_version "v0.7.0-nflx-")
+    echo "Building version ${version}"
+    push_tag "${version}"
+    $GRADLE final -Prelease.version=${version}
 
 else # something always safe to run here
     $GRADLE check
