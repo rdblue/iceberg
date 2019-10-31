@@ -20,13 +20,13 @@ GRADLE="./gradlew --info --stacktrace"
 ./gradlew clean
 
 if [ "$ROCKET_BRANCH" = "netflix/0.7.0-unstable" ]; then
-    verion=$(next_version "v0.7.0-rc.")
+    version=$(next_version "v0.7.0-rc.")
     echo "Building version ${version}"
     push_tag "${version}"
     $GRADLE candidate -Prelease.version=${version}
 
 elif [ "$ROCKET_BRANCH" = "netflix/0.7.0" ]; then
-    verion=$(next_version "v0.7.0-nflx-")
+    version=$(next_version "v0.7.0-nflx-")
     echo "Building version ${version}"
     push_tag "${version}"
     $GRADLE final -Prelease.version=${version}
