@@ -3,11 +3,16 @@ scm:
     prBuildMerge: true
 notifications:
   email:
-  - to:
-    - jzhuge@netflix.com
-    rocketBranch: netflix/0\.7\..*
-    conditions:
-    - failure
-    - aborted
+    - to:
+        - bigdatacomputealerts@netflix.com
+      rocketBranch: netflix/0\.7\..*
+      conditions:
+        - failure
+        - aborted
+  slack:
+    - channel: dp_service_compute
+      rocketBranch: netflix/0\.7\.\d+
+      conditions:
+        - success
 publish:
   junit: "*/build/*est-results/*.xml"
