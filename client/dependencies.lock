@@ -1,7 +1,8 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "compile": {
@@ -59,7 +60,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -71,7 +72,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -158,7 +159,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -183,14 +184,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -205,6 +206,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -281,11 +302,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "netflix:bdp-emr-credentials": {
@@ -332,7 +359,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -468,11 +495,12 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         },
         "org.slf4j:jcl-over-slf4j": {
             "locked": "1.7.25"
@@ -493,7 +521,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -523,7 +551,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -535,7 +563,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -621,7 +649,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -646,14 +674,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -668,6 +696,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -744,11 +792,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "netflix:bdp-emr-credentials": {
@@ -795,7 +849,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -931,7 +985,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
@@ -957,7 +1011,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -1030,7 +1084,8 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0"
+            "locked": "0.6.0",
+            "requested": "latest.release"
         }
     },
     "runtime": {
@@ -1136,7 +1191,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -1148,7 +1203,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -1234,7 +1289,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -1259,14 +1314,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -1281,6 +1336,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -1357,11 +1432,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "netflix:bdp-emr-credentials": {
@@ -1408,7 +1489,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -1544,7 +1625,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.slf4j:jcl-over-slf4j": {
@@ -1566,7 +1647,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -1591,7 +1672,8 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "testCompile": {
@@ -1601,7 +1683,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -1613,7 +1695,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -1703,7 +1785,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -1728,14 +1810,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -1750,6 +1832,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -1826,11 +1928,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "junit:junit": {
@@ -1880,7 +1988,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -2032,7 +2140,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
@@ -2063,7 +2171,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -2093,7 +2201,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -2105,7 +2213,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -2195,7 +2303,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -2220,14 +2328,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -2242,6 +2350,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -2318,11 +2446,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "junit:junit": {
@@ -2372,7 +2506,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -2517,7 +2651,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
@@ -2548,7 +2682,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -2584,7 +2718,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -2596,7 +2730,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -2686,7 +2820,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -2711,14 +2845,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -2733,6 +2867,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -2809,11 +2963,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "junit:junit": {
@@ -2863,7 +3023,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -3015,7 +3175,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
@@ -3046,7 +3206,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -3076,7 +3236,7 @@
                 "com.amazonaws:aws-java-sdk-kms",
                 "com.amazonaws:aws-java-sdk-s3",
                 "com.amazonaws:aws-java-sdk-sts",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-kms": {
@@ -3088,7 +3248,7 @@
         "com.amazonaws:aws-java-sdk-s3": {
             "locked": "1.11.147",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.amazonaws:aws-java-sdk-sts": {
@@ -3178,7 +3338,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs",
+                "com.netflix.bdp:presto-s3fs",
                 "com.netflix.iceberg:iceberg-metacat",
                 "com.netflix.iceberg:iceberg-spark-netflix",
                 "netflix:bdp-emr-credentials",
@@ -3203,14 +3363,14 @@
                 "com.google.guava:guava"
             ]
         },
-        "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
-        },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.bdp:presto-s3fs": {
+            "locked": "1.3.2"
         },
         "com.netflix.iceberg:iceberg-metacat": {
             "project": true
@@ -3225,6 +3385,26 @@
             "locked": "1.3.6",
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
+            ]
+        },
+        "com.netflix.spectator:spectator-api": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs",
+                "com.netflix.spectator:spectator-ext-aws",
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
+        "com.netflix.spectator:spectator-ext-aws": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
+            ]
+        },
+        "com.netflix.spectator:spectator-reg-metrics3": {
+            "locked": "0.76.0",
+            "transitive": [
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "com.thoughtworks.paranamer:paranamer": {
@@ -3301,11 +3481,17 @@
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
+        "io.dropwizard.metrics:metrics-core": {
+            "locked": "3.1.2",
+            "transitive": [
+                "com.netflix.spectator:spectator-reg-metrics3"
+            ]
+        },
         "joda-time:joda-time": {
             "locked": "2.8.2",
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "junit:junit": {
@@ -3355,7 +3541,7 @@
         "org.apache.hadoop:hadoop-common": {
             "locked": "2.7.3",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.apache.hadoop:hadoop-mapreduce-client-core": {
@@ -3507,7 +3693,7 @@
         "org.openjdk.jol:jol-core": {
             "locked": "0.1",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.projectlombok:lombok": {
@@ -3538,7 +3724,7 @@
         "org.weakref:jmxutils": {
             "locked": "1.19",
             "transitive": [
-                "com.netflix.bdp:bdp-s3fs"
+                "com.netflix.bdp:presto-s3fs"
             ]
         },
         "org.xerial.snappy:snappy-java": {
