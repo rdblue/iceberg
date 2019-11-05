@@ -1,6 +1,6 @@
 package com.netflix.iceberg;
 
-import com.facebook.presto.s3fs.PrestoS3FileSystem;
+import com.netflix.bdp.s3fs.BdpS3FileSystem;
 import com.netflix.hadoop.aws.ConfigurableCredentialsProvider;
 import com.netflix.iceberg.metacat.MetacatIcebergCatalog;
 import org.apache.hadoop.conf.Configuration;
@@ -14,9 +14,9 @@ public class ClientExample {
   public static void main(String[] argv) {
     Configuration conf = new Configuration();
     conf.set("fs.defaultFS", "file:/");
-    conf.set("fs.s3.impl", PrestoS3FileSystem.class.getName());
-    conf.set("fs.s3n.impl", PrestoS3FileSystem.class.getName());
-    conf.set("presto.s3.credentials-provider", ConfigurableCredentialsProvider.class.getName());
+    conf.set("fs.s3.impl", BdpS3FileSystem.class.getName());
+    conf.set("fs.s3n.impl", BdpS3FileSystem.class.getName());
+    conf.set("bdp.s3.credentials-provider", ConfigurableCredentialsProvider.class.getName());
     conf.set("aws.iam.role.arn.default", "your-role-arn");
     conf.set("netflix.metacat.host", "http://metacat.dynprod.netflix.net:7001");
     conf.set("spark.sql.hive.env", "prod");

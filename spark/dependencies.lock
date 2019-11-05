@@ -1,8 +1,7 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         }
     },
     "compile": {
@@ -1591,8 +1590,7 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         },
         "org.roaringbitmap:RoaringBitmap": {
             "locked": "0.7.45",
@@ -3427,7 +3425,6 @@
         },
         "org.openjdk.jmh:jmh-core": {
             "locked": "1.21",
-            "requested": "1.21",
             "transitive": [
                 "org.openjdk.jmh:jmh-generator-asm",
                 "org.openjdk.jmh:jmh-generator-bytecode",
@@ -3441,8 +3438,7 @@
             ]
         },
         "org.openjdk.jmh:jmh-generator-bytecode": {
-            "locked": "1.21",
-            "requested": "1.21"
+            "locked": "1.21"
         },
         "org.openjdk.jmh:jmh-generator-reflection": {
             "locked": "1.21",
@@ -6968,8 +6964,7 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0",
-            "requested": "latest.release"
+            "locked": "0.6.0"
         }
     },
     "runtime": {
@@ -7510,8 +7505,7 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6",
-            "requested": "1.18.6"
+            "locked": "1.18.6"
         }
     },
     "testCompile": {

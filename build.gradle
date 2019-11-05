@@ -561,7 +561,7 @@ project(':bdp-iceberg-client') {
       exclude group: 'org.apache.directory.server'
     }
 
-    shadow("com.netflix.bdp:presto-s3fs") {
+    shadow("com.netflix.bdp:bdp-s3fs") {
       exclude group: 'commons-logging'
       exclude group: 'org.apache.hadoop', module: 'hadoop-yarn-common'
       exclude group: 'junit'
@@ -591,11 +591,12 @@ project(':bdp-iceberg-client') {
       exclude group: 'org.apache.httpcomponents'
       exclude group: 'org.apache.directory.api'
       exclude group: 'org.apache.directory.server'
+      exclude group: 'com.netflix.spectator'
     }
 
     shadow("netflix:bdp-emr-credentials") {
-      exclude group: 'org.apache.hadoop' // included with presto-s3fs
-      exclude group: 'com.amazon.aws'    // included with presto-s3fs
+      exclude group: 'org.apache.hadoop' // included with bdp-s3fs
+      exclude group: 'com.amazon.aws'    // included with bdp-s3fs
     }
 
     shadow(project(':iceberg-metacat')) {
