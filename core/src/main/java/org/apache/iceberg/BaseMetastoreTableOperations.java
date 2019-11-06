@@ -146,12 +146,10 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
               TableMetadataParser.read(this, io().newInputFile(metadataLocation))));
 
       String newUUID = newMetadata.get().uuid();
-      Preconditions.checkState(
-          currentMetadata == null ||
-              currentMetadata.uuid() == null ||
-              newUUID == null ||
-              newUUID.equals(currentMetadata.uuid()),
-          "Table UUID does not match: current=%s != refreshed=%s", currentMetadata.uuid(), newUUID);
+      if (currentMetadata != null && currentMetadata.uuid() != null && newUUID != null) {
+        Preconditions.checkState(newUUID.equals(currentMetadata.uuid()),
+            "Table UUID does not match: current=%s != refreshed=%s", currentMetadata.uuid(), newUUID);
+      }
 
       this.currentMetadata = newMetadata.get();
       this.currentMetadataLocation = newLocation;
