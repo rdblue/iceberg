@@ -105,12 +105,23 @@ subprojects {
     archiveClassifier = 'tests'
     from sourceSets.test.output
   }
+  tasks.build.dependsOn tasks.testJar
 
   artifacts {
     archives sourceJar
     archives javadocJar
     archives testJar
     testArtifacts testJar
+  }
+
+  afterEvaluate {
+    publishing {
+      publications {
+        nebulaIvy(IvyPublication) {
+          artifact(testJar)
+        }
+      }
+    }
   }
 }
 
