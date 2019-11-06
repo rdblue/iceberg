@@ -1,11 +1,11 @@
 {
     "nebulaRecommenderBom": {
         "netflix.bom:bdc-recommendations": {
-            "locked": "0.0.8",
+            "locked": "0.0.10",
             "requested": "latest.release"
         },
         "netflix.bom:runtime-platform-recommendations": {
-            "locked": "4.7.83",
+            "locked": "4.7.84",
             "requested": "latest.release"
         }
     },

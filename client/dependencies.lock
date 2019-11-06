@@ -184,7 +184,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -647,7 +647,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -1260,7 +1260,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -1729,7 +1729,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2221,7 +2221,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2712,7 +2712,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -3204,7 +3204,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.0"
+            "locked": "0.1.1"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
