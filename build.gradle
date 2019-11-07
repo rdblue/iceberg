@@ -120,6 +120,9 @@ subprojects {
         nebulaIvy(IvyPublication) {
           artifact(testJar)
         }
+        nebula(MavenPublication) {
+          artifact(testJar)
+        }
       }
     }
   }
