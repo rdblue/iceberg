@@ -256,7 +256,7 @@ class StructInternalRow extends InternalRow {
   }
 
   @SuppressWarnings("unchecked")
-  private <T> GenericArrayData fillArray(Collection<?> values, Function<ArrayData, BiConsumer<Integer, T>> makeSetter) {
+  private <T> GenericArrayData fillArray(Collection<?> values, Function<GenericArrayData, BiConsumer<Integer, T>> makeSetter) {
     GenericArrayData array = new GenericArrayData(new Object[values.size()]);
     BiConsumer<Integer, T> setter = makeSetter.apply(array);
 
