@@ -95,7 +95,7 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
 
   @Override
   public DataSourceReader createReader(DataSourceOptions options) {
-    String caseSensitive = spark.conf().get("spark.sql.caseSensitive", "true");
+    String caseSensitive = spark.conf().get("spark.sql.caseSensitive");
     String wapId = spark.conf().get("spark.wap.id", null);
     return new Reader(table, Boolean.parseBoolean(caseSensitive), options, snapshotId, wapId);
   }
