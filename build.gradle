@@ -376,8 +376,6 @@ project(':iceberg-spark-runtime') {
 }
 
 project(':iceberg-spark-netflix') {
-  group = "com.netflix.iceberg"
-
   apply plugin: 'scala'
 
   dependencies {
@@ -406,8 +404,6 @@ project(':iceberg-spark-netflix') {
 }
 
 project(':iceberg-metacat') {
-  group = "com.netflix.iceberg"
-
   dependencies {
     compile project(':iceberg-data')
     compile project(':iceberg-spark-netflix')
@@ -428,8 +424,6 @@ project(':iceberg-metacat') {
 }
 
 project(':iceberg-view') {
-  group = "com.netflix.iceberg"
-
   apply plugin: 'netflix.spotbugs-ci'
 
   dependencies {
@@ -442,8 +436,6 @@ project(':iceberg-view') {
 
 // this runtime jar is a self-contained artifact for testing in a notebook or shipping with Spark
 project(':bdp-iceberg') {
-  group = "com.netflix.iceberg"
-
   apply plugin: 'com.github.johnrengelman.shadow'
 
   configurations {
@@ -515,8 +507,6 @@ project(':bdp-iceberg') {
 
 // this runtime jar is a self-contained artifact for reading Iceberg tables from JVM apps
 project(':bdp-iceberg-client') {
-  group = "com.netflix.iceberg"
-
   apply plugin: 'com.github.johnrengelman.shadow'
 
   configurations {
@@ -672,8 +662,6 @@ project(':bdp-iceberg-client') {
 
 // this runtime jar is a self-contained artifact for running Pig jobs
 project(':iceberg-pig-storage') {
-  group = "com.netflix.iceberg"
-
   apply plugin: 'com.github.johnrengelman.shadow'
 
   configurations {
