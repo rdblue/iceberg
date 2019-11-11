@@ -42,7 +42,7 @@ allprojects {
     releaseBranchPatterns = [/netflix\/0.7.0/, /netflix\/0.7.0-unstable/]
   }
 
-  group = "org.apache.iceberg"
+  group = "com.netflix.iceberg"
 }
 
 dependencyRecommendations {
