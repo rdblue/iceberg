@@ -63,32 +63,32 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -107,13 +107,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -133,6 +133,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -155,59 +201,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -219,7 +219,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
@@ -306,31 +306,31 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -349,13 +349,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -375,6 +375,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -397,59 +443,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -461,7 +461,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
@@ -703,32 +703,32 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -747,13 +747,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -773,6 +773,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -798,59 +844,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -862,7 +862,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
@@ -972,32 +972,32 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1016,13 +1016,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1042,6 +1042,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1067,59 +1113,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -1131,7 +1131,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
@@ -1240,32 +1240,32 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1284,13 +1284,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1310,6 +1310,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1335,59 +1381,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -1399,7 +1399,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {
@@ -1509,32 +1509,32 @@
             "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.ben-manes.caffeine:caffeine": {
             "locked": "2.7.0",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
         },
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1553,13 +1553,13 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1579,6 +1579,52 @@
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-core",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-core": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-hive",
+                "com.netflix.iceberg:iceberg-orc",
+                "com.netflix.iceberg:iceberg-parquet",
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-hive": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-orc": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-parquet": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-spark"
+            ]
+        },
+        "com.netflix.iceberg:iceberg-spark": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1604,59 +1650,13 @@
         "org.apache.avro:avro": {
             "locked": "1.8.2",
             "transitive": [
-                "org.apache.iceberg:iceberg-core"
+                "com.netflix.iceberg:iceberg-core"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-core",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-core": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-hive",
-                "org.apache.iceberg:iceberg-orc",
-                "org.apache.iceberg:iceberg-parquet",
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-hive": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-orc": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-parquet": {
-            "project": true,
-            "transitive": [
-                "org.apache.iceberg:iceberg-spark"
-            ]
-        },
-        "org.apache.iceberg:iceberg-spark": {
-            "project": true
         },
         "org.apache.orc:orc-core": {
             "locked": "1.5.6",
             "transitive": [
-                "org.apache.iceberg:iceberg-orc"
+                "com.netflix.iceberg:iceberg-orc"
             ]
         },
         "org.apache.orc:orc-shims": {
@@ -1668,7 +1668,7 @@
         "org.apache.parquet:parquet-avro": {
             "locked": "1.10.1-nflx-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-parquet"
+                "com.netflix.iceberg:iceberg-parquet"
             ]
         },
         "org.apache.parquet:parquet-column": {

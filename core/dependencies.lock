@@ -27,8 +27,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -47,8 +47,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -62,6 +62,12 @@
             "transitive": [
                 "com.google.guava:guava"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -77,12 +83,6 @@
             "transitive": [
                 "org.apache.avro:avro"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
         },
         "org.checkerframework:checker-qual": {
             "locked": "2.8.1",
@@ -113,9 +113,9 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
-                "org.apache.avro:avro",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "org.apache.avro:avro"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -166,8 +166,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -199,6 +199,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -208,9 +210,7 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-common",
-                "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -248,6 +248,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.sun.jersey.contribs:jersey-guice": {
             "locked": "1.9",
@@ -625,12 +631,6 @@
                 "org.apache.httpcomponents:httpclient"
             ]
         },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
-        },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.6",
             "transitive": [
@@ -724,6 +724,8 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -739,8 +741,6 @@
                 "org.apache.hadoop:hadoop-mapreduce-client-shuffle",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
                 "org.apache.zookeeper:zookeeper"
             ]
         },
@@ -1346,8 +1346,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1366,8 +1366,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1381,6 +1381,12 @@
             "transitive": [
                 "com.google.guava:guava"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1396,12 +1402,6 @@
             "transitive": [
                 "org.apache.avro:avro"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
         },
         "org.checkerframework:checker-qual": {
             "locked": "2.8.1",
@@ -1432,9 +1432,9 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
-                "org.apache.avro:avro",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "org.apache.avro:avro"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -1472,8 +1472,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1492,8 +1492,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1507,6 +1507,12 @@
             "transitive": [
                 "com.google.guava:guava"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1522,12 +1528,6 @@
             "transitive": [
                 "org.apache.avro:avro"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
         },
         "org.checkerframework:checker-qual": {
             "locked": "2.8.1",
@@ -1558,9 +1558,9 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
-                "org.apache.avro:avro",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "org.apache.avro:avro"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -1593,8 +1593,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
@@ -1613,8 +1613,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1628,6 +1628,12 @@
             "transitive": [
                 "com.google.guava:guava"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.thoughtworks.paranamer:paranamer": {
             "locked": "2.7",
@@ -1643,12 +1649,6 @@
             "transitive": [
                 "org.apache.avro:avro"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
         },
         "org.checkerframework:checker-qual": {
             "locked": "2.8.1",
@@ -1679,9 +1679,9 @@
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
             "transitive": [
-                "org.apache.avro:avro",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
+                "org.apache.avro:avro"
             ]
         },
         "org.xerial.snappy:snappy-java": {
@@ -1740,8 +1740,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -1773,6 +1773,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -1782,9 +1784,7 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-common",
-                "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1822,6 +1822,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.sun.jersey.contribs:jersey-guice": {
             "locked": "1.9",
@@ -2209,12 +2215,6 @@
                 "org.apache.httpcomponents:httpclient"
             ]
         },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
-        },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.6",
             "transitive": [
@@ -2326,6 +2326,8 @@
             "locked": "1.7.25",
             "transitive": [
                 "com.codahale.metrics:metrics-core",
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -2341,8 +2343,6 @@
                 "org.apache.hadoop:hadoop-mapreduce-client-shuffle",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
                 "org.apache.zookeeper:zookeeper",
                 "org.slf4j:slf4j-simple"
             ]
@@ -2414,8 +2414,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -2447,6 +2447,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -2456,9 +2458,7 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-common",
-                "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -2496,6 +2496,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.sun.jersey.contribs:jersey-guice": {
             "locked": "1.9",
@@ -2875,12 +2881,6 @@
             "transitive": [
                 "org.apache.httpcomponents:httpclient"
             ]
-        },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
         },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.6",
@@ -2986,6 +2986,8 @@
             "locked": "1.7.25",
             "transitive": [
                 "com.codahale.metrics:metrics-core",
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -3001,8 +3003,6 @@
                 "org.apache.hadoop:hadoop-mapreduce-client-shuffle",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
                 "org.apache.zookeeper:zookeeper",
                 "org.slf4j:slf4j-simple"
             ]
@@ -3080,8 +3080,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -3113,6 +3113,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -3122,9 +3124,7 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-common",
-                "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -3162,6 +3162,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.sun.jersey.contribs:jersey-guice": {
             "locked": "1.9",
@@ -3549,12 +3555,6 @@
                 "org.apache.httpcomponents:httpclient"
             ]
         },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
-        },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.6",
             "transitive": [
@@ -3666,6 +3666,8 @@
             "locked": "1.7.25",
             "transitive": [
                 "com.codahale.metrics:metrics-core",
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -3681,8 +3683,6 @@
                 "org.apache.hadoop:hadoop-mapreduce-client-shuffle",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
                 "org.apache.zookeeper:zookeeper",
                 "org.slf4j:slf4j-simple"
             ]
@@ -3754,8 +3754,8 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -3787,6 +3787,8 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -3796,9 +3798,7 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-common",
-                "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common"
+                "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -3836,6 +3836,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
+        },
+        "com.netflix.iceberg:iceberg-api": {
+            "project": true
+        },
+        "com.netflix.iceberg:iceberg-common": {
+            "project": true
         },
         "com.sun.jersey.contribs:jersey-guice": {
             "locked": "1.9",
@@ -4223,12 +4229,6 @@
                 "org.apache.httpcomponents:httpclient"
             ]
         },
-        "org.apache.iceberg:iceberg-api": {
-            "project": true
-        },
-        "org.apache.iceberg:iceberg-common": {
-            "project": true
-        },
         "org.apache.zookeeper:zookeeper": {
             "locked": "3.4.6",
             "transitive": [
@@ -4340,6 +4340,8 @@
             "locked": "1.7.25",
             "transitive": [
                 "com.codahale.metrics:metrics-core",
+                "com.netflix.iceberg:iceberg-api",
+                "com.netflix.iceberg:iceberg-common",
                 "org.apache.avro:avro",
                 "org.apache.curator:curator-client",
                 "org.apache.directory.api:api-asn1-api",
@@ -4355,8 +4357,6 @@
                 "org.apache.hadoop:hadoop-mapreduce-client-shuffle",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager",
-                "org.apache.iceberg:iceberg-api",
-                "org.apache.iceberg:iceberg-common",
                 "org.apache.zookeeper:zookeeper",
                 "org.slf4j:slf4j-simple"
             ]
