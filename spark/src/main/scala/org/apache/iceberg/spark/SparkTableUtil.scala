@@ -74,7 +74,7 @@ object SparkTableUtil {
     val expr = spark.sessionState.sqlParser.parseExpression(expression)
     val partitions: Seq[(Map[String, String], Option[String], Option[String])] =
       Hive.partitionsByFilter(spark, table, expr).map { p: CatalogTablePartition =>
-        (p.spec, p.storage.locationUri.map(String.valueOf(_)), p.storage.serde)
+        (p.spec, p.storage.locationUri.map((o: Object) => String.valueOf(o)), p.storage.serde)
       }
 
     partitions.toDF("partition", "uri", "format")
