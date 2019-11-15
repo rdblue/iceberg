@@ -147,7 +147,7 @@ class ParquetWriter<T> implements FileAppender<T>, Closeable {
       } else {
         long remainingSpace = nextRowGroupSize - bufferedSize;
         long remainingRecords = (long) (remainingSpace / avgRecordSize);
-        this.nextCheckRecordCount = recordCount + min(max(remainingRecords / 2, 100), 10000);
+        this.nextCheckRecordCount = recordCount + min(max(remainingRecords / 2, 100), 1000);
       }
     }
   }
@@ -174,7 +174,7 @@ class ParquetWriter<T> implements FileAppender<T>, Closeable {
     } catch (IOException e) {
       throw new RuntimeIOException(e);
     }
-    this.nextCheckRecordCount = min(max(recordCount / 2, 100), 10000);
+    this.nextCheckRecordCount = min(max(recordCount / 2, 100), 1000);
     this.recordCount = 0;
 
     PageWriteStore pageStore = pageStoreCtor.newInstance(
