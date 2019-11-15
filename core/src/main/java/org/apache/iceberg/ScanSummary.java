@@ -184,7 +184,7 @@ public class ScanSummary {
       // if oldest known snapshot is in the range, then there may be an expired snapshot that has
       // been removed that matched the range. because the timestamp of that snapshot is unknown,
       // it can't be included in the results and the results are not reliable.
-      if (oldestSnapshot.timestampMillis() >= minTimestamp &&
+      if (oldestSnapshot.timestampMillis() > minTimestamp &&
           oldestSnapshot.timestampMillis() <= maxTimestamp) {
         throw new IllegalArgumentException(
             "Cannot satisfy time filters: time range may include expired snapshots");
