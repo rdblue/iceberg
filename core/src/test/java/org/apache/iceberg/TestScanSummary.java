@@ -403,7 +403,7 @@ public class TestScanSummary extends TableTestBase {
 
   private long waitUntilAfter(long timestampMillis) {
     long current = System.currentTimeMillis();
-    while (current < timestampMillis) {
+    while (current <= timestampMillis) {
       current = System.currentTimeMillis();
     }
     return current;
