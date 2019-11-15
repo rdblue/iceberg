@@ -207,6 +207,7 @@ public class Parquet {
             .withWriterVersion(writerVersion)
             .withPageSize(pageSize)
             .withDictionaryPageSize(dictionaryPageSize)
+            .withMaxRowCountForRowGroupSizeCheck(1000)
             .build();
 
         return new org.apache.iceberg.parquet.ParquetWriter<>(
