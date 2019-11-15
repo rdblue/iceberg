@@ -43,27 +43,23 @@ public class TestScanSummary extends TableTestBase {
   @Test
   public void testSnapshotTimeRangeValidation() {
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
         .appendFile(FILE_B) // data_bucket=1
         .commit();
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     table.newAppend()
         .appendFile(FILE_C) // data_bucket=2
         .commit();
 
     long secondSnapshotId = table.currentSnapshot().snapshotId();
-
-    long t2 = System.currentTimeMillis();
-    while (t2 == table.currentSnapshot().timestampMillis()) {
-      t2 = System.currentTimeMillis();
-    }
+    long t2 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t2);
 
     // expire the first snapshot
     table.expireSnapshots()
@@ -95,6 +91,7 @@ public class TestScanSummary extends TableTestBase {
     table.newAppend().commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
@@ -102,11 +99,8 @@ public class TestScanSummary extends TableTestBase {
         .commit();
 
     long timestamp = table.currentSnapshot().timestampMillis();
-
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(timestamp);
+    waitUntilAfter(t1);
 
     table.newAppend()
         .appendFile(FILE_C) // data_bucket=2
@@ -134,6 +128,7 @@ public class TestScanSummary extends TableTestBase {
     table.newAppend().commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
@@ -152,10 +147,8 @@ public class TestScanSummary extends TableTestBase {
         .appendFile(FILE_C) // data_bucket=2
         .commit();
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     TableScan scan = table.newScan()
         .filter(greaterThanOrEqual("dateCreated", t0))
@@ -180,6 +173,7 @@ public class TestScanSummary extends TableTestBase {
         .commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
@@ -206,10 +200,8 @@ public class TestScanSummary extends TableTestBase {
 
     Assert.assertEquals(1, table.currentSnapshot().manifests().size());
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     TableScan scan = table.newScan()
         .filter(greaterThanOrEqual("dateCreated", t0))
@@ -234,6 +226,7 @@ public class TestScanSummary extends TableTestBase {
         .commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
@@ -248,10 +241,8 @@ public class TestScanSummary extends TableTestBase {
 
     Assert.assertEquals(1, table.currentSnapshot().manifests().size());
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     TableScan scan = table.newScan()
         .filter(greaterThanOrEqual("dateCreated", t0))
@@ -276,16 +267,15 @@ public class TestScanSummary extends TableTestBase {
     table.newAppend().commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
         .appendFile(FILE_B) // data_bucket=1
         .commit();
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     table.newAppend()
         .appendFile(FILE_C) // data_bucket=2
@@ -315,6 +305,7 @@ public class TestScanSummary extends TableTestBase {
     table.newAppend().commit();
 
     long t0 = System.currentTimeMillis();
+    waitUntilAfter(t0);
 
     table.newAppend()
         .appendFile(FILE_A) // data_bucket=0
@@ -333,10 +324,8 @@ public class TestScanSummary extends TableTestBase {
         .appendFile(FILE_C) // data_bucket=2
         .commit();
 
-    long t1 = System.currentTimeMillis();
-    while (t1 <= table.currentSnapshot().timestampMillis()) {
-      t1 = System.currentTimeMillis();
-    }
+    long t1 = waitUntilAfter(table.currentSnapshot().timestampMillis());
+    waitUntilAfter(t1);
 
     // delete the manifest files to ensure they are not read
     FileIO io = table.ops().io();
@@ -410,5 +399,13 @@ public class TestScanSummary extends TableTestBase {
     Assert.assertEquals(1542750947000L, toMillis(millis / 1000));
     Assert.assertEquals(1542750947417L, toMillis(millis));
     Assert.assertEquals(1542750947417L, toMillis(millis * 1000 + 918));
+  }
+
+  private long waitUntilAfter(long timestampMillis) {
+    long current = System.currentTimeMillis();
+    while (current < timestampMillis) {
+      current = System.currentTimeMillis();
+    }
+    return current;
   }
 }
