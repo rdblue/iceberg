@@ -105,7 +105,7 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
                                                  SaveMode mode, DataSourceOptions options) {
     validateWriteSchema(table.schema(), writeSchema);
     validatePartitionTransforms(table.spec());
-    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, appId(), wapId()));
+    return Optional.of(new Writer(table, options, mode == SaveMode.Overwrite, genieId(), appId(), wapId()));
   }
 
   @Override
@@ -113,6 +113,10 @@ class SparkTable implements Table, ReadSupport, WriteSupport, DeleteSupport {
     table.newDelete()
         .deleteFromRowFilter(convert(filters))
         .commit();
+  }
+
+  private String genieId() {
+    return spark.sparkContext().hadoopConfiguration().get("genie.job.id");
   }
 
   private String wapId() {

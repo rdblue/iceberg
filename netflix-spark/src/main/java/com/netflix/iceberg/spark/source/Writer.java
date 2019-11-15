@@ -75,6 +75,7 @@ class Writer implements DataSourceWriter {
   private final FileFormat format;
   private final FileIO fileIo;
   private final EncryptionManager encryptionManager;
+  private final String genieId;
   private final String applicationId;
   private final String wapId;
   private final long targetFileSize;
@@ -84,12 +85,14 @@ class Writer implements DataSourceWriter {
   private boolean overwriteByFilter = false;
   private Expression overwriteFilter = null;
 
-  Writer(Table table, DataSourceOptions options, boolean replacePartitions, String applicationId, String wapId) {
+  Writer(Table table, DataSourceOptions options, boolean replacePartitions,
+         String genieId, String applicationId, String wapId) {
     this.table = table;
     this.format = getFileFormat(table.properties(), options);
     this.fileIo = table.io();
     this.encryptionManager = table.encryption();
     this.replacePartitions = replacePartitions;
+    this.genieId = genieId;
     this.applicationId = applicationId;
     this.wapId = wapId;
 
@@ -163,6 +166,10 @@ class Writer implements DataSourceWriter {
 
   protected void commitOperation(SnapshotUpdate<?> operation, int numFiles, String description) {
     LOG.info("Committing {} with {} files to table {}", description, numFiles, table);
+    if (genieId != null) {
+      operation.set("genie-id", genieId);
+    }
+
     if (applicationId != null) {
       operation.set("spark.app.id", applicationId);
     }

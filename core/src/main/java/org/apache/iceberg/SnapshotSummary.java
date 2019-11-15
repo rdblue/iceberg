@@ -28,10 +28,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.util.Map;
 import java.util.Set;
-import org.apache.hadoop.conf.Configuration;
 
 public class SnapshotSummary {
-  public static final String GENIE_ID_PROP = "genie-id";
   public static final String ADDED_FILES_PROP = "added-data-files";
   public static final String DELETED_FILES_PROP = "deleted-data-files";
   public static final String TOTAL_FILES_PROP = "total-data-files";
@@ -160,8 +158,6 @@ public class SnapshotSummary {
       // copy custom summary properties
       builder.putAll(properties);
 
-      String genieId = new Configuration().get("genie.job.id");
-      setIf(genieId != null, builder, GENIE_ID_PROP, genieId);
       setIf(addedFiles > 0, builder, ADDED_FILES_PROP, addedFiles);
       setIf(deletedFiles > 0, builder, DELETED_FILES_PROP, deletedFiles);
       setIf(deletedDuplicateFiles > 0, builder, DELETED_DUPLICATE_FILES, deletedDuplicateFiles);
