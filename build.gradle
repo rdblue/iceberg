@@ -523,7 +523,6 @@ project(':bdp-iceberg-client') {
   shadowJar {
     configurations = [project.configurations.shadow]
     from(project.sourceSets.main.output)
-    relocate 'com.netflix.bdp', "${relocationPrefix}.com.netflix.bdp"
   }
 
   tasks.build.dependsOn tasks.shadowJar
@@ -537,6 +536,7 @@ project(':bdp-iceberg-client') {
       exclude group: 'org.apache.avro'
     }
 
+    shadow("com.codahale.metrics:metrics-core:3.0.1")
     shadow("org.slf4j:jcl-over-slf4j")
 
     shadow("org.apache.hadoop:hadoop-mapreduce-client-core") {
@@ -657,6 +657,12 @@ project(':bdp-iceberg-client') {
     relocate 'org.meteogroup.jbrotli', "${relocationPrefix}.org.meteogroup.jbrotli"
     relocate 'com.codahale.metrics', "${relocationPrefix}.com.codahale.metrics"
     relocate 'it.unimi.dsi', "${relocationPrefix}.it.unimi.dsi"
+    relocate 'io.airlift', "${relocationPrefix}.io.airlift"
+    relocate 'com.github.benmanes', "${relocationPrefix}.com.github.benmanes"
+    relocate 'org.znerd', "${relocationPrefix}.org.znerd"
+    relocate 'org.apache.http', "${relocationPrefix}.org.apache.http"
+    relocate 'com.thoughtworks.paranamer', "${relocationPrefix}.com.thoughtworks.paranamer"
+    relocate 'com.codahale.metrics', "${relocationPrefix}.com.codahale.metrics"
 
     // Relocate Metacat dependencies to avoid conflicts in Spark
     // Metacat needs com.fasterxml relocated, which is already done above
