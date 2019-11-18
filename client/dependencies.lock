@@ -107,6 +107,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -184,7 +185,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -571,6 +572,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -647,7 +649,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -1184,6 +1186,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -1260,7 +1263,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -1652,6 +1655,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -1729,7 +1733,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2144,6 +2148,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -2221,7 +2226,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2635,6 +2640,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -2712,7 +2718,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -3127,6 +3133,7 @@
             "transitive": [
                 "com.amazonaws:aws-java-sdk-core",
                 "com.amazonaws:jmespath-java",
+                "com.netflix.bdp:bdp-s3fs",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -3204,7 +3211,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.2"
+            "locked": "0.1.3"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
