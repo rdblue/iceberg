@@ -427,6 +427,8 @@ project(':iceberg-metacat') {
       exclude group: 'org.apache.avro', module: 'avro'
       exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     }
+
+    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
   }
 }
 
@@ -526,12 +528,12 @@ project(':bdp-iceberg-client') {
   apply plugin: 'com.github.johnrengelman.shadow'
 
   configurations {
-    shadow
-    compileOnly.extendsFrom shadow
+    shade
+    compileOnly.extendsFrom shade
   }
 
   shadowJar {
-    configurations = [project.configurations.shadow]
+    configurations = [project.configurations.shade]
     from(project.sourceSets.main.output)
   }
 
@@ -539,22 +541,22 @@ project(':bdp-iceberg-client') {
   tasks.javadocJar.dependsOn tasks.shadowJar
 
   dependencies {
-    shadow('com.google.guava:guava') {
+    shade('com.google.guava:guava') {
       // may be LGPL - use ALv2 findbugs-annotations instead
       exclude group: 'com.google.code.findbugs'
     }
 
-    shadow(project(":iceberg-parquet")) {
+    shade(project(":iceberg-parquet")) {
       exclude group: 'com.netflix.iceberg' // included with iceberg-data
       exclude group: 'org.apache.iceberg' // included with iceberg-data
       exclude group: 'org.codehaus.jackson' // included with parquet-jackson
       exclude group: 'org.apache.avro'
     }
 
-    shadow("com.codahale.metrics:metrics-core:3.0.1")
-    shadow("org.slf4j:jcl-over-slf4j")
+    shade("com.codahale.metrics:metrics-core:3.0.1")
+    shade("org.slf4j:jcl-over-slf4j")
 
-    shadow("org.apache.hadoop:hadoop-mapreduce-client-core") {
+    shade("org.apache.hadoop:hadoop-mapreduce-client-core") {
       exclude group: 'commons-logging'
       exclude group: 'org.apache.hadoop', module: 'hadoop-yarn-common'
       exclude group: 'junit'
@@ -586,7 +588,7 @@ project(':bdp-iceberg-client') {
       exclude group: 'org.apache.directory.server'
     }
 
-    shadow("com.netflix.bdp:bdp-s3fs") {
+    shade("com.netflix.bdp:bdp-s3fs") {
       exclude group: 'commons-logging'
       exclude group: 'org.apache.hadoop', module: 'hadoop-yarn-common'
       exclude group: 'junit'
@@ -619,12 +621,14 @@ project(':bdp-iceberg-client') {
       exclude group: 'com.netflix.spectator'
     }
 
-    shadow("netflix:bdp-emr-credentials") {
+    shade("netflix:bdp-emr-credentials") {
       exclude group: 'org.apache.hadoop' // included with bdp-s3fs
       exclude group: 'com.amazon.aws'    // included with bdp-s3fs
     }
 
-    shadow(project(':iceberg-metacat')) {
+    shade(project(':iceberg-metacat')) {
+      exclude group: 'org.apache.hadoop'
+      exclude group: 'com.netflix.iceberg', module: 'iceberg-view'
       exclude group: 'org.tukaani'
       exclude group: 'com.thoughtworks.paranamer'
       exclude group: 'com.netflix.iceberg', module: 'iceberg-spark'
