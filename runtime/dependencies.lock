@@ -9,45 +9,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -105,16 +66,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",
@@ -347,16 +299,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",
@@ -540,45 +483,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -593,45 +497,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -640,45 +505,6 @@
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
-        },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
@@ -745,16 +571,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",
@@ -1014,16 +831,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",
@@ -1282,16 +1090,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",
@@ -1551,16 +1350,7 @@
             ]
         },
         "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark"
-            ]
+            "locked": "28.0-jre"
         },
         "com.google.guava:listenablefuture": {
             "locked": "9999.0-empty-to-avoid-conflict-with-guava",

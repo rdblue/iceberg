@@ -9,45 +9,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -69,6 +30,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -82,6 +44,7 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -91,8 +54,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -117,17 +79,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -140,6 +92,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -164,13 +122,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -213,9 +171,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -303,6 +258,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -315,6 +271,7 @@
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -324,8 +281,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -350,17 +306,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -373,6 +319,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -397,13 +349,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -446,9 +398,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -522,45 +471,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -575,45 +485,6 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
         },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
         }
@@ -622,45 +493,6 @@
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "requested": "1.3.9-1"
-        },
-        "com.google.errorprone:error_prone_annotations": {
-            "locked": "2.3.2",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre"
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25"
@@ -683,6 +515,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -695,6 +528,7 @@
         "com.github.stephenc.findbugs:findbugs-annotations": {
             "locked": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -704,8 +538,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -730,17 +563,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -753,6 +576,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -777,13 +606,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -826,9 +655,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -918,6 +744,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -931,6 +758,7 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -940,8 +768,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -966,17 +793,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -989,6 +806,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1013,13 +836,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -1062,9 +885,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -1182,6 +1002,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -1195,6 +1016,7 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -1204,8 +1026,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -1230,17 +1051,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1253,6 +1064,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1277,13 +1094,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -1326,9 +1143,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -1445,6 +1259,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -1458,6 +1273,7 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -1467,8 +1283,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -1493,17 +1308,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1516,6 +1321,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1540,13 +1351,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -1589,9 +1400,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",
@@ -1709,6 +1517,7 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.9.10",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
@@ -1722,6 +1531,7 @@
             "locked": "1.3.9-1",
             "requested": "1.3.9-1",
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-api",
                 "com.netflix.iceberg:iceberg-common",
                 "com.netflix.iceberg:iceberg-core",
@@ -1731,8 +1541,7 @@
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.google.code.findbugs:jsr305": {
@@ -1757,17 +1566,7 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
-                "com.netflix.iceberg:iceberg-data",
-                "com.netflix.iceberg:iceberg-hive",
-                "com.netflix.iceberg:iceberg-metacat",
-                "com.netflix.iceberg:iceberg-orc",
-                "com.netflix.iceberg:iceberg-parquet",
-                "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.google.guava:listenablefuture": {
@@ -1780,6 +1579,12 @@
             "locked": "1.3",
             "transitive": [
                 "com.google.guava:guava"
+            ]
+        },
+        "com.netflix.iceberg:bdp-view": {
+            "project": true,
+            "transitive": [
+                "com.netflix.iceberg:iceberg-metacat"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1804,13 +1609,13 @@
         "com.netflix.iceberg:iceberg-core": {
             "project": true,
             "transitive": [
+                "com.netflix.iceberg:bdp-view",
                 "com.netflix.iceberg:iceberg-data",
                 "com.netflix.iceberg:iceberg-hive",
                 "com.netflix.iceberg:iceberg-orc",
                 "com.netflix.iceberg:iceberg-parquet",
                 "com.netflix.iceberg:iceberg-spark",
-                "com.netflix.iceberg:iceberg-spark-netflix",
-                "com.netflix.iceberg:iceberg-view"
+                "com.netflix.iceberg:iceberg-spark-netflix"
             ]
         },
         "com.netflix.iceberg:iceberg-data": {
@@ -1853,9 +1658,6 @@
             "transitive": [
                 "com.netflix.iceberg:iceberg-metacat"
             ]
-        },
-        "com.netflix.iceberg:iceberg-view": {
-            "project": true
         },
         "com.netflix.metacat:metacat-netflix-client": {
             "locked": "1.3.6",

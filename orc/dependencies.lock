@@ -42,34 +42,7 @@
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.3.3",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core"
-            ]
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -127,10 +100,9 @@
             ]
         },
         "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
+            "locked": "2.6.0",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "org.codehaus.jackson:jackson-core-asl": {
@@ -144,12 +116,6 @@
             "locked": "1.9.13",
             "transitive": [
                 "org.apache.avro:avro"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
             ]
         },
         "org.slf4j:slf4j-api": {
@@ -252,9 +218,6 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -857,8 +820,9 @@
             ]
         },
         "com.google.code.findbugs:jsr305": {
-            "locked": "3.0.0",
+            "locked": "3.0.2",
             "transitive": [
+                "com.google.guava:guava",
                 "org.apache.hadoop:hadoop-common"
             ]
         },
@@ -868,8 +832,20 @@
                 "org.apache.hadoop:hadoop-common"
             ]
         },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.3.2",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
+        "com.google.guava:failureaccess": {
+            "locked": "1.0.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
         "com.google.guava:guava": {
-            "locked": "16.0.1",
+            "locked": "28.0-jre",
             "transitive": [
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
@@ -883,12 +859,24 @@
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
             ]
         },
+        "com.google.guava:listenablefuture": {
+            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
         "com.google.inject:guice": {
             "locked": "3.0",
             "transitive": [
                 "com.sun.jersey.contribs:jersey-guice",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
+            ]
+        },
+        "com.google.j2objc:j2objc-annotations": {
+            "locked": "1.3",
+            "transitive": [
+                "com.google.guava:guava"
             ]
         },
         "com.google.protobuf:protobuf-java": {
@@ -1291,6 +1279,12 @@
                 "org.apache.hadoop:hadoop-yarn-server-common"
             ]
         },
+        "org.checkerframework:checker-qual": {
+            "locked": "2.8.1",
+            "transitive": [
+                "com.google.guava:guava"
+            ]
+        },
         "org.codehaus.jackson:jackson-core-asl": {
             "locked": "1.9.13",
             "transitive": [
@@ -1333,6 +1327,12 @@
             "transitive": [
                 "com.sun.jersey:jersey-json",
                 "org.apache.hadoop:hadoop-yarn-server-nodemanager"
+            ]
+        },
+        "org.codehaus.mojo:animal-sniffer-annotations": {
+            "locked": "1.17",
+            "transitive": [
+                "com.google.guava:guava"
             ]
         },
         "org.fusesource.leveldbjni:leveldbjni-all": {
@@ -1434,34 +1434,7 @@
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.3.3",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core"
-            ]
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1519,10 +1492,9 @@
             ]
         },
         "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
+            "locked": "2.6.0",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "org.codehaus.jackson:jackson-core-asl": {
@@ -1536,12 +1508,6 @@
             "locked": "1.9.13",
             "transitive": [
                 "org.apache.avro:avro"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
             ]
         },
         "org.slf4j:slf4j-api": {
@@ -1605,34 +1571,7 @@
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.3.3",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core"
-            ]
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1690,10 +1629,9 @@
             ]
         },
         "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
+            "locked": "2.6.0",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "org.codehaus.jackson:jackson-core-asl": {
@@ -1707,12 +1645,6 @@
             "locked": "1.9.13",
             "transitive": [
                 "org.apache.avro:avro"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
             ]
         },
         "org.slf4j:slf4j-api": {
@@ -1771,34 +1703,7 @@
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.3.3",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:failureaccess": {
-            "locked": "1.0.1",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "28.0-jre",
-            "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core"
-            ]
-        },
-        "com.google.guava:listenablefuture": {
-            "locked": "9999.0-empty-to-avoid-conflict-with-guava",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.3",
-            "transitive": [
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "com.netflix.iceberg:iceberg-api": {
@@ -1856,10 +1761,9 @@
             ]
         },
         "org.checkerframework:checker-qual": {
-            "locked": "2.8.1",
+            "locked": "2.6.0",
             "transitive": [
-                "com.github.ben-manes.caffeine:caffeine",
-                "com.google.guava:guava"
+                "com.github.ben-manes.caffeine:caffeine"
             ]
         },
         "org.codehaus.jackson:jackson-core-asl": {
@@ -1873,12 +1777,6 @@
             "locked": "1.9.13",
             "transitive": [
                 "org.apache.avro:avro"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.17",
-            "transitive": [
-                "com.google.guava:guava"
             ]
         },
         "org.slf4j:slf4j-api": {
@@ -1989,9 +1887,6 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -2691,9 +2586,6 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -3385,9 +3277,6 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
@@ -4087,9 +3976,6 @@
         "com.google.guava:guava": {
             "locked": "28.0-jre",
             "transitive": [
-                "com.netflix.iceberg:iceberg-api",
-                "com.netflix.iceberg:iceberg-common",
-                "com.netflix.iceberg:iceberg-core",
                 "org.apache.curator:curator-client",
                 "org.apache.curator:curator-framework",
                 "org.apache.curator:curator-recipes",
