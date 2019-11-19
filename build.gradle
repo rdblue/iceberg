@@ -95,7 +95,7 @@ subprojects {
 
   dependencies {
     compile 'org.slf4j:slf4j-api'
-    compile('com.google.guava:guava') {
+    compileOnly('com.google.guava:guava') {
       // may be LGPL - use ALv2 findbugs-annotations instead
       exclude group: 'com.google.code.findbugs'
     }
@@ -461,6 +461,11 @@ project(':bdp-iceberg') {
   tasks.javadocJar.dependsOn tasks.shadowJar
 
   dependencies {
+    shadow('com.google.guava:guava') {
+      // may be LGPL - use ALv2 findbugs-annotations instead
+      exclude group: 'com.google.code.findbugs'
+    }
+
     shadow(project(':iceberg-metacat')) {
       // exclude transitive dependencies provided by the Spark distribution
       exclude group: 'org.slf4j'
@@ -533,6 +538,11 @@ project(':bdp-iceberg-client') {
   tasks.javadocJar.dependsOn tasks.shadowJar
 
   dependencies {
+    shadow('com.google.guava:guava') {
+      // may be LGPL - use ALv2 findbugs-annotations instead
+      exclude group: 'com.google.code.findbugs'
+    }
+
     shadow(project(":iceberg-parquet")) {
       exclude group: 'com.netflix.iceberg' // included with iceberg-data
       exclude group: 'org.apache.iceberg' // included with iceberg-data
@@ -644,6 +654,9 @@ project(':bdp-iceberg-client') {
     relocate 'org.apache.log4j', "${relocationPrefix}.org.apache.log4j"
     relocate 'com.google.common', "${relocationPrefix}.com.google.common"
 
+    // Important: jbrotli cannot be relocated because it has native methods
+    // relocate 'org.meteogroup.jbrotli', "${relocationPrefix}.org.meteogroup.jbrotli"
+
     // Relocate dependencies to avoid conflicts
     relocate 'com.amazonaws', "${relocationPrefix}.com.amazonaws"
     relocate 'software.amazon.ion', "${relocationPrefix}.software.amazon.ion"
@@ -658,7 +671,6 @@ project(':bdp-iceberg-client') {
     relocate 'avro.shaded', "${relocationPrefix}.avro.shaded"
     relocate 'shaded.parquet', "${relocationPrefix}.shaded.parquet"
     relocate 'org.apache.parquet', "${relocationPrefix}.org.apache.parquet"
-    relocate 'org.meteogroup.jbrotli', "${relocationPrefix}.org.meteogroup.jbrotli"
     relocate 'com.codahale.metrics', "${relocationPrefix}.com.codahale.metrics"
     relocate 'it.unimi.dsi', "${relocationPrefix}.it.unimi.dsi"
     relocate 'io.airlift', "${relocationPrefix}.io.airlift"
@@ -667,6 +679,9 @@ project(':bdp-iceberg-client') {
     relocate 'org.apache.http', "${relocationPrefix}.org.apache.http"
     relocate 'com.thoughtworks.paranamer', "${relocationPrefix}.com.thoughtworks.paranamer"
     relocate 'com.codahale.metrics', "${relocationPrefix}.com.codahale.metrics"
+    relocate('com.netflix.bdp', "${relocationPrefix}.com.netflix.bdp") {
+      exclude 'com.netflix.bdp.s3fs.*'
+    }
 
     // Relocate Metacat dependencies to avoid conflicts in Spark
     // Metacat needs com.fasterxml relocated, which is already done above
