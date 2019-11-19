@@ -709,6 +709,11 @@ project(':iceberg-pig-storage') {
   tasks.javadocJar.dependsOn tasks.shadowJar
 
   dependencies {
+    shadow('com.google.guava:guava') {
+      // may be LGPL - use ALv2 findbugs-annotations instead
+      exclude group: 'com.google.code.findbugs'
+    }
+
     shadow(project(':iceberg-pig')) {
       // provided by iceberg-metacat
       exclude group: 'com.netflix.iceberg'
