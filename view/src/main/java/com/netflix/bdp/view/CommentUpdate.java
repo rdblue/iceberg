@@ -21,7 +21,7 @@ import static org.apache.iceberg.types.Types.NestedField.required;
 /**
  * Update comments API implementation.
  */
-class CommentUpdate implements UpdateComment {
+public class CommentUpdate implements UpdateComment {
     private static final Logger LOG = LoggerFactory.getLogger(CommentUpdate.class);
 
     private final ViewOperations ops;
