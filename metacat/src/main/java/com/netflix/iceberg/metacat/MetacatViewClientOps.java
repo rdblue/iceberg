@@ -3,6 +3,7 @@ package com.netflix.iceberg.metacat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.netflix.bdp.view.BaseMetastoreViewOperations;
+import com.netflix.bdp.view.CommonViewConstants;
 import com.netflix.bdp.view.ViewVersionMetadata;
 import com.netflix.metacat.client.Client;
 import com.netflix.metacat.common.QualifiedName;
@@ -19,6 +20,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.NoSuchTableException;
+import org.apache.iceberg.exceptions.NotFoundException;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.exceptions.ValidationException;
 import org.apache.iceberg.hadoop.HadoopFileIO;
@@ -69,8 +71,14 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
                     false /* do not send user data metadata (?) */);
 
             Map<String, String> tableProperties = tableInfo.getMetadata();
-            String tableType = tableProperties.get(VIEW_TYPE_PROP);
 
+            String common_view_flag = tableProperties.get(CommonViewConstants.COMMON_VIEW);
+            if (common_view_flag == null || !common_view_flag.equalsIgnoreCase("true")) {
+                throw new NotFoundException(
+                    "Invalid view, missing or wrong flag: %s.%s.%s", catalog, dbName, viewName);
+            }
+
+            String tableType = tableProperties.get(VIEW_TYPE_PROP);
             Preconditions.checkArgument(
                     tableType != null && tableType.equalsIgnoreCase(VIEW_TYPE_VALUE),
                     "Invalid object, not a view: %s.%s.%s", catalog, dbName, viewName);
@@ -119,6 +127,7 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
             newTableInfo.setFields(fieldDtos(metadata.definition().schema()));
             newTableInfo.setDataExternal(true);
             Map<String, String> metadata_props = new HashMap<>(properties);
+            metadata_props.put(CommonViewConstants.COMMON_VIEW, "true");
             metadata_props.put(VIEW_TYPE_PROP, VIEW_TYPE_VALUE.toUpperCase(Locale.ENGLISH));
             metadata_props.put(METADATA_LOCATION_PROP, newMetadataLocation);
             metadata_props.put(PREVIOUS_METADATA_LOCATION_PROP, currentMetadataLocation() == null ? "" : currentMetadataLocation());
