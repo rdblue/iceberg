@@ -1,6 +1,5 @@
 package com.netflix.iceberg.metacat;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.netflix.bdp.view.BaseMetastoreViewOperations;
 import com.netflix.bdp.view.CommonViewConstants;
@@ -19,7 +18,6 @@ import com.netflix.metacat.common.exception.MetacatUserMetadataException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.exceptions.CommitFailedException;
-import org.apache.iceberg.exceptions.NoSuchTableException;
 import org.apache.iceberg.exceptions.NotFoundException;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.exceptions.ValidationException;
@@ -75,24 +73,25 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
             String common_view_flag = tableProperties.get(CommonViewConstants.COMMON_VIEW);
             if (common_view_flag == null || !common_view_flag.equalsIgnoreCase("true")) {
                 throw new NotFoundException(
-                    "Invalid view, missing or wrong flag: %s.%s.%s", catalog, dbName, viewName);
+                    "Invalid view, missing or wrong common view flag: %s.%s.%s", catalog, dbName, viewName);
             }
 
             String tableType = tableProperties.get(VIEW_TYPE_PROP);
-            Preconditions.checkArgument(
-                    tableType != null && tableType.equalsIgnoreCase(VIEW_TYPE_VALUE),
-                    "Invalid object, not a view: %s.%s.%s", catalog, dbName, viewName);
+            if (tableType == null || !tableType.equalsIgnoreCase(VIEW_TYPE_VALUE)) {
+                throw new NotFoundException(
+                    "Invalid view, missing or wrong table type: %s.%s.%s", catalog, dbName, viewName);
+            }
 
             metadataLocation = tableProperties.get(METADATA_LOCATION_PROP);
-            Preconditions.checkNotNull(metadataLocation,
-                    "Invalid table, missing metadata_location: %s.%s.%s", catalog, dbName, viewName);
-
+            if (metadataLocation == null) {
+                throw new NotFoundException(
+                    "Invalid view, missing metadata_location: %s.%s.%s", catalog, dbName, viewName);
+            }
         } catch (MetacatNotFoundException e) {
             // if metadata has been loaded for this table and is now gone, throw an exception
             // otherwise, assume the table doesn't exist yet.
             if (currentMetadataLocation() != null) {
-                throw new NoSuchTableException(format(
-                        "No such Metacat table: %s.%s.%s", catalog, dbName, viewName));
+                throw new NotFoundException("No such Metacat view: %s.%s.%s", catalog, dbName, viewName);
             }
         }
 

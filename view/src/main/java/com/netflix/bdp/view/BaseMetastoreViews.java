@@ -9,7 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
-import org.apache.iceberg.exceptions.NoSuchTableException;
+import org.apache.iceberg.exceptions.NotFoundException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +97,7 @@ public abstract class BaseMetastoreViews implements Views {
         TableIdentifier viewName = toCatalogTableIdentifier(viewIdentifier);
         ViewOperations ops = newViewOps(viewName);
         if (ops.current() == null) {
-            throw new NoSuchTableException("View does not exist: " + viewName);
+            throw new NotFoundException("View does not exist: " + viewName);
         }
         return new BaseView(ops, viewName.toString());
     }
@@ -107,7 +107,7 @@ public abstract class BaseMetastoreViews implements Views {
         TableIdentifier viewName = toCatalogTableIdentifier(viewIdentifier);
         ViewOperations ops = newViewOps(viewName);
         if (ops.current() == null) {
-            throw new NoSuchTableException("View does not exist: " + viewName);
+            throw new NotFoundException("View does not exist: " + viewName);
         }
         return ops.current().definition();
     }
