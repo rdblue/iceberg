@@ -29,7 +29,7 @@ public class CommentUpdate implements UpdateComment {
     private final Schema schema;
     private final Map<Integer, Types.NestedField> updates = Maps.newHashMap();
 
-    CommentUpdate(ViewOperations ops) {
+    public CommentUpdate(ViewOperations ops) {
         this.ops = ops;
         this.base = ops.current();
         this.schema = base.definition().schema();
