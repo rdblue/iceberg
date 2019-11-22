@@ -54,6 +54,7 @@ public class TestSparkParquetReader extends AvroDataTest {
     }
 
     try (CloseableIterable<InternalRow> reader = Parquet.read(Files.localInput(testFile))
+        .reuseContainers()
         .project(schema)
         .createReaderFunc(type -> SparkParquetReaders.buildReader(schema, type))
         .build()) {
