@@ -42,7 +42,7 @@ public class KSGatewayListener {
       String remoteHost = conf.get(KS_HOST_PROP);
       if (remoteHost != null) {
         int remotePort = conf.getInt(KS_PORT_PROP, 80);
-        LOG.info("Sending Iceberg events to %s:%d", remoteHost, remotePort);
+        LOG.info("Sending Iceberg events to {}:{}", remoteHost, remotePort);
 
         KSGatewayListener listener = new KSGatewayListener(appType,
             appId,
