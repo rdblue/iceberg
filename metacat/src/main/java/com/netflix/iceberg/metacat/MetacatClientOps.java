@@ -132,22 +132,24 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
         boolean isMigrated = Boolean.parseBoolean(
             metadata.properties().getOrDefault("migrated-from-hive", "false"));
         if (isMigrated) {
-          Preconditions.checkArgument(table.endsWith("_iceberg"),
-              "Expected temporary table name ending in '_iceberg': %s", table);
-          String backupTableName = table.substring(0, table.length() - 8) + "_hive";
+          if (table.endsWith("_iceberg")) {
+            String backupTableName = table.substring(0, table.length() - 8) + "_hive";
 
-          try {
-            TableDto table = client.getApi().getTable(catalog, database, backupTableName,
-                true /* send table fields, partition keys */,
-                true /* send user definition metadata (including ttl settings) */,
-                false /* do not send user data metadata (?) */);
+            try {
+              TableDto table = client.getApi().getTable(catalog, database, backupTableName,
+                  true /* send table fields, partition keys */,
+                  true /* send user definition metadata (including ttl settings) */,
+                  false /* do not send user data metadata (?) */);
 
-            // copy all of the definition metadata
-            newTableInfo.setDefinitionMetadata(table.getDefinitionMetadata());
+              // copy all of the definition metadata
+              newTableInfo.setDefinitionMetadata(table.getDefinitionMetadata());
 
-          } catch (MetacatNotFoundException e) {
-            LOG.warn("Cannot find backup table {}.{}.{}, not copying definition metadata",
-                catalog, database, backupTableName);
+            } catch (MetacatNotFoundException e) {
+              LOG.warn("Cannot find backup table {}.{}.{}, not copying definition metadata",
+                  catalog, database, backupTableName);
+            }
+          } else {
+            LOG.warn("Expected temporary table name ending in '_iceberg': {}", table);
           }
         }
 
