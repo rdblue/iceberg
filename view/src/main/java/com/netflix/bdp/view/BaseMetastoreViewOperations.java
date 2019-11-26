@@ -13,8 +13,6 @@ import java.util.function.Predicate;
 public abstract class BaseMetastoreViewOperations implements ViewOperations {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMetastoreViewOperations.class);
 
-    public static final String VIEW_TYPE_PROP = "table_type";
-    public static final String VIEW_TYPE_VALUE = "VIRTUAL_VIEW";
     public static final String METADATA_LOCATION_PROP = "metadata_location";
     public static final String PREVIOUS_METADATA_LOCATION_PROP = "previous_metadata_location";
 

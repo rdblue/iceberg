@@ -83,6 +83,7 @@ public class TestHadoopViews extends TestHadoopViewBase {
     public void testView4() throws Exception {
         View view = VIEWS.load(tableLocation);
         view.updateProperties().set("version.history.num-entries", "3").commit();
+        view.updateProperties().set(ViewProperties.TABLE_COMMENT, "A dummy table comment").commit();
         VIEWS.replace(tableLocation, viewDefinition, new HashMap<>());
         Assert.assertTrue("Table location should exist",
                 tableDir.exists());
@@ -98,12 +99,14 @@ public class TestHadoopViews extends TestHadoopViewBase {
                 version(4).exists() && version(4).isFile());
         Assert.assertTrue("Should create v5 metadata",
                 version(5).exists() && version(5).isFile());
-        Assert.assertFalse("Should not create v5 or newer versions",
-                version(6).exists());
+        Assert.assertTrue("Should create v6 metadata",
+                version(6).exists() && version(6).isFile());
+        Assert.assertFalse("Should not create v7 or newer versions",
+                version(7).exists());
         Assert.assertTrue("Should create version hint file",
                 versionHintFile.exists());
         Assert.assertEquals("Should write the current version to the hint file",
-                5, readVersionHint());
+                6, readVersionHint());
     }
 
     @Test

@@ -76,12 +76,6 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
                     "Invalid view, missing or wrong common view flag: %s.%s.%s", catalog, dbName, viewName);
             }
 
-            String tableType = tableProperties.get(VIEW_TYPE_PROP);
-            if (tableType == null || !tableType.equalsIgnoreCase(VIEW_TYPE_VALUE)) {
-                throw new NotFoundException(
-                    "Invalid view, missing or wrong table type: %s.%s.%s", catalog, dbName, viewName);
-            }
-
             metadataLocation = tableProperties.get(METADATA_LOCATION_PROP);
             if (metadataLocation == null) {
                 throw new NotFoundException(
@@ -128,7 +122,6 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
             newTableInfo.setDataExternal(true);
             Map<String, String> metadata_props = new HashMap<>(properties);
             metadata_props.put(CommonViewConstants.COMMON_VIEW, "true");
-            metadata_props.put(VIEW_TYPE_PROP, VIEW_TYPE_VALUE.toUpperCase(Locale.ENGLISH));
             metadata_props.put(METADATA_LOCATION_PROP, newMetadataLocation);
             metadata_props.put(PREVIOUS_METADATA_LOCATION_PROP, currentMetadataLocation() == null ? "" : currentMetadataLocation());
             newTableInfo.setMetadata(metadata_props);

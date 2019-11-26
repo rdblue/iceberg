@@ -42,6 +42,13 @@ public class TestViewCreateReplace extends TestViewBase {
         Assert.assertEquals(viewVersionMetadata.currentVersion().summary().properties().get(CommonViewConstants.ENGINE_VERSION),
                 "TestEngine");
 
+        View view = TestViews.load(null, "test");
+        view.updateProperties().set(ViewProperties.TABLE_COMMENT, "A dummy table comment").commit();
+
+        viewVersionMetadata = TestViews.loadViewVersionMetadata(metadataDir, "test");
+
+        // Expect to see the view comment
+        Assert.assertEquals(viewVersionMetadata.properties().get(ViewProperties.TABLE_COMMENT), "A dummy table comment");
         // Expect to see three versions
         Assert.assertEquals(viewVersionMetadata.currentVersionId(), 3);
         Assert.assertEquals(viewVersionMetadata.versions().size(), 3);

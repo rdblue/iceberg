@@ -68,18 +68,7 @@ public class HadoopViews implements Views, Configurable {
 
         int parentId = -1;
 
-        Map<String, String> summaryProps = new HashMap<>();
-        summaryProps.put(CommonViewConstants.OPERATION, DDLOperations.CREATE);
-        summaryProps.put(CommonViewConstants.GENIE_ID, "N/A");
-        summaryProps.put(CommonViewConstants.ENGINE_VERSION, "HadoopEngine");
-        VersionSummary summary = new VersionSummary(summaryProps);
-
-        Map<String, String> jsonProperties = new HashMap<>();
-        BaseVersion version = new BaseVersion(1, parentId, System.currentTimeMillis(), summary, viewDefinition);
-
-        ViewVersionMetadata metadata = ViewVersionMetadata.newViewVersionMetadata(version, location, viewDefinition,
-                jsonProperties);
-        ops.commit(ops.current(), metadata, properties);
+        ViewUtils.doCommit(DDLOperations.CREATE, properties,  1, parentId, viewDefinition, location, ops, null);
     }
 
     @Override
@@ -93,20 +82,7 @@ public class HadoopViews implements Views, Configurable {
         Preconditions.checkState(prevViewVersionMetadata.versions().size() > 0, "Version history not found");
         int parentId = prevViewVersionMetadata.currentVersionId();
 
-        Map<String, String> summaryProps = new HashMap<>();
-        summaryProps.put(CommonViewConstants.OPERATION, DDLOperations.REPLACE);
-        summaryProps.put(CommonViewConstants.GENIE_ID, "N/A");
-        summaryProps.put(CommonViewConstants.ENGINE_VERSION, "HadoopEngine");
-        VersionSummary summary = new VersionSummary(summaryProps);
-
-        Map<String, String> viewJsonProperties = new HashMap<>();
-
-        BaseVersion version = new BaseVersion(parentId + 1, parentId, System.currentTimeMillis(),
-                summary, definition);
-
-        ViewVersionMetadata viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, location,
-                definition, prevViewVersionMetadata, viewJsonProperties);
-        ops.commit(prevViewVersionMetadata, viewVersionMetadata, properties);
+        ViewUtils.doCommit(DDLOperations.REPLACE, properties,  parentId + 1, parentId, definition, location, ops, prevViewVersionMetadata);
     }
 
     @Override

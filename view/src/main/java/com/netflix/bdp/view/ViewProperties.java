@@ -1,5 +1,8 @@
 package com.netflix.bdp.view;
 
+/**
+ * View properties that can be set during CREATE/REPLACE view or using updateProperties API.
+ */
 public class ViewProperties {
     public static final String COMMIT_NUM_RETRIES = "commit.retry.num-retries";
     public static final int COMMIT_NUM_RETRIES_DEFAULT = 4;
@@ -15,4 +18,6 @@ public class ViewProperties {
 
     public static final String VERSION_HISTORY_SIZE = "version.history.num-entries";
     public static final int VERSION_HISTORY_SIZE_DEFAULT = 10;
+
+    public static final String TABLE_COMMENT = "comment";
 }
