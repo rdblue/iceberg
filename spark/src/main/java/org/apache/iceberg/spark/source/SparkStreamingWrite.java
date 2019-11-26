@@ -22,38 +22,52 @@ package org.apache.iceberg.spark.source;
 import java.util.Map;
 import org.apache.iceberg.AppendFiles;
 import org.apache.iceberg.DataFile;
+import org.apache.iceberg.FileFormat;
 import org.apache.iceberg.OverwriteFiles;
+import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Snapshot;
 import org.apache.iceberg.SnapshotUpdate;
 import org.apache.iceberg.Table;
+import org.apache.iceberg.encryption.EncryptionManager;
 import org.apache.iceberg.expressions.Expressions;
-import org.apache.spark.sql.sources.v2.DataSourceOptions;
-import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
-import org.apache.spark.sql.sources.v2.writer.streaming.StreamWriter;
-import org.apache.spark.sql.streaming.OutputMode;
+import org.apache.iceberg.io.FileIO;
+import org.apache.iceberg.io.LocationProvider;
+import org.apache.iceberg.util.PropertyUtil;
+import org.apache.spark.sql.catalyst.InternalRow;
+import org.apache.spark.sql.connector.write.DataWriter;
+import org.apache.spark.sql.connector.write.WriterCommitMessage;
+import org.apache.spark.sql.connector.write.streaming.StreamingDataWriterFactory;
+import org.apache.spark.sql.connector.write.streaming.StreamingWrite;
+import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreamingWriter extends Writer implements StreamWriter {
+public class SparkStreamingWrite extends SparkBatchWrite implements StreamingWrite {
 
-  private static final Logger LOG = LoggerFactory.getLogger(StreamingWriter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SparkStreamingWrite.class);
   private static final String QUERY_ID_PROPERTY = "spark.sql.streaming.queryId";
   private static final String EPOCH_ID_PROPERTY = "spark.sql.streaming.epochId";
 
+  private final boolean truncateBatches;
   private final String queryId;
-  private final OutputMode mode;
 
-  StreamingWriter(Table table, DataSourceOptions options, String queryId, OutputMode mode, String applicationId,
-      Schema dsSchema) {
-    super(table, options, false, applicationId, dsSchema);
+  SparkStreamingWrite(Table table, CaseInsensitiveStringMap options, boolean truncateBatches, String queryId,
+                      String applicationId, String wapId, Schema dsSchema) {
+    super(table, options, false, truncateBatches, Expressions.alwaysTrue(), applicationId, wapId, dsSchema);
+    this.truncateBatches = truncateBatches;
     this.queryId = queryId;
-    this.mode = mode;
+  }
+
+  @Override
+  public StreamingDataWriterFactory createStreamingWriterFactory() {
+    // the writer factory works for both batch and streaming
+    return createBatchWriterFactory();
   }
 
   @Override
   public void commit(long epochId, WriterCommitMessage[] messages) {
-    LOG.info("Committing epoch {} for query {} in {} mode", epochId, queryId, mode);
+    LOG.info("Committing epoch {} for query {} in {} mode", epochId, queryId, truncateBatches ? "complete" : "append");
 
     table().refresh();
     Long lastCommittedEpochId = getLastCommittedEpochId();
@@ -62,7 +76,7 @@ public class StreamingWriter extends Writer implements StreamWriter {
       return;
     }
 
-    if (mode == OutputMode.Complete()) {
+    if (truncateBatches) {
       OverwriteFiles overwriteFiles = table().newOverwrite();
       overwriteFiles.overwriteByRowFilter(Expressions.alwaysTrue());
       int numFiles = 0;

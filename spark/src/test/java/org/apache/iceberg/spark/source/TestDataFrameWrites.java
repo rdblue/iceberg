@@ -53,6 +53,7 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -222,6 +223,8 @@ public class TestDataFrameWrites extends AvroDataTest {
 
   @Test
   public void testNullableWithWriteOption() throws IOException {
+    Assume.assumeTrue("Spark 3.0 rejects writing nulls to a required column", spark.version().startsWith("2"));
+
     File location = new File(temp.newFolder("parquet"), "test");
     String sourcePath = String.format("%s/nullable_poc/sourceFolder/", location.toString());
     String targetPath = String.format("%s/nullable_poc/targetFolder/", location.toString());
@@ -266,6 +269,8 @@ public class TestDataFrameWrites extends AvroDataTest {
 
   @Test
   public void testNullableWithSparkSqlOption() throws IOException {
+    Assume.assumeTrue("Spark 3.0 rejects writing nulls to a required column", spark.version().startsWith("2"));
+
     File location = new File(temp.newFolder("parquet"), "test");
     String sourcePath = String.format("%s/nullable_poc/sourceFolder/", location.toString());
     String targetPath = String.format("%s/nullable_poc/targetFolder/", location.toString());

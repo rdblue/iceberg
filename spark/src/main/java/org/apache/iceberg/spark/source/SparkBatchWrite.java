@@ -37,6 +37,7 @@ import org.apache.iceberg.DataFiles;
 import org.apache.iceberg.FileFormat;
 import org.apache.iceberg.Metrics;
 import org.apache.iceberg.MetricsConfig;
+import org.apache.iceberg.OverwriteFiles;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.ReplacePartitions;
 import org.apache.iceberg.Schema;
@@ -47,6 +48,7 @@ import org.apache.iceberg.avro.Avro;
 import org.apache.iceberg.encryption.EncryptedOutputFile;
 import org.apache.iceberg.encryption.EncryptionManager;
 import org.apache.iceberg.exceptions.RuntimeIOException;
+import org.apache.iceberg.expressions.Expression;
 import org.apache.iceberg.io.FileAppender;
 import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.io.LocationProvider;
@@ -57,11 +59,12 @@ import org.apache.iceberg.spark.data.SparkParquetWriters;
 import org.apache.iceberg.util.PropertyUtil;
 import org.apache.iceberg.util.Tasks;
 import org.apache.spark.sql.catalyst.InternalRow;
-import org.apache.spark.sql.sources.v2.DataSourceOptions;
-import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
-import org.apache.spark.sql.sources.v2.writer.DataWriter;
-import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
-import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
+import org.apache.spark.sql.connector.write.BatchWrite;
+import org.apache.spark.sql.connector.write.DataWriter;
+import org.apache.spark.sql.connector.write.DataWriterFactory;
+import org.apache.spark.sql.connector.write.WriterCommitMessage;
+import org.apache.spark.sql.connector.write.streaming.StreamingDataWriterFactory;
+import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,31 +81,30 @@ import static org.apache.iceberg.TableProperties.DEFAULT_FILE_FORMAT_DEFAULT;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DEFAULT;
 
-// TODO: parameterize DataSourceWriter with subclass of WriterCommitMessage
-class Writer implements DataSourceWriter {
-  private static final Logger LOG = LoggerFactory.getLogger(Writer.class);
+class SparkBatchWrite implements BatchWrite {
+  private static final Logger LOG = LoggerFactory.getLogger(SparkBatchWrite.class);
 
   private final Table table;
   private final FileFormat format;
   private final FileIO fileIo;
   private final EncryptionManager encryptionManager;
-  private final boolean replacePartitions;
+  private final boolean overwriteDynamic;
+  private final boolean overwriteByFilter;
+  private final Expression overwriteExpr;
   private final String applicationId;
   private final String wapId;
   private final long targetFileSize;
   private final Schema dsSchema;
 
-  Writer(Table table, DataSourceOptions options, boolean replacePartitions, String applicationId, Schema dsSchema) {
-    this(table, options, replacePartitions, applicationId, null, dsSchema);
-  }
-
-  Writer(Table table, DataSourceOptions options, boolean replacePartitions, String applicationId, String wapId,
-      Schema dsSchema) {
+  SparkBatchWrite(Table table, CaseInsensitiveStringMap options, boolean overwriteDynamic, boolean overwriteByFilter,
+                  Expression overwriteExpr, String applicationId, String wapId, Schema dsSchema) {
     this.table = table;
     this.format = getFileFormat(table.properties(), options);
     this.fileIo = table.io();
     this.encryptionManager = table.encryption();
-    this.replacePartitions = replacePartitions;
+    this.overwriteDynamic = overwriteDynamic;
+    this.overwriteByFilter = overwriteByFilter;
+    this.overwriteExpr = overwriteExpr;
     this.applicationId = applicationId;
     this.wapId = wapId;
     this.dsSchema = dsSchema;
@@ -112,8 +114,8 @@ class Writer implements DataSourceWriter {
     this.targetFileSize = options.getLong("target-file-size-bytes", tableTargetFileSize);
   }
 
-  private FileFormat getFileFormat(Map<String, String> tableProperties, DataSourceOptions options) {
-    Optional<String> formatOption = options.get("write-format");
+  protected FileFormat getFileFormat(Map<String, String> tableProperties, Map<String, String> options) {
+    Optional<String> formatOption = Optional.ofNullable(options.get("write-format"));
     String formatString = formatOption
         .orElse(tableProperties.getOrDefault(DEFAULT_FILE_FORMAT, DEFAULT_FILE_FORMAT_DEFAULT));
     return FileFormat.valueOf(formatString.toUpperCase(Locale.ENGLISH));
@@ -125,7 +127,7 @@ class Writer implements DataSourceWriter {
   }
 
   @Override
-  public DataWriterFactory<InternalRow> createWriterFactory() {
+  public WriterFactory createBatchWriterFactory() {
     return new WriterFactory(
         table.spec(), format, table.locationProvider(), table.properties(), fileIo, encryptionManager, targetFileSize,
         dsSchema);
@@ -133,8 +135,10 @@ class Writer implements DataSourceWriter {
 
   @Override
   public void commit(WriterCommitMessage[] messages) {
-    if (replacePartitions) {
+    if (overwriteDynamic) {
       replacePartitions(messages);
+    } else if (overwriteByFilter) {
+      overwrite(messages);
     } else {
       append(messages);
     }
@@ -181,6 +185,19 @@ class Writer implements DataSourceWriter {
     }
 
     commitOperation(dynamicOverwrite, numFiles, "dynamic partition overwrite");
+  }
+
+  private void overwrite(WriterCommitMessage[] messages) {
+    OverwriteFiles overwriteFiles = table.newOverwrite();
+    overwriteFiles.overwriteByRowFilter(overwriteExpr);
+
+    int numFiles = 0;
+    for (DataFile file : files(messages)) {
+      numFiles += 1;
+      overwriteFiles.addFile(file);
+    }
+
+    commitOperation(overwriteFiles, numFiles, "overwrite by filter");
   }
 
   @Override
@@ -246,7 +263,7 @@ class Writer implements DataSourceWriter {
     }
   }
 
-  private static class WriterFactory implements DataWriterFactory<InternalRow> {
+  private static class WriterFactory implements DataWriterFactory, StreamingDataWriterFactory {
     private final PartitionSpec spec;
     private final FileFormat format;
     private final LocationProvider locations;
@@ -269,11 +286,13 @@ class Writer implements DataSourceWriter {
       this.dsSchema = dsSchema;
     }
 
-    @Override
-    public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
+    public DataWriter<InternalRow> createWriter(int partitionId, long taskId) {
+      return createWriter(partitionId, taskId, 0);
+    }
+
+    public DataWriter<InternalRow> createWriter(int partitionId, long taskId, long epochId) {
       OutputFileFactory fileFactory = new OutputFileFactory(partitionId, taskId, epochId);
       AppenderFactory<InternalRow> appenderFactory = new SparkAppenderFactory();
-
       if (spec.fields().isEmpty()) {
         return new UnpartitionedWriter(spec, format, appenderFactory, fileFactory, fileIo, targetFileSize);
       } else {
@@ -384,7 +403,7 @@ class Writer implements DataSourceWriter {
     @Override
     public abstract void write(InternalRow row) throws IOException;
 
-    public void writeInternal(InternalRow row)  throws IOException {
+    public void writeInternal(InternalRow row) throws IOException {
       if (currentRows % ROWS_DIVISOR == 0 && currentAppender.length() >= targetFileSize) {
         closeCurrent();
         openCurrent();

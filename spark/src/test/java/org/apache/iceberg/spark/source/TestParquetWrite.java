@@ -39,6 +39,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -195,6 +196,7 @@ public class TestParquetWrite {
 
     // overwrite with 2*id to replace record 2, append 4 and 6
     df.withColumn("id", df.col("id").multiply(2)).select("id", "data").write()
+        .option("overwrite-mode", "dynamic")
         .format("iceberg")
         .mode("overwrite")
         .save(location.toString());
@@ -341,6 +343,10 @@ public class TestParquetWrite {
 
   @Test
   public void testWriteProjection() throws IOException {
+    Assume.assumeTrue(
+        "Not supported in Spark 3.0; analysis requires all columns are present",
+        spark.version().startsWith("2"));
+
     File parent = temp.newFolder("parquet");
     File location = new File(parent, "test");
 
@@ -374,6 +380,10 @@ public class TestParquetWrite {
 
   @Test
   public void testWriteProjectionWithMiddle() throws IOException {
+    Assume.assumeTrue(
+        "Not supported in Spark 3.0; analysis requires all columns are present",
+        spark.version().startsWith("2"));
+
     File parent = temp.newFolder("parquet");
     File location = new File(parent, "test");
 
