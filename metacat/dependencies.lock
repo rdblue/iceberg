@@ -1,7 +1,8 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "compile": {
@@ -536,7 +537,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -677,14 +678,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"
@@ -1784,7 +1785,8 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         },
         "org.roaringbitmap:RoaringBitmap": {
             "locked": "0.5.11",
@@ -1997,7 +1999,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-annotations": {
-            "locked": "2.8.1",
+            "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.module:jackson-module-scala_2.11",
@@ -2005,7 +2007,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-core": {
-            "locked": "2.8.1",
+            "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.core:jackson-databind",
                 "com.fasterxml.jackson.module:jackson-module-scala_2.11",
@@ -2013,7 +2015,7 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.8.1",
+            "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-paranamer",
                 "com.fasterxml.jackson.module:jackson-module-scala_2.11",
@@ -2026,13 +2028,13 @@
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-paranamer": {
-            "locked": "2.8.1",
+            "locked": "2.9.10",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-scala_2.11"
             ]
         },
         "com.fasterxml.jackson.module:jackson-module-scala_2.11": {
-            "locked": "2.8.1",
+            "locked": "2.9.10",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -2148,7 +2150,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -2218,14 +2220,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"
@@ -2880,39 +2882,40 @@
             ]
         },
         "org.apache.parquet:parquet-column": {
-            "locked": "1.9.1-nflx-22",
+            "locked": "1.10.1-nflx-2",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop",
                 "org.apache.spark:spark-sql_2.11"
             ]
         },
         "org.apache.parquet:parquet-common": {
-            "locked": "1.9.1-nflx-22",
+            "locked": "1.10.1-nflx-2",
             "transitive": [
                 "org.apache.parquet:parquet-column",
                 "org.apache.parquet:parquet-encoding"
             ]
         },
         "org.apache.parquet:parquet-encoding": {
-            "locked": "1.9.1-nflx-22",
+            "locked": "1.10.1-nflx-2",
             "transitive": [
                 "org.apache.parquet:parquet-column"
             ]
         },
         "org.apache.parquet:parquet-format": {
-            "locked": "2.4.0-nflx",
+            "locked": "2.4.0",
             "transitive": [
+                "org.apache.parquet:parquet-common",
                 "org.apache.parquet:parquet-hadoop"
             ]
         },
         "org.apache.parquet:parquet-hadoop": {
-            "locked": "1.9.1-nflx-22",
+            "locked": "1.10.1-nflx-2",
             "transitive": [
                 "org.apache.spark:spark-sql_2.11"
             ]
         },
         "org.apache.parquet:parquet-jackson": {
-            "locked": "1.9.1-nflx-22",
+            "locked": "1.10.1-nflx-2",
             "transitive": [
                 "org.apache.parquet:parquet-hadoop"
             ]
@@ -3328,7 +3331,7 @@
             ]
         },
         "org.scala-lang:scala-library": {
-            "locked": "2.11.8",
+            "locked": "2.11.12",
             "transitive": [
                 "com.fasterxml.jackson.module:jackson-module-scala_2.11",
                 "com.twitter:chill_2.11",
@@ -3346,7 +3349,6 @@
         "org.scala-lang:scala-reflect": {
             "locked": "2.11.8",
             "transitive": [
-                "com.fasterxml.jackson.module:jackson-module-scala_2.11",
                 "org.apache.spark:spark-catalyst_2.11",
                 "org.scala-lang:scala-compiler"
             ]
@@ -3782,7 +3784,8 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0"
+            "locked": "0.6.0",
+            "requested": "latest.release"
         }
     },
     "runtime": {
@@ -4415,7 +4418,8 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "testCompile": {
@@ -4639,7 +4643,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -4780,14 +4784,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"
@@ -6307,7 +6311,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -6448,14 +6452,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"
@@ -7972,7 +7976,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -8113,14 +8117,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"
@@ -9640,7 +9644,7 @@
             ]
         },
         "com.netflix.bdp:lineage-logging": {
-            "locked": "0.1.20",
+            "locked": "0.1.28",
             "transitive": [
                 "org.apache.spark:spark-core_2.11"
             ]
@@ -9781,14 +9785,14 @@
             ]
         },
         "com.twitter:chill-java": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "com.twitter:chill_2.11",
                 "org.apache.spark:spark-core_2.11"
             ]
         },
         "com.twitter:chill_2.11": {
-            "locked": "0.8.0",
+            "locked": "0.8.4",
             "transitive": [
                 "org.apache.spark:spark-core_2.11",
                 "org.apache.spark:spark-unsafe_2.11"

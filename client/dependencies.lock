@@ -1,7 +1,8 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "compile": {
@@ -145,7 +146,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -440,7 +441,8 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         },
         "org.slf4j:jcl-over-slf4j": {
             "locked": "1.7.25"
@@ -616,7 +618,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -968,7 +970,8 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0"
+            "locked": "0.6.0",
+            "requested": "latest.release"
         }
     },
     "runtime": {
@@ -1120,7 +1123,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -1459,7 +1462,8 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "testCompile": {
@@ -1594,7 +1598,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2090,7 +2094,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -2585,7 +2589,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",
@@ -3081,7 +3085,7 @@
             ]
         },
         "com.netflix.bdp:bdp-s3fs": {
-            "locked": "0.1.3"
+            "locked": "0.1.4"
         },
         "com.netflix.bdp:metrics": {
             "locked": "0.3.4",

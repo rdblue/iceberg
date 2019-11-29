@@ -1,7 +1,8 @@
 {
     "annotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "compile": {
@@ -725,7 +726,8 @@
             ]
         },
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
@@ -1478,7 +1480,8 @@
     },
     "repositoryContentDescriptorMavenModules": {
         "netflix.nebula.repositorycontent:repository-content-descriptor-maven-modules": {
-            "locked": "0.6.0"
+            "locked": "0.6.0",
+            "requested": "latest.release"
         }
     },
     "runtime": {
@@ -1701,7 +1704,8 @@
     },
     "spotbugs": {
         "com.github.spotbugs:spotbugs": {
-            "locked": "3.1.10"
+            "locked": "3.1.10",
+            "requested": "3.1.10"
         },
         "com.github.spotbugs:spotbugs-annotations": {
             "locked": "3.1.10",
@@ -1787,7 +1791,8 @@
     },
     "testAnnotationProcessor": {
         "org.projectlombok:lombok": {
-            "locked": "1.18.6"
+            "locked": "1.18.6",
+            "requested": "1.18.6"
         }
     },
     "testCompile": {
@@ -1846,9 +1851,14 @@
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
+        "com.google.code.findbugs:annotations": {
+            "locked": "3.0.1",
+            "requested": "3.0.1"
+        },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.2",
             "transitive": [
+                "com.google.code.findbugs:annotations",
                 "com.google.guava:guava",
                 "org.apache.hadoop:hadoop-common"
             ]
@@ -2140,6 +2150,12 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.zookeeper:zookeeper"
+            ]
+        },
+        "net.jcip:jcip-annotations": {
+            "locked": "1.0",
+            "transitive": [
+                "com.google.code.findbugs:annotations"
             ]
         },
         "org.apache.avro:avro": {
@@ -2539,9 +2555,14 @@
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
+        "com.google.code.findbugs:annotations": {
+            "locked": "3.0.1",
+            "requested": "3.0.1"
+        },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.2",
             "transitive": [
+                "com.google.code.findbugs:annotations",
                 "com.google.guava:guava",
                 "org.apache.hadoop:hadoop-common"
             ]
@@ -2826,6 +2847,12 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.zookeeper:zookeeper"
+            ]
+        },
+        "net.jcip:jcip-annotations": {
+            "locked": "1.0",
+            "transitive": [
+                "com.google.code.findbugs:annotations"
             ]
         },
         "org.apache.avro:avro": {
@@ -3224,9 +3251,14 @@
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
+        "com.google.code.findbugs:annotations": {
+            "locked": "3.0.1",
+            "requested": "3.0.1"
+        },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.2",
             "transitive": [
+                "com.google.code.findbugs:annotations",
                 "com.google.guava:guava",
                 "org.apache.hadoop:hadoop-common"
             ]
@@ -3518,6 +3550,12 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.zookeeper:zookeeper"
+            ]
+        },
+        "net.jcip:jcip-annotations": {
+            "locked": "1.0",
+            "transitive": [
+                "com.google.code.findbugs:annotations"
             ]
         },
         "org.apache.avro:avro": {
@@ -3917,9 +3955,14 @@
                 "com.netflix.iceberg:iceberg-core"
             ]
         },
+        "com.google.code.findbugs:annotations": {
+            "locked": "3.0.1",
+            "requested": "3.0.1"
+        },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.2",
             "transitive": [
+                "com.google.code.findbugs:annotations",
                 "com.google.guava:guava",
                 "org.apache.hadoop:hadoop-common"
             ]
@@ -4211,6 +4254,12 @@
                 "org.apache.hadoop:hadoop-yarn-client",
                 "org.apache.hadoop:hadoop-yarn-common",
                 "org.apache.zookeeper:zookeeper"
+            ]
+        },
+        "net.jcip:jcip-annotations": {
+            "locked": "1.0",
+            "transitive": [
+                "com.google.code.findbugs:annotations"
             ]
         },
         "org.apache.avro:avro": {
