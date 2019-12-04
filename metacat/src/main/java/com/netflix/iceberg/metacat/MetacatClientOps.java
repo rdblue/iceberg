@@ -20,10 +20,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import javax.security.auth.login.LoginException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
-import org.apache.hadoop.hive.shims.Utils;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.iceberg.BaseMetastoreTableOperations;
@@ -122,7 +120,7 @@ class MetacatClientOps extends BaseMetastoreTableOperations {
             SPARK_PROVIDER, ICEBERG_TABLE_TYPE_VALUE,
             TABLE_TYPE_PROP, ICEBERG_TABLE_TYPE_VALUE.toUpperCase(Locale.ENGLISH),
             METADATA_LOCATION_PROP, newMetadataLocation,
-            PREVIOUS_METADATA_LOCATION_PROP, currentMetadataLocation()
+            PREVIOUS_METADATA_LOCATION_PROP, base.location()
         ));
 
         client.getApi().updateTable(catalog, database, table, newTableInfo);
