@@ -47,6 +47,7 @@ import org.apache.iceberg.avro.Avro;
 import org.apache.iceberg.encryption.EncryptedOutputFile;
 import org.apache.iceberg.encryption.EncryptionManager;
 import org.apache.iceberg.exceptions.RuntimeIOException;
+import org.apache.iceberg.hadoop.HadoopFileIO;
 import org.apache.iceberg.io.FileAppender;
 import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.io.LocationProvider;
@@ -56,12 +57,14 @@ import org.apache.iceberg.spark.data.SparkAvroWriter;
 import org.apache.iceberg.spark.data.SparkParquetWriters;
 import org.apache.iceberg.util.PropertyUtil;
 import org.apache.iceberg.util.Tasks;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
 import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
+import org.apache.spark.util.SerializableConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +103,11 @@ class Writer implements DataSourceWriter {
       Schema dsSchema) {
     this.table = table;
     this.format = getFileFormat(table.properties(), options);
-    this.fileIo = table.io();
+    if (table.io() instanceof HadoopFileIO) {
+      this.fileIo = new HadoopFileIO(new SerializableConfiguration(((HadoopFileIO) table.io()).conf())::value);
+    } else {
+      this.fileIo = table.io();
+    }
     this.encryptionManager = table.encryption();
     this.replacePartitions = replacePartitions;
     this.applicationId = applicationId;

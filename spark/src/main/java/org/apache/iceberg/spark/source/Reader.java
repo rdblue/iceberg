@@ -51,6 +51,7 @@ import org.apache.iceberg.encryption.EncryptedFiles;
 import org.apache.iceberg.encryption.EncryptionManager;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.expressions.Expression;
+import org.apache.iceberg.hadoop.HadoopFileIO;
 import org.apache.iceberg.io.CloseableIterable;
 import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.io.InputFile;
@@ -87,6 +88,7 @@ import org.apache.spark.sql.types.StringType;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
+import org.apache.spark.util.SerializableConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.JavaConverters;
@@ -130,7 +132,11 @@ class Reader implements DataSourceReader, SupportsPushDownFilters, SupportsPushD
     this.splitOpenFileCost = options.get("file-open-cost").map(Long::parseLong).orElse(null);
 
     this.schema = table.schema();
-    this.fileIo = table.io();
+    if (table.io() instanceof HadoopFileIO) {
+      this.fileIo = new HadoopFileIO(new SerializableConfiguration(((HadoopFileIO) table.io()).conf())::value);
+    } else {
+      this.fileIo = table.io();
+    }
     this.encryptionManager = table.encryption();
     this.caseSensitive = caseSensitive;
   }
