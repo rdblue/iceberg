@@ -165,7 +165,9 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
 
     @Override
     public synchronized void drop(String viewName) {
-
+        // Callers must guarantee this is the table to delete
+        // because we do not want to load table to verify table type.
+        client.getApi().deleteTable(catalog, dbName, this.viewName);
     }
 
     @Override
