@@ -119,6 +119,7 @@ class MetacatViewClientOps extends BaseMetastoreViewOperations {
         try {
             StorageDto serde = new StorageDto();
             serde.setUri(metadata.location());
+            serde.setOwner(Util.getUser());
 
             TableDto newTableInfo = new TableDto();
             newTableInfo.setName(QualifiedName.ofTable(catalog, dbName, viewName));
