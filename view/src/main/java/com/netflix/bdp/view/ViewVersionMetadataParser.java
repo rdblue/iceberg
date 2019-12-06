@@ -110,8 +110,9 @@ public class ViewVersionMetadataParser {
         int currentVersionId = JsonUtil.getInt(CURRENT_VERSION_ID, node);
 
         Map<String, String> properties = new HashMap<>();
+        properties.put(CommonViewConstants.COMMON_VIEW, "true");
         if (node.has(PROPERTIES)) {
-           properties = JsonUtil.getStringMap(PROPERTIES, node);
+           properties.putAll(JsonUtil.getStringMap(PROPERTIES, node));
         }
 
         JsonNode versionArray = node.get(VERSIONS);
