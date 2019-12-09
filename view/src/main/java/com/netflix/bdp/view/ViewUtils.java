@@ -1,6 +1,11 @@
 package com.netflix.bdp.view;
 
+import org.apache.iceberg.Schema;
+import org.apache.iceberg.types.Types;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.netflix.bdp.view.CommonViewConstants.OPERATION;
@@ -124,15 +129,47 @@ public class ViewUtils
         Map<String, String> viewVersionMetadataProperties = ViewUtils.getViewVersionMetadataProperties(properties, prevViewVersionMetadataProps,
                 summaryProps, metacatProps);
 
-        BaseVersion version = new BaseVersion(versionId, parentId, System.currentTimeMillis(), summary, definition);
+        // Retain the column comments from previous version of the view if the new version does not have column comments
+        ViewDefinition definitionWithComments = definition;
+        if (prevViewVersionMetadata != null) {
+            definitionWithComments = retainColumnComments(definition, prevViewVersionMetadata.definition());
+        }
 
+        BaseVersion version = new BaseVersion(versionId, parentId, System.currentTimeMillis(), summary, definitionWithComments);
         ViewVersionMetadata viewVersionMetadata;
         if (prevViewVersionMetadata == null) {
-            viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, location, definition, viewVersionMetadataProperties);
+            viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, location, definitionWithComments, viewVersionMetadataProperties);
         } else {
-            viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, location, definition, prevViewVersionMetadata, viewVersionMetadataProperties);
+            viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, location, definitionWithComments, prevViewVersionMetadata, viewVersionMetadataProperties);
         }
 
         ops.commit(prevViewVersionMetadata, viewVersionMetadata, metacatProps);
+    }
+
+    /**
+     * The method ensures that when a view is getting REPLACEd and a new column comment has not been specified (indicated by
+     * 'doc' field being null), column comment from the previous version of the view is retained.
+     * @param newDef new view definition, definition specified by REPLACE
+     * @param oldDef current view definition
+     * @return new view definition enhanced with column comments from current view definition where applicable.
+     */
+    public static ViewDefinition retainColumnComments(ViewDefinition newDef, ViewDefinition oldDef) {
+        List<Types.NestedField> newCols = new ArrayList<>();
+        for (Types.NestedField col : newDef.schema().columns()) {
+            if (col.doc() == null) {
+                Types.NestedField oldCol = oldDef.schema().caseInsensitiveFindField(col.name());
+                if (oldCol != null) {
+                    Types.NestedField newCol = Types.NestedField.of(col.fieldId(), col.isOptional(), col.name(),
+                            col.type(), oldCol.doc());
+                    newCols.add(newCol);
+                } else {
+                    newCols.add(col);
+                }
+            } else {
+                newCols.add(col);
+            }
+        }
+        Schema enhancedSchema = new Schema(newCols);
+        return new BaseViewDefinition(newDef.sql(), enhancedSchema, newDef.sessionCatalog(), newDef.sessionNamespace());
     }
 }

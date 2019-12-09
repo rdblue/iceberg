@@ -28,8 +28,7 @@ public class TestViewCreateReplace extends TestViewBase {
         // Change the schema, session catalog and engine version
         Schema newSchema = new Schema(
                 required(1, "id", Types.IntegerType.get()),
-                required(2, "intData", Types.IntegerType.get())
-        );
+                required(2, "intData", Types.IntegerType.get()));
         viewMetadata = ViewDefinition.of("select id, intData from base_tab", newSchema,
                  "new catalog", new ArrayList<>());
         TestViews.replace(metadataDir, "test", viewMetadata, new HashMap<>());
@@ -37,7 +36,7 @@ public class TestViewCreateReplace extends TestViewBase {
         // Assert that the replaced view has the correct changes
         viewVersionMetadata = TestViews.loadViewVersionMetadata(metadataDir, "test");
         oldViewMetadata = viewVersionMetadata.definition();
-        Assert.assertEquals(oldViewMetadata.schema(), newSchema);
+        Assert.assertEquals(oldViewMetadata.schema().toString(), newSchema.toString());
         Assert.assertEquals(oldViewMetadata.sessionCatalog(), "new catalog");
         Assert.assertEquals(viewVersionMetadata.currentVersion().summary().properties().get(CommonViewConstants.ENGINE_VERSION),
                 "TestEngine");

@@ -1,7 +1,9 @@
 package com.netflix.bdp.view;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.apache.iceberg.Files;
+import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.NotFoundException;
@@ -25,19 +27,12 @@ public class TestViews {
         if (ops.current() != null) {
             throw new AlreadyExistsException("View %s already exists at location: %s", name, temp);
         }
+        int parentId = -1;
+        properties.put(CommonViewConstants.GENIE_ID, "test genie-id");
+        properties.put(CommonViewConstants.ENGINE_VERSION, "TestEngine");
 
-        Map<String, String> summaryProps = new HashMap<>();
-        summaryProps.put(CommonViewConstants.OPERATION, DDLOperations.CREATE);
-        summaryProps.put(CommonViewConstants.GENIE_ID, "N/A");
-        summaryProps.put(CommonViewConstants.ENGINE_VERSION, "TestEngine");
-        VersionSummary summary = new VersionSummary(summaryProps);
+        ViewUtils.doCommit(DDLOperations.CREATE, properties, 1, parentId, viewDefinition, "", ops, null);
 
-        BaseVersion version = new BaseVersion(1, -1, System.currentTimeMillis(), summary,
-                viewDefinition);
-        ViewVersionMetadata viewVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version, temp.toString(),
-                viewDefinition, properties);
-        ops.commit(null, viewVersionMetadata, properties);
-        return;
     }
 
     public static ViewVersionMetadata loadViewVersionMetadata(File temp, String name) {
@@ -54,24 +49,20 @@ public class TestViews {
     }
 
     public static void replace(File temp, String name, ViewDefinition viewDefinition, Map<String, String> properties) {
-        ViewVersionMetadata viewVersionMetadata = loadViewVersionMetadata(temp, name);
+        ViewVersionMetadata prevViewVersionMetadata = loadViewVersionMetadata(temp, name);
         TestViewOperations ops = new TestViewOperations(name, temp);
         if (ops.current() == null) {
             throw new NotFoundException("View %s does not exist at location: %s", name, temp);
         }
 
-        Map<String, String> summaryProps = new HashMap<>();
-        summaryProps.put(CommonViewConstants.OPERATION, DDLOperations.REPLACE);
-        summaryProps.put(CommonViewConstants.GENIE_ID, "N/A");
-        summaryProps.put(CommonViewConstants.ENGINE_VERSION, "TestEngine");
-        VersionSummary summary = new VersionSummary(summaryProps);
+        Preconditions.checkState(prevViewVersionMetadata.versions().size() > 0, "Version history not found");
+        int parentId = prevViewVersionMetadata.currentVersionId();
 
-        BaseVersion version = new BaseVersion(viewVersionMetadata.currentVersionId() + 1,
-                viewVersionMetadata.currentVersionId(), System.currentTimeMillis(), summary, viewDefinition);
-        ViewVersionMetadata updatedVersionMetadata = ViewVersionMetadata.newViewVersionMetadata(version,
-                temp.toString(), viewDefinition, viewVersionMetadata, properties);
-        ops.commit(viewVersionMetadata, updatedVersionMetadata, properties);
-        return;
+        String location = prevViewVersionMetadata.location();
+
+        properties.put(CommonViewConstants.GENIE_ID, "test genie-id");
+        properties.put(CommonViewConstants.ENGINE_VERSION, "TestEngine");
+        ViewUtils.doCommit(DDLOperations.REPLACE, properties, parentId + 1, parentId, viewDefinition, location, ops, prevViewVersionMetadata);
     }
 
     public static void drop(String name, File temp) {
