@@ -49,6 +49,10 @@ class SparkTable implements org.apache.spark.sql.connector.catalog.Table, Suppor
   private StructType lazyTableSchema = null;
   private SparkSession lazySpark = null;
 
+  SparkTable(Table icebergTable) {
+    this(icebergTable, null);
+  }
+
   SparkTable(Table icebergTable, StructType requestedSchema) {
     this.icebergTable = icebergTable;
     this.requestedSchema = requestedSchema;
