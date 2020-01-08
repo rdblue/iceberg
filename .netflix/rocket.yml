@@ -9,9 +9,14 @@ notifications:
       conditions:
         - failure
         - aborted
+    - to:
+        - data-platform-change-log@netflix.com
+      rocketBranch: netflix/0\.7\.\d+$
+      conditions:
+        - success
   slack:
     - channel: dp_service_compute
-      rocketBranch: netflix/0\.7\.\d+
+      rocketBranch: netflix/0\.7\.\d+$
       conditions:
         - success
 publish:
