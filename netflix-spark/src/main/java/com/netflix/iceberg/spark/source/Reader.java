@@ -19,11 +19,14 @@
 
 package com.netflix.iceberg.spark.source;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
 import com.netflix.iceberg.spark.SparkExpressions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.iceberg.CombinedScanTask;
 import org.apache.iceberg.FileScanTask;
 import org.apache.iceberg.Schema;
@@ -48,9 +51,17 @@ import org.apache.spark.sql.sources.v2.reader.SupportsPushDownCatalystFilters;
 import org.apache.spark.sql.sources.v2.reader.SupportsPushDownRequiredColumns;
 import org.apache.spark.sql.sources.v2.reader.SupportsReportStatistics;
 import org.apache.spark.sql.types.StructType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
     SupportsPushDownRequiredColumns, SupportsReportStatistics {
+
+  private static final Logger LOG = LoggerFactory.getLogger(Reader.class);
+  private static final Cache<CacheKey, List<CombinedScanTask>> PLANNING_CACHE = Caffeine
+      .newBuilder()
+      .softValues()
+      .build();
 
   private static final org.apache.spark.sql.catalyst.expressions.Expression[] NO_EXPRS =
       new org.apache.spark.sql.catalyst.expressions.Expression[0];
@@ -249,11 +260,16 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
         }
       }
 
-      try (CloseableIterable<CombinedScanTask> tasksIterable = scan.planTasks()) {
-        this.tasks = Lists.newArrayList(tasksIterable);
-      }  catch (IOException e) {
-        throw new RuntimeIOException(e, "Failed to close table scan: %s", scan);
-      }
+      TableScan finalScan = scan;
+      CacheKey key = CacheKey.from(scan, splitSize);
+      this.tasks = PLANNING_CACHE.get(key, ignored -> {
+        LOG.info("Planning tasks for {} (no cached tasks available)", this);
+        try (CloseableIterable<CombinedScanTask> tasksIterable = finalScan.planTasks()) {
+          return Lists.newArrayList(tasksIterable);
+        }  catch (IOException e) {
+          throw new RuntimeIOException(e, "Failed to close table scan: %s", finalScan);
+        }
+      });
     }
 
     return tasks;
@@ -264,5 +280,49 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
     return String.format(
         "IcebergScan(table=%s, type=%s, filters=%s, caseSensitive=%s)",
         table, lazySchema().asStruct(), filterExpressions, caseSensitive);
+  }
+
+  private static class CacheKey {
+    static CacheKey from(TableScan scan, Long splitSize) {
+      return new CacheKey(
+          scan.table().toString() + ":" + System.identityHashCode(scan.table()),
+          scan.snapshot().snapshotId(),
+          splitSize,
+          scan.filter().toString());
+    }
+
+    private final String table;
+    private final long snapshotId;
+    private final Long splitSize;
+    private final String filter;
+
+    private CacheKey(String table, long snapshotId, Long splitSize, String filter) {
+      this.table = table;
+      this.snapshotId = snapshotId;
+      this.splitSize = splitSize;
+      this.filter = filter;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+
+      CacheKey that = (CacheKey) obj;
+      return snapshotId == that.snapshotId &&
+          Objects.equals(splitSize, that.splitSize) &&
+          Objects.equals(table, that.table) &&
+          Objects.equals(filter, that.filter);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(table, snapshotId, splitSize, filter);
+    }
   }
 }
