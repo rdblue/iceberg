@@ -288,19 +288,22 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
           scan.table().toString() + ":" + System.identityHashCode(scan.table()),
           scan.snapshot().snapshotId(),
           splitSize,
-          scan.filter().toString());
+          scan.filter().toString(),
+          scan.isCaseSensitive());
     }
 
     private final String table;
     private final long snapshotId;
     private final Long splitSize;
     private final String filter;
+    private final boolean isCaseSensitive;
 
-    private CacheKey(String table, long snapshotId, Long splitSize, String filter) {
+    private CacheKey(String table, long snapshotId, Long splitSize, String filter, boolean isCaseSensitive) {
       this.table = table;
       this.snapshotId = snapshotId;
       this.splitSize = splitSize;
       this.filter = filter;
+      this.isCaseSensitive = isCaseSensitive;
     }
 
     @Override
@@ -317,12 +320,13 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
       return snapshotId == that.snapshotId &&
           Objects.equals(splitSize, that.splitSize) &&
           Objects.equals(table, that.table) &&
-          Objects.equals(filter, that.filter);
+          Objects.equals(filter, that.filter) &&
+          isCaseSensitive == that.isCaseSensitive;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(table, snapshotId, splitSize, filter);
+      return Objects.hash(table, snapshotId, splitSize, filter, isCaseSensitive);
     }
   }
 }
