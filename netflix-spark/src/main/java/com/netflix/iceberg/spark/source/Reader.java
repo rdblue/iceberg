@@ -286,19 +286,19 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
     static CacheKey from(TableScan scan, Long splitSize) {
       return new CacheKey(
           scan.table().toString() + ":" + System.identityHashCode(scan.table()),
-          scan.snapshot().snapshotId(),
+          scan.snapshot() != null ? scan.snapshot().snapshotId() : null,
           splitSize,
           scan.filter().toString(),
           scan.isCaseSensitive());
     }
 
     private final String table;
-    private final long snapshotId;
+    private final Long snapshotId;
     private final Long splitSize;
     private final String filter;
     private final boolean isCaseSensitive;
 
-    private CacheKey(String table, long snapshotId, Long splitSize, String filter, boolean isCaseSensitive) {
+    private CacheKey(String table, Long snapshotId, Long splitSize, String filter, boolean isCaseSensitive) {
       this.table = table;
       this.snapshotId = snapshotId;
       this.splitSize = splitSize;
@@ -317,7 +317,7 @@ class Reader implements DataSourceReader, SupportsPushDownCatalystFilters,
       }
 
       CacheKey that = (CacheKey) obj;
-      return snapshotId == that.snapshotId &&
+      return Objects.equals(snapshotId, that.snapshotId) &&
           Objects.equals(splitSize, that.splitSize) &&
           Objects.equals(table, that.table) &&
           Objects.equals(filter, that.filter) &&
