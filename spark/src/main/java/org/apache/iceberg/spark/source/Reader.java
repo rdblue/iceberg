@@ -64,6 +64,7 @@ import org.apache.iceberg.spark.data.SparkParquetReaders;
 import org.apache.iceberg.types.TypeUtil;
 import org.apache.iceberg.types.Types;
 import org.apache.iceberg.util.ByteBuffers;
+import org.apache.spark.rdd.InputFileBlockHolder;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.Attribute;
 import org.apache.spark.sql.catalyst.expressions.AttributeReference;
@@ -381,6 +382,8 @@ public class Reader implements DataSourceReader, SupportsPushDownFilters, Suppor
 
     @Override
     public void close() throws IOException {
+      InputFileBlockHolder.unset();
+
       // close the current iterator
       this.currentCloseable.close();
 
@@ -392,6 +395,9 @@ public class Reader implements DataSourceReader, SupportsPushDownFilters, Suppor
 
     private Iterator<InternalRow> open(FileScanTask task) {
       DataFile file = task.file();
+
+      // update the current file for Spark's filename() function
+      InputFileBlockHolder.set(file.path().toString(), task.start(), task.length());
 
       // schema or rows returned by readers
       Schema finalSchema = expectedSchema;
