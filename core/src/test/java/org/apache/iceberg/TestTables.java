@@ -21,8 +21,10 @@ package org.apache.iceberg;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.CommitFailedException;
@@ -97,11 +99,13 @@ public class TestTables {
 
   private static final Map<String, TableMetadata> METADATA = Maps.newHashMap();
   private static final Map<String, Integer> VERSIONS = Maps.newHashMap();
+  public static final List<String> DELETED_FILE_PATHS = Lists.newArrayList();
 
   static void clearTables() {
     synchronized (METADATA) {
       METADATA.clear();
       VERSIONS.clear();
+      DELETED_FILE_PATHS.clear();
     }
   }
 
@@ -218,9 +222,7 @@ public class TestTables {
 
     @Override
     public void deleteFile(String path) {
-      if (!new File(path).delete()) {
-        throw new RuntimeIOException("Failed to delete file: " + path);
-      }
+      DELETED_FILE_PATHS.add(path);
     }
   }
 }
