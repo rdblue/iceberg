@@ -142,14 +142,14 @@ public abstract class ManifestWriter implements FileAppender<DataFile> {
    *
    * @param deletedFile a data file
    */
-  public void delete(DataFile deletedFile) {
-    addEntry(reused.wrapDelete(snapshotId, deletedFile));
+  public void delete(DataFile deletedFile, long sequenceNumber) {
+    addEntry(reused.wrapDelete(snapshotId, sequenceNumber, deletedFile));
   }
 
   void delete(ManifestEntry entry) {
     // Use the current Snapshot ID for the delete. It is safe to delete the data file from disk
     // when this Snapshot has been removed or when there are no Snapshots older than this one.
-    addEntry(reused.wrapDelete(snapshotId, entry.file()));
+    addEntry(reused.wrapDelete(snapshotId, entry.sequenceNumber(), entry.file()));
   }
 
   @Override

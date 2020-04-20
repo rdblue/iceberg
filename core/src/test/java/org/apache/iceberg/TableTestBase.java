@@ -184,7 +184,7 @@ public class TableTestBase {
       case EXISTING:
         return entry.wrapExisting(snapshotId, 0L, file);
       case DELETED:
-        return entry.wrapDelete(snapshotId, file);
+        return entry.wrapDelete(snapshotId, 0L, file);
       default:
         throw new IllegalArgumentException("Unexpected entry status: " + status);
     }

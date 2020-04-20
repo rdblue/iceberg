@@ -71,10 +71,10 @@ class GenericManifestEntry implements ManifestEntry, IndexedRecord, SpecificData
     return this;
   }
 
-  ManifestEntry wrapDelete(Long newSnapshotId, DataFile newFile) {
+  ManifestEntry wrapDelete(Long newSnapshotId, Long newSequenceNumber, DataFile newFile) {
     this.status = Status.DELETED;
     this.snapshotId = newSnapshotId;
-    this.sequenceNumber = null;
+    this.sequenceNumber = newSequenceNumber;
     this.file = newFile;
     return this;
   }
