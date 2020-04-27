@@ -33,33 +33,23 @@ class V2Metadata {
   private V2Metadata() {
   }
 
-  // fields for v2 write schema for required metadata
-  static final Types.NestedField REQUIRED_SNAPSHOT_ID =
-      required(503, "added_snapshot_id", Types.LongType.get());
-  static final Types.NestedField REQUIRED_ADDED_FILES_COUNT =
-      required(504, "added_data_files_count", Types.IntegerType.get());
-  static final Types.NestedField REQUIRED_EXISTING_FILES_COUNT =
-      required(505, "existing_data_files_count", Types.IntegerType.get());
-  static final Types.NestedField REQUIRED_DELETED_FILES_COUNT =
-      required(506, "deleted_data_files_count", Types.IntegerType.get());
-  static final Types.NestedField REQUIRED_ADDED_ROWS_COUNT =
-      required(512, "added_rows_count", Types.LongType.get());
-  static final Types.NestedField REQUIRED_EXISTING_ROWS_COUNT =
-      required(513, "existing_rows_count", Types.LongType.get());
-  static final Types.NestedField REQUIRED_DELETED_ROWS_COUNT =
-      required(514, "deleted_rows_count", Types.LongType.get());
-  static final Types.NestedField REQUIRED_SEQUENCE_NUMBER =
-      required(515, "sequence_number", Types.LongType.get());
-  static final Types.NestedField REQUIRED_MIN_SEQUENCE_NUMBER =
-      required(516, "min_sequence_number", Types.LongType.get());
-
   static final Schema MANIFEST_LIST_SCHEMA = new Schema(
-      ManifestFile.PATH, ManifestFile.LENGTH, ManifestFile.SPEC_ID,
-      REQUIRED_SEQUENCE_NUMBER, REQUIRED_MIN_SEQUENCE_NUMBER, REQUIRED_SNAPSHOT_ID,
-      REQUIRED_ADDED_FILES_COUNT, REQUIRED_EXISTING_FILES_COUNT, REQUIRED_DELETED_FILES_COUNT,
-      REQUIRED_ADDED_ROWS_COUNT, REQUIRED_EXISTING_ROWS_COUNT, REQUIRED_DELETED_ROWS_COUNT,
-      ManifestFile.PARTITION_SUMMARIES);
-
+      ManifestFile.PATH,
+      ManifestFile.LENGTH,
+      ManifestFile.SPEC_ID,
+      ManifestFile.VERSION_ID,
+      ManifestFile.MANIFEST_CONTENT.asRequired(),
+      ManifestFile.SEQUENCE_NUMBER.asRequired(),
+      ManifestFile.MIN_SEQUENCE_NUMBER.asRequired(),
+      ManifestFile.SNAPSHOT_ID.asRequired(),
+      ManifestFile.ADDED_FILES_COUNT.asRequired(),
+      ManifestFile.EXISTING_FILES_COUNT.asRequired(),
+      ManifestFile.DELETED_FILES_COUNT.asRequired(),
+      ManifestFile.ADDED_ROWS_COUNT.asRequired(),
+      ManifestFile.EXISTING_ROWS_COUNT.asRequired(),
+      ManifestFile.DELETED_ROWS_COUNT.asRequired(),
+      ManifestFile.PARTITION_SUMMARIES
+  );
 
   /**
    * A wrapper class to write any ManifestFile implementation to Avro using the v2 write schema.
@@ -233,8 +223,24 @@ class V2Metadata {
   }
 
   static Schema manifestSchema(Types.StructType partitionType) {
-    // if v2 diverges from the read schema, then copy the schema here
-    return new Schema(DataFile.getType(partitionType).fields());
+    return new Schema(
+        DataFile.STATUS.asRequired(),
+        DataFile.SNAPSHOT_ID,
+        DataFile.SEQUENCE_NUMBER,
+        DataFile.CONTENT.asRequired(),
+        DataFile.FILE_PATH,
+        DataFile.FILE_FORMAT,
+        required(DataFile.PARTITION_ID, DataFile.PARTITION_NAME, partitionType, DataFile.PARTITION_DOC),
+        DataFile.RECORD_COUNT,
+        DataFile.FILE_SIZE,
+        DataFile.COLUMN_SIZES,
+        DataFile.VALUE_COUNTS,
+        DataFile.NULL_VALUE_COUNTS,
+        DataFile.LOWER_BOUNDS,
+        DataFile.UPPER_BOUNDS,
+        DataFile.KEY_METADATA,
+        DataFile.SPLIT_OFFSETS
+    );
   }
 
   /**

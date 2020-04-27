@@ -21,6 +21,7 @@ package org.apache.iceberg;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A snapshot of the data in a table at a point in time.
@@ -72,6 +73,18 @@ public interface Snapshot {
    */
   List<ManifestFile> manifests();
 
+  default List<ManifestFile> dataManifests() {
+    return manifests().stream()
+        .filter(manifest -> manifest.content() == ManifestContent.DATA)
+        .collect(Collectors.toList());
+  }
+
+  default List<ManifestFile> deleteManifests() {
+    return manifests().stream()
+        .filter(manifest -> manifest.content() == ManifestContent.DELETES)
+        .collect(Collectors.toList());
+  }
+
   /**
    * Return the name of the {@link DataOperations data operation} that produced this snapshot.
    *
@@ -106,6 +119,8 @@ public interface Snapshot {
    * @return all files deleted from the table in this snapshot.
    */
   Iterable<DataFile> deletedFiles();
+
+  Iterable<DataFile> deleteFiles();
 
   /**
    * Return the location of this snapshot's manifest list, or null if it is not separate.

@@ -38,30 +38,41 @@ import static org.apache.iceberg.types.Types.NestedField.required;
  * Interface for files listed in a table manifest.
  */
 public interface DataFile {
+  // TODO: Should this be split into DataFile and DeleteFile that use the same schema but hard-code values?
   // DataFile fields from ManifestEntry with new ids
-  Types.NestedField STATUS = optional(50, "status", Types.IntegerType.get());
-  Types.NestedField SNAPSHOT_ID = optional(51, "snapshot_id", Types.LongType.get());
-  Types.NestedField SEQUENCE_NUMBER = optional(52, "sequence_number", Types.LongType.get());
+  Types.NestedField STATUS = optional(50, "status", Types.IntegerType.get(),
+      "Status of the file in a manifest: 0=existing, 1=added, 2=deleted");
+  Types.NestedField SNAPSHOT_ID = optional(51, "snapshot_id", Types.LongType.get(),
+      "Snapshot ID that added or deleted the file");
+  Types.NestedField SEQUENCE_NUMBER = optional(52, "sequence_number", Types.LongType.get(),
+      "Sequence number when the file was added");
+
+  // fields for adding delete data files
+  Types.NestedField CONTENT = optional(53, "content", IntegerType.get(),
+      "Contents of the file: 0=data, 1=position deletes, 2=equality deletes");
 
   // original DataFile fields
-  Types.NestedField FILE_PATH = required(100, "file_path", StringType.get());
-  Types.NestedField FILE_FORMAT = required(101, "file_format", StringType.get());
-  Types.NestedField RECORD_COUNT = required(103, "record_count", LongType.get());
-  Types.NestedField FILE_SIZE = required(104, "file_size_in_bytes", LongType.get());
+  Types.NestedField FILE_PATH = required(100, "file_path", StringType.get(), "Location URI with FS scheme");
+  Types.NestedField FILE_FORMAT = required(101, "file_format", StringType.get(),
+      "File format name: avro, orc, or parquet");
+  Types.NestedField RECORD_COUNT = required(103, "record_count", LongType.get(), "Number of records in the file");
+  Types.NestedField FILE_SIZE = required(104, "file_size_in_bytes", LongType.get(), "Total file size in bytes");
   Types.NestedField COLUMN_SIZES = optional(108, "column_sizes", MapType.ofRequired(117, 118,
-      IntegerType.get(), LongType.get()));
+      IntegerType.get(), LongType.get()), "Map of column id to total size on disk");
   Types.NestedField VALUE_COUNTS = optional(109, "value_counts", MapType.ofRequired(119, 120,
-      IntegerType.get(), LongType.get()));
+      IntegerType.get(), LongType.get()), "Map of column id to total count, including null and NaN");
   Types.NestedField NULL_VALUE_COUNTS = optional(110, "null_value_counts", MapType.ofRequired(121, 122,
-      IntegerType.get(), LongType.get()));
+      IntegerType.get(), LongType.get()), "Map of column id to null value count");
   Types.NestedField LOWER_BOUNDS = optional(125, "lower_bounds", MapType.ofRequired(126, 127,
-      IntegerType.get(), BinaryType.get()));
+      IntegerType.get(), BinaryType.get()), "Map of column id to lower bound");
   Types.NestedField UPPER_BOUNDS = optional(128, "upper_bounds", MapType.ofRequired(129, 130,
-      IntegerType.get(), BinaryType.get()));
-  Types.NestedField KEY_METADATA = optional(131, "key_metadata", BinaryType.get());
-  Types.NestedField SPLIT_OFFSETS = optional(132, "split_offsets", ListType.ofRequired(133, LongType.get()));
+      IntegerType.get(), BinaryType.get()), "Map of column id to upper bound");
+  Types.NestedField KEY_METADATA = optional(131, "key_metadata", BinaryType.get(), "Encryption key metadata blob");
+  Types.NestedField SPLIT_OFFSETS = optional(132, "split_offsets", ListType.ofRequired(133, LongType.get()),
+      "Splittable offsets");
   int PARTITION_ID = 102;
   String PARTITION_NAME = "partition";
+  String PARTITION_DOC = "Partition data tuple, schema based on the partition spec";
   // NEXT ID TO ASSIGN: 134
 
   static StructType getType(StructType partitionType) {
@@ -70,9 +81,10 @@ public interface DataFile {
         STATUS,
         SNAPSHOT_ID,
         SEQUENCE_NUMBER,
+        CONTENT,
         FILE_PATH,
         FILE_FORMAT,
-        required(PARTITION_ID, PARTITION_NAME, partitionType),
+        required(PARTITION_ID, PARTITION_NAME, partitionType, PARTITION_DOC),
         RECORD_COUNT,
         FILE_SIZE,
         COLUMN_SIZES,
@@ -99,6 +111,11 @@ public interface DataFile {
    * @return the sequence number of the snapshot in which the file was added to the table
    */
   Long sequenceNumber();
+
+  /**
+   * @return the content stored in the file; one of DATA, POSITION_DELETES, or EQUALITY_DELETES
+   */
+  FileContent content();
 
   /**
    * @return fully qualified path to the file, suitable for constructing a Hadoop Path

@@ -112,6 +112,16 @@ class V1Metadata {
     }
 
     @Override
+    public int manifestVersion() {
+      return 1;
+    }
+
+    @Override
+    public ManifestContent content() {
+      return ManifestContent.DATA;
+    }
+
+    @Override
     public long sequenceNumber() {
       return wrapped.sequenceNumber();
     }
@@ -398,6 +408,11 @@ class V1Metadata {
     @Override
     public Long sequenceNumber() {
       return wrapped.sequenceNumber();
+    }
+
+    @Override
+    public FileContent content() {
+      return FileContent.DATA;
     }
 
     @Override
