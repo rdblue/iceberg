@@ -30,7 +30,6 @@ import java.util.function.Function;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.expressions.And;
 import org.apache.iceberg.expressions.Expression;
-import org.apache.iceberg.expressions.Expression.Operation;
 import org.apache.iceberg.expressions.Expressions;
 import org.apache.iceberg.expressions.Literal;
 import org.apache.iceberg.expressions.NamedReference;
@@ -48,6 +47,9 @@ import org.apache.iceberg.types.Types;
 import org.apache.iceberg.util.Pair;
 
 public class ScanSummary {
+  private static final Set<String> IGNORED_OPERATIONS = Sets.newHashSet(
+      DataOperations.DELETE, DataOperations.REPLACE);
+
   private ScanSummary() {
   }
 
@@ -74,6 +76,7 @@ public class ScanSummary {
     private int limit = Integer.MAX_VALUE;
     private boolean throwIfLimited = false;
     private List<UnboundPredicate<Long>> timeFilters = Lists.newArrayList();
+    private boolean forceUseManifests = false;
 
     public Builder(TableScan scan) {
       this.scan = scan;
@@ -121,8 +124,14 @@ public class ScanSummary {
       return this;
     }
 
+    Builder useManifests() {
+      // for testing, allow
+      this.forceUseManifests = true;
+      return this;
+    }
+
     private void removeTimeFilters(List<Expression> expressions, Expression expression) {
-      if (expression.op() == Operation.AND) {
+      if (expression.op() == Expression.Operation.AND) {
         And and = (And) expression;
         removeTimeFilters(expressions, and.left());
         removeTimeFilters(expressions, and.right());
@@ -130,15 +139,13 @@ public class ScanSummary {
 
       } else if (expression instanceof UnboundPredicate) {
         UnboundPredicate pred = (UnboundPredicate) expression;
-        if (pred.term() instanceof NamedReference) {
-          NamedReference<?> ref = (NamedReference<?>) pred.term();
-          Literal<?> lit = pred.literal();
-          if (TIMESTAMP_NAMES.contains(ref.name())) {
-            Literal<Long> tsLiteral = lit.to(Types.TimestampType.withoutZone());
-            long millis = toMillis(tsLiteral.value());
-            addTimestampFilter(Expressions.predicate(pred.op(), "timestamp_ms", millis));
-            return;
-          }
+        NamedReference ref = (NamedReference) pred.ref();
+        Literal<?> lit = pred.literal();
+        if (TIMESTAMP_NAMES.contains(ref.name())) {
+          Literal<Long> tsLiteral = lit.to(Types.TimestampType.withoutZone());
+          long millis = toMillis(tsLiteral.value());
+          addTimestampFilter(Expressions.predicate(pred.op(), "timestamp_ms", millis));
+          return;
         }
       }
 
@@ -159,62 +166,65 @@ public class ScanSummary {
       removeTimeFilters(filters, Expressions.rewriteNot(scan.filter()));
       Expression rowFilter = joinFilters(filters);
 
-      Iterable<ManifestFile> manifests = table.currentSnapshot().dataManifests();
-
-      boolean filterByTimestamp = !timeFilters.isEmpty();
-      Set<Long> snapshotsInTimeRange = Sets.newHashSet();
-      if (filterByTimestamp) {
-        Pair<Long, Long> range = timestampRange(timeFilters);
-        long minTimestamp = range.first();
-        long maxTimestamp = range.second();
-
-        Snapshot oldestSnapshot = table.currentSnapshot();
-        for (Map.Entry<Long, Long> entry : snapshotTimestamps.entrySet()) {
-          long snapshotId = entry.getKey();
-          long timestamp = entry.getValue();
-
-          if (timestamp < oldestSnapshot.timestampMillis()) {
-            oldestSnapshot = ops.current().snapshot(snapshotId);
-          }
-
-          if (timestamp >= minTimestamp && timestamp <= maxTimestamp) {
-            snapshotsInTimeRange.add(snapshotId);
-          }
-        }
-
-        // if oldest known snapshot is in the range, then there may be an expired snapshot that has
-        // been removed that matched the range. because the timestamp of that snapshot is unknown,
-        // it can't be included in the results and the results are not reliable.
-        if (snapshotsInTimeRange.contains(oldestSnapshot.snapshotId()) &&
-            minTimestamp < oldestSnapshot.timestampMillis()) {
-          throw new IllegalArgumentException(
-              "Cannot satisfy time filters: time range may include expired snapshots");
-        }
-
-        // filter down to the the set of manifest files that were added after the start of the
-        // time range. manifests after the end of the time range must be included because
-        // compaction may create a manifest after the time range that includes files added in the
-        // range.
-        manifests = Iterables.filter(manifests, manifest -> {
-          if (manifest.snapshotId() == null) {
-            return true; // can't tell when the manifest was written, so it may contain matches
-          }
-
-          Long timestamp = snapshotTimestamps.get(manifest.snapshotId());
-          // if the timestamp is null, then its snapshot has expired. the check for the oldest
-          // snapshot ensures that all expired snapshots are not in the time range.
-          return timestamp != null && timestamp >= minTimestamp;
-        });
+      if (timeFilters.isEmpty()) {
+        return fromManifestScan(table.currentSnapshot().dataManifests(), rowFilter);
       }
 
-      return computeTopPartitionMetrics(rowFilter, manifests, filterByTimestamp, snapshotsInTimeRange);
+      Pair<Long, Long> range = timestampRange(timeFilters);
+      long minTimestamp = range.first();
+      long maxTimestamp = range.second();
+
+      Snapshot oldestSnapshot = table.currentSnapshot();
+      for (Map.Entry<Long, Long> entry : snapshotTimestamps.entrySet()) {
+        if (entry.getValue() < oldestSnapshot.timestampMillis()) {
+          oldestSnapshot = ops.current().snapshot(entry.getKey());
+        }
+      }
+
+      // if the range starts before the oldest known snapshot, then there may be missing history. there could have been
+      // a snapshot before the oldest and after the start that was expired. However, if the oldest known snapshot has
+      // no parent, then it is the first snapshot in the table and table history can be trusted.
+      if (oldestSnapshot.parentId() != null && minTimestamp < oldestSnapshot.timestampMillis()) {
+        throw new IllegalArgumentException(
+            "Cannot satisfy time filters: time range may include expired snapshots");
+      }
+
+      Iterable<Snapshot> snapshots = Iterables.filter(
+          snapshotsInTimeRange(ops.current(), minTimestamp, maxTimestamp),
+          snap -> !IGNORED_OPERATIONS.contains(snap.operation()));
+
+      Map<String, PartitionMetrics> result = fromPartitionSummaries(snapshots);
+      if (result != null && !forceUseManifests) {
+        return result;
+      }
+
+      // filter down to the the set of manifest files that were created in the time range, ignoring
+      // the snapshots created by delete or replace operations. this is complete because it finds
+      // files in the snapshot where they were added to the dataset in either an append or an
+      // overwrite. if those files are later compacted with a replace or deleted, those changes are
+      // ignored.
+      List<ManifestFile> manifestsToScan = Lists.newArrayList();
+      Set<Long> snapshotIds = Sets.newHashSet();
+      for (Snapshot snap : snapshots) {
+        snapshotIds.add(snap.snapshotId());
+        for (ManifestFile manifest : snap.dataManifests()) {
+          // get all manifests added in the snapshot
+          if (manifest.snapshotId() == null || manifest.snapshotId() == snap.snapshotId()) {
+            manifestsToScan.add(manifest);
+          }
+        }
+      }
+
+      return fromManifestScan(manifestsToScan, rowFilter, true /* ignore existing entries */ );
     }
 
-    private Map<String, PartitionMetrics> computeTopPartitionMetrics(
-        Expression rowFilter,
-        Iterable<ManifestFile> manifests,
-        boolean filterByTimestamp,
-        Set<Long> snapshotsInTimeRange) {
+    private Map<String, PartitionMetrics> fromManifestScan(Iterable<ManifestFile> manifests,
+                                                                           Expression rowFilter) {
+      return fromManifestScan(manifests, rowFilter, false /* all entries */ );
+    }
+
+    private Map<String, PartitionMetrics> fromManifestScan(
+        Iterable<ManifestFile> manifests, Expression rowFilter, boolean ignoreExisting) {
       TopN<String, PartitionMetrics> topN = new TopN<>(
           limit, throwIfLimited, Comparators.charSequences());
 
@@ -222,21 +232,16 @@ public class ScanSummary {
           .specsById(ops.current().specsById())
           .filterData(rowFilter)
           .ignoreDeleted()
+          .ignoreExisting(ignoreExisting)
           .select(SCAN_SUMMARY_COLUMNS)
           .entries()) {
 
         PartitionSpec spec = table.spec();
         for (ManifestEntry<?> entry : entries) {
           Long timestamp = snapshotTimestamps.get(entry.snapshotId());
-
-          // if filtering, skip timestamps that are outside the range
-          if (filterByTimestamp && !snapshotsInTimeRange.contains(entry.snapshotId())) {
-            continue;
-          }
-
           String partition = spec.partitionToPath(entry.file().partition());
           topN.update(partition, metrics -> (metrics == null ? new PartitionMetrics() : metrics)
-              .updateFromFile(entry.file(), timestamp));
+              .updateFromFile(entry.file(), timestamp, entry.status() != ManifestEntry.Status.DELETED));
         }
 
       } catch (IOException e) {
@@ -245,49 +250,150 @@ public class ScanSummary {
 
       return topN.get();
     }
+
+    private Map<String, PartitionMetrics> fromPartitionSummaries(Iterable<Snapshot> snapshots) {
+      // try to build the result from snapshot metadata, but fall back if:
+      // * any snapshot has no summary
+      // * any snapshot has
+      TopN<String, PartitionMetrics> topN = new TopN<>(
+          limit, throwIfLimited, Comparators.charSequences());
+
+      for (Snapshot snap : snapshots) {
+        if (snap.operation() == null || snap.summary() == null ||
+            !Boolean.parseBoolean(snap.summary().getOrDefault(SnapshotSummary.PARTITION_SUMMARY_PROP, "false"))) {
+          // the snapshot summary is missing or does not include partition-level data. fall back.
+          return null;
+        }
+
+        for (Map.Entry<String, String> entry : snap.summary().entrySet()) {
+          if (entry.getKey().startsWith(SnapshotSummary.CHANGED_PARTITION_PREFIX)) {
+            String key = entry.getKey().substring(SnapshotSummary.CHANGED_PARTITION_PREFIX.length());
+            topN.update(key, metrics -> (metrics == null ? new PartitionMetrics() : metrics)
+                .merge(toMetrics(entry.getValue()), snap.timestampMillis()));
+          }
+        }
+      }
+
+      return topN.get();
+    }
+  }
+
+  private static Iterable<Snapshot> snapshotsInTimeRange(TableMetadata meta,
+                                                         long minTimestamp, long maxTimestamp) {
+    ImmutableList.Builder<Snapshot> snapshots = ImmutableList.builder();
+
+    Snapshot current = meta.currentSnapshot();
+    while (current != null && current.timestampMillis() >= minTimestamp) {
+      if (current.timestampMillis() <= maxTimestamp) {
+        snapshots.add(current);
+      }
+
+      if (current.parentId() != null) {
+        current = meta.snapshot(current.parentId());
+      } else {
+        current = null;
+      }
+    }
+
+    return snapshots.build().reverse();
+  }
+
+  public static PartitionMetrics toMetrics(String mapAsString) {
+    Map<String, String> part = SnapshotSummary.MAP_SPLITTER.split(mapAsString);
+    PartitionMetrics metrics = new PartitionMetrics();
+    metrics.addedDataFileCount = Integer.parseInt(part.getOrDefault(SnapshotSummary.ADDED_FILES_PROP, "0"));
+    metrics.removedDataFileCount = Integer.parseInt(part.getOrDefault(SnapshotSummary.DELETED_FILES_PROP, "0"));
+    metrics.addedDeleteFileCount = Integer.parseInt(part.getOrDefault(SnapshotSummary.ADDED_DELETE_FILES_PROP, "0"));
+    metrics.removedDeleteFileCount =
+        Integer.parseInt(part.getOrDefault(SnapshotSummary.REMOVED_DELETE_FILES_PROP, "0"));
+    metrics.addedRecordCount = Long.parseLong(part.getOrDefault(SnapshotSummary.ADDED_RECORDS_PROP, "0"));
+    metrics.addedSize = Long.parseLong(part.getOrDefault(SnapshotSummary.ADDED_FILE_SIZE_PROP, "0"));
+    return metrics;
   }
 
   public static class PartitionMetrics {
-    private int fileCount = 0;
-    private long recordCount = 0L;
-    private long totalSize = 0L;
+    private int addedDataFileCount = 0;
+    private int removedDataFileCount = 0;
+    private int addedDeleteFileCount = 0;
+    private int removedDeleteFileCount = 0;
+    private long addedRecordCount = 0L;
+    private long addedSize = 0L;
     private Long dataTimestampMillis = null;
 
     public int fileCount() {
-      return fileCount;
+      return addedDataFileCount + addedDeleteFileCount;
     }
 
     public long recordCount() {
-      return recordCount;
+      return addedRecordCount;
     }
 
     public long totalSize() {
-      return totalSize;
+      return addedSize;
+    }
+
+    public int addedDataFileCount() {
+      return addedDataFileCount;
+    }
+
+    public int removedDataFileCount() {
+      return removedDataFileCount;
+    }
+
+    public int addedDeleteFileCount() {
+      return addedDeleteFileCount;
+    }
+
+    public int removedDeleteFileCount() {
+      return removedDeleteFileCount;
     }
 
     public Long dataTimestampMillis() {
       return dataTimestampMillis;
     }
 
-    PartitionMetrics updateFromCounts(int numFiles, long filesRecordCount, long filesSize,
-                                      Long timestampMillis) {
-      this.fileCount += numFiles;
-      this.recordCount += filesRecordCount;
-      this.totalSize += filesSize;
+    public PartitionMetrics merge(PartitionMetrics other, Long timestampMillis) {
+      this.addedDataFileCount += other.addedDataFileCount;
+      this.removedDataFileCount += other.removedDataFileCount;
+      this.addedDeleteFileCount += other.addedDeleteFileCount;
+      this.removedDeleteFileCount += other.removedDeleteFileCount;
+      this.addedRecordCount += other.addedRecordCount;
+      this.addedSize += other.addedSize;
       if (timestampMillis != null && (dataTimestampMillis == null || dataTimestampMillis < timestampMillis)) {
         this.dataTimestampMillis = timestampMillis;
       }
       return this;
     }
 
-    private PartitionMetrics updateFromFile(ContentFile<?> file, Long timestampMillis) {
-      this.fileCount += 1;
-      this.recordCount += file.recordCount();
-      this.totalSize += file.fileSizeInBytes();
-      if (timestampMillis != null &&
-          (dataTimestampMillis == null || dataTimestampMillis < timestampMillis)) {
+    public PartitionMetrics updateFromFile(ContentFile<?> file, Long timestampMillis, boolean isAdded) {
+      if (timestampMillis != null && (dataTimestampMillis == null || dataTimestampMillis < timestampMillis)) {
         this.dataTimestampMillis = timestampMillis;
       }
+
+      if (isAdded) {
+        addedSize += file.fileSizeInBytes();
+        addedRecordCount += file.recordCount();
+        switch (file.content()) {
+          case DATA:
+            addedDataFileCount += 1;
+            break;
+          case POSITION_DELETES:
+          case EQUALITY_DELETES:
+            addedDeleteFileCount += 1;
+            break;
+        }
+      } else {
+        switch (file.content()) {
+          case DATA:
+            removedDataFileCount += 1;
+            break;
+          case POSITION_DELETES:
+          case EQUALITY_DELETES:
+            removedDeleteFileCount += 1;
+            break;
+        }
+      }
+
       return this;
     }
 
@@ -295,9 +401,9 @@ public class ScanSummary {
     public String toString() {
       String dataTimestamp = dataTimestampMillis != null ?
           new Date(dataTimestampMillis).toString() : null;
-      return "PartitionMetrics(fileCount=" + fileCount +
-          ", recordCount=" + recordCount +
-          ", totalSize=" + totalSize +
+      return "PartitionMetrics(fileCount=" + addedDataFileCount +
+          ", recordCount=" + addedRecordCount +
+          ", totalSize=" + addedSize +
           ", dataTimestamp=" + dataTimestamp + ")";
     }
   }

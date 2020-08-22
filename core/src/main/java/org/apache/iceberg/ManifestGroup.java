@@ -127,6 +127,11 @@ class ManifestGroup {
     return this;
   }
 
+  ManifestGroup ignoreExisting(boolean shouldIgnore) {
+    this.ignoreExisting = shouldIgnore;
+    return this;
+  }
+
   ManifestGroup ignoreResiduals() {
     this.ignoreResiduals = true;
     return this;
