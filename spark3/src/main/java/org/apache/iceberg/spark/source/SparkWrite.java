@@ -29,6 +29,7 @@ import org.apache.iceberg.DataFile;
 import org.apache.iceberg.FileFormat;
 import org.apache.iceberg.OverwriteFiles;
 import org.apache.iceberg.PartitionSpec;
+import org.apache.iceberg.Partitioning;
 import org.apache.iceberg.ReplacePartitions;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Snapshot;
@@ -46,15 +47,22 @@ import org.apache.iceberg.io.UnpartitionedWriter;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.Iterables;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
+import org.apache.iceberg.spark.Spark3Util;
 import org.apache.iceberg.util.PropertyUtil;
 import org.apache.iceberg.util.Tasks;
 import org.apache.spark.broadcast.Broadcast;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.catalyst.InternalRow;
+import org.apache.spark.sql.connector.distributions.Distribution;
+import org.apache.spark.sql.connector.distributions.OrderedDistribution;
+import org.apache.spark.sql.connector.expressions.SortOrder;
 import org.apache.spark.sql.connector.write.BatchWrite;
 import org.apache.spark.sql.connector.write.DataWriter;
 import org.apache.spark.sql.connector.write.DataWriterFactory;
 import org.apache.spark.sql.connector.write.LogicalWriteInfo;
 import org.apache.spark.sql.connector.write.PhysicalWriteInfo;
+import org.apache.spark.sql.connector.write.RequiresDistributionAndOrdering;
+import org.apache.spark.sql.connector.write.Write;
 import org.apache.spark.sql.connector.write.WriterCommitMessage;
 import org.apache.spark.sql.connector.write.streaming.StreamingDataWriterFactory;
 import org.apache.spark.sql.connector.write.streaming.StreamingWrite;
@@ -75,8 +83,9 @@ import static org.apache.iceberg.TableProperties.DEFAULT_FILE_FORMAT_DEFAULT;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DEFAULT;
 
-class SparkWrite {
+class SparkWrite implements Write, RequiresDistributionAndOrdering {
   private static final Logger LOG = LoggerFactory.getLogger(SparkWrite.class);
+  private static final SortOrder[] NO_REQUIRED_ORDER = new SortOrder[0];
 
   private final Table table;
   private final String queryId;
@@ -145,6 +154,32 @@ class SparkWrite {
   private boolean isWapTable() {
     return Boolean.parseBoolean(table.properties().getOrDefault(
         TableProperties.WRITE_AUDIT_PUBLISH_ENABLED, TableProperties.WRITE_AUDIT_PUBLISH_ENABLED_DEFAULT));
+  }
+
+  @Override
+  public Distribution requiredDistribution() {
+    // honor the Spark inference setting, but override with table options
+    boolean infer = Boolean.parseBoolean(SparkSession.active().conf()
+        .get("spark.sql.dsv2.inferDistributionAndOrdering", "false"));
+    boolean inferFromSpec = PropertyUtil.propertyAsBoolean(table.properties(),
+        TableProperties.ORDER_INFERENCE,
+        infer && Partitioning.hasBucketField(table.spec()));
+    return Spark3Util.toRequiredDistribution(table.spec(), table.sortOrder(), inferFromSpec);
+  }
+
+  @Override
+  public SortOrder[] requiredOrdering() {
+    Distribution distribution = requiredDistribution();
+    if (distribution instanceof OrderedDistribution) {
+      return ((OrderedDistribution) distribution).ordering();
+    } else if (table.sortOrder() != null && !table.sortOrder().isUnsorted()) {
+      return Spark3Util.convert(table.sortOrder());
+    } else if (Boolean.parseBoolean(SparkSession.active().conf().get("spark.sql.dsv2.inferOrdering", "true"))) {
+      // infer a local ordering
+      return Spark3Util.convert(Partitioning.sortOrderFor(table.spec()));
+    }
+
+    return NO_REQUIRED_ORDER;
   }
 
   // the writer factory works for both batch and streaming

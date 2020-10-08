@@ -66,6 +66,8 @@ public class TableProperties {
   public static final String AVRO_COMPRESSION = "write.avro.compression-codec";
   public static final String AVRO_COMPRESSION_DEFAULT = "gzip";
 
+  public static final String ORDER_INFERENCE = "write.order-by.infer";
+
   public static final String SPLIT_SIZE = "read.split.target-size";
   public static final long SPLIT_SIZE_DEFAULT = 134217728; // 128 MB
 

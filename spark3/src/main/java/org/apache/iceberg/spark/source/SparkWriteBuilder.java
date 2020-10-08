@@ -38,6 +38,7 @@ import org.apache.spark.sql.connector.write.BatchWrite;
 import org.apache.spark.sql.connector.write.LogicalWriteInfo;
 import org.apache.spark.sql.connector.write.SupportsDynamicOverwrite;
 import org.apache.spark.sql.connector.write.SupportsOverwrite;
+import org.apache.spark.sql.connector.write.Write;
 import org.apache.spark.sql.connector.write.WriteBuilder;
 import org.apache.spark.sql.connector.write.streaming.StreamingWrite;
 import org.apache.spark.sql.sources.Filter;
@@ -97,7 +98,7 @@ class SparkWriteBuilder implements WriteBuilder, SupportsDynamicOverwrite, Suppo
   }
 
   @Override
-  public BatchWrite buildForBatch() {
+  public Write build() {
     // Validate
     Schema writeSchema = SparkSchemaUtil.convert(table.schema(), dsSchema);
     TypeUtil.validateWriteSchema(table.schema(), writeSchema,
@@ -124,34 +125,13 @@ class SparkWriteBuilder implements WriteBuilder, SupportsDynamicOverwrite, Suppo
   }
 
   @Override
+  public BatchWrite buildForBatch() {
+    return build().toBatch();
+  }
+
+  @Override
   public StreamingWrite buildForStreaming() {
-    // Validate
-    Schema writeSchema = SparkSchemaUtil.convert(table.schema(), dsSchema);
-    TypeUtil.validateWriteSchema(table.schema(), writeSchema,
-        checkNullability(spark, options), checkOrdering(spark, options));
-    SparkUtil.validatePartitionTransforms(table.spec());
-
-    // Change to streaming write if it is just append
-    Preconditions.checkState(!overwriteDynamic,
-        "Unsupported streaming operation: dynamic partition overwrite");
-    Preconditions.checkState(!overwriteByFilter || overwriteExpr == Expressions.alwaysTrue(),
-        "Unsupported streaming operation: overwrite by filter: %s", overwriteExpr);
-
-    // Get application id
-    String appId = spark.sparkContext().applicationId();
-
-    // Get write-audit-publish id
-    String wapId = spark.conf().get("spark.wap.id", null);
-
-    Broadcast<FileIO> io = lazySparkContext().broadcast(SparkUtil.serializableFileIO(table));
-    Broadcast<EncryptionManager> encryptionManager = lazySparkContext().broadcast(table.encryption());
-
-    SparkWrite write = new SparkWrite(table, io, encryptionManager, writeInfo, appId, wapId, writeSchema, dsSchema);
-    if (overwriteByFilter) {
-      return write.asStreamingOverwrite();
-    } else {
-      return write.asStreamingAppend();
-    }
+    return build().toStreaming();
   }
 
   private static boolean checkNullability(SparkSession spark, CaseInsensitiveStringMap options) {
