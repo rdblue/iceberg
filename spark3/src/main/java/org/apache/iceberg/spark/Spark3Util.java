@@ -26,17 +26,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.iceberg.NullOrder;
 import org.apache.iceberg.PartitionField;
 import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Partitioning;
+import org.apache.iceberg.ReplaceSortOrder;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.SortField;
 import org.apache.iceberg.SortOrder;
+import org.apache.iceberg.SortOrderBuilder;
 import org.apache.iceberg.TableProperties;
 import org.apache.iceberg.UpdateProperties;
 import org.apache.iceberg.UpdateSchema;
 import org.apache.iceberg.expressions.BoundPredicate;
 import org.apache.iceberg.expressions.ExpressionVisitors;
+import org.apache.iceberg.expressions.Term;
 import org.apache.iceberg.expressions.UnboundPredicate;
 import org.apache.iceberg.hadoop.HadoopInputFile;
 import org.apache.iceberg.io.FileIO;
@@ -60,9 +65,15 @@ import org.apache.spark.sql.connector.distributions.Distributions;
 import org.apache.spark.sql.connector.expressions.Expression;
 import org.apache.spark.sql.connector.expressions.Expressions;
 import org.apache.spark.sql.connector.expressions.Literal;
+import org.apache.spark.sql.connector.expressions.NamedReference;
+import org.apache.spark.sql.connector.expressions.NullOrdering;
+import org.apache.spark.sql.connector.expressions.SortDirection;
 import org.apache.spark.sql.connector.expressions.Transform;
+import org.apache.spark.sql.types.Decimal;
+import org.apache.spark.sql.types.DecimalType;
 import org.apache.spark.sql.types.IntegerType;
 import org.apache.spark.sql.types.LongType;
+import org.apache.spark.sql.types.StringType;
 import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 
 public class Spark3Util {
@@ -257,6 +268,56 @@ public class Spark3Util {
         });
 
     return transforms.toArray(new Transform[0]);
+  }
+
+  private static Term convert(Expression expr) {
+    if (expr instanceof Transform) {
+      Transform transform = (Transform) expr;
+      Preconditions.checkArgument(transform.references().length == 1,
+          "Cannot convert transform with more than one column reference: %s", transform);
+      String colName = DOT.join(transform.references()[0].fieldNames());
+      switch (transform.name()) {
+        case "identity":
+          return org.apache.iceberg.expressions.Expressions.ref(colName);
+        case "bucket":
+          return org.apache.iceberg.expressions.Expressions.bucket(colName, findWidth(transform));
+        case "years":
+          return org.apache.iceberg.expressions.Expressions.year(colName);
+        case "months":
+          return org.apache.iceberg.expressions.Expressions.month(colName);
+        case "date":
+        case "days":
+          return org.apache.iceberg.expressions.Expressions.day(colName);
+        case "date_hour":
+        case "hours":
+          return org.apache.iceberg.expressions.Expressions.hour(colName);
+        case "truncate":
+          return org.apache.iceberg.expressions.Expressions.truncate(colName, findWidth(transform));
+        default:
+          throw new UnsupportedOperationException("Transform is not supported: " + transform);
+      }
+
+    } else if (expr instanceof NamedReference) {
+      NamedReference ref = (NamedReference) expr;
+      return org.apache.iceberg.expressions.Expressions.ref(DOT.join(ref.fieldNames()));
+
+    } else {
+      throw new UnsupportedOperationException(String.format("Cannot convert unknown expression: %s", expr));
+    }
+  }
+
+  static void rebuildSortOrder(SortOrderBuilder<?> builder,
+                               org.apache.spark.sql.connector.expressions.SortOrder[] orderFields) {
+    Stream.of(orderFields).forEach(field -> {
+      Term term = convert(field.expression());
+      NullOrder nullOrder = field.nullOrdering() == NullOrdering.NULLS_FIRST ?
+          NullOrder.NULLS_FIRST : NullOrder.NULLS_LAST;
+      if (field.direction() == SortDirection.ASCENDING) {
+        builder.asc(term, nullOrder);
+      } else {
+        builder.desc(term, nullOrder);
+      }
+    });
   }
 
   public static Distribution toRequiredDistribution(PartitionSpec spec, SortOrder sortOrder, boolean inferFromSpec) {
