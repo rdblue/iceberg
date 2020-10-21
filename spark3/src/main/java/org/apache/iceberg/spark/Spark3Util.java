@@ -463,6 +463,10 @@ public class Spark3Util {
     return TypeUtil.visit(type, DescribeSchemaVisitor.INSTANCE);
   }
 
+  public static String describe(SortOrder order) {
+    return Joiner.on(", ").join(SortOrderVisitor.visit(order, DescribeSortOrderVisitor.INSTANCE));
+  }
+
   public static boolean isLocalityEnabled(FileIO io, String location, CaseInsensitiveStringMap readOptions) {
     InputFile in = io.newInputFile(location);
     if (in instanceof HadoopInputFile) {
@@ -653,6 +657,61 @@ public class Spark3Util {
       } else {
         return lit.value().toString();
       }
+    }
+  }
+
+  private static class DescribeSortOrderVisitor implements SortOrderVisitor<String> {
+    private static final DescribeSortOrderVisitor INSTANCE = new DescribeSortOrderVisitor();
+
+    private DescribeSortOrderVisitor() {
+    }
+
+    @Override
+    public String field(String sourceName, int sourceId,
+                        org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("%s %s %s", sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String bucket(String sourceName, int sourceId, int numBuckets,
+                         org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("bucket(%s, %s) %s %s", numBuckets, sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String truncate(String sourceName, int sourceId, int width,
+                           org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("bucket(%s, %s) %s %s", sourceName, width, direction, nullOrder);
+    }
+
+    @Override
+    public String year(String sourceName, int sourceId,
+                       org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("years(%s) %s %s", sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String month(String sourceName, int sourceId,
+                        org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("months(%s) %s %s", sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String day(String sourceName, int sourceId,
+                      org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("days(%s) %s %s", sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String hour(String sourceName, int sourceId,
+                       org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("hours(%s) %s %s", sourceName, direction, nullOrder);
+    }
+
+    @Override
+    public String unknown(String sourceName, int sourceId, String transform,
+                          org.apache.iceberg.SortDirection direction, NullOrder nullOrder) {
+      return String.format("%s(%s) %s %s", transform, sourceName, direction, nullOrder);
     }
   }
 }
