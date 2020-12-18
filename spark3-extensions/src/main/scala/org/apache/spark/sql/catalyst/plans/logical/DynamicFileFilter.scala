@@ -20,18 +20,17 @@
 package org.apache.spark.sql.catalyst.plans.logical
 
 import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeSet}
-import org.apache.spark.sql.connector.iceberg.read.SupportsFileFilter
+import org.apache.spark.sql.execution.datasources.v2.DataSourceV2ScanRelation
 
 // TODO: fix stats (ignore the fact it is a binary node and report only scanRelation stats)
 case class DynamicFileFilter(
-    scanPlan: LogicalPlan,
-    fileFilterPlan: LogicalPlan,
-    filterable: SupportsFileFilter) extends BinaryNode {
+    scanRelation: DataSourceV2ScanRelation,
+    fileFilterPlan: LogicalPlan) extends BinaryNode {
 
   @transient
-  override lazy val references: AttributeSet = AttributeSet(fileFilterPlan.output)
+  override lazy val references: AttributeSet = AttributeSet(scanRelation.output ++ fileFilterPlan.output)
 
-  override def left: LogicalPlan = scanPlan
+  override def left: LogicalPlan = scanRelation
   override def right: LogicalPlan = fileFilterPlan
-  override def output: Seq[Attribute] = scanPlan.output
+  override def output: Seq[Attribute] = scanRelation.output
 }

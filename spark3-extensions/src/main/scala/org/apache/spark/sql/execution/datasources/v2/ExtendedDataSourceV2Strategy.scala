@@ -25,10 +25,9 @@ import org.apache.spark.sql.catalyst.expressions.Expression
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
 import org.apache.spark.sql.catalyst.plans.logical.Call
 import org.apache.spark.sql.catalyst.plans.logical.DynamicFileFilter
-import org.apache.spark.sql.catalyst.plans.logical.ExtendedScanRelation
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.plans.logical.ReplaceData
-import org.apache.spark.sql.execution.SparkPlan
+import org.apache.spark.sql.execution.{ProjectExec, SparkPlan}
 
 object ExtendedDataSourceV2Strategy extends Strategy {
 
@@ -37,11 +36,16 @@ object ExtendedDataSourceV2Strategy extends Strategy {
       val input = buildInternalRow(args)
       CallExec(c.output, procedure, input) :: Nil
 
-    case DynamicFileFilter(scanPlan, fileFilterPlan, filterable) =>
-      DynamicFileFilterExec(planLater(scanPlan), planLater(fileFilterPlan), filterable) :: Nil
-
-    case ExtendedScanRelation(relation) =>
-      ExtendedBatchScanExec(relation.output, relation.scan) :: Nil
+    case DynamicFileFilter(scanRelation, fileFilterPlan) =>
+      // we don't use planLater here as we need ExtendedBatchScanExec, not BatchScanExec
+      val scanExec = ExtendedBatchScanExec(scanRelation.output, scanRelation.scan)
+      val dynamicFileFilterExec = DynamicFileFilterExec(scanExec, planLater(fileFilterPlan))
+      if (scanExec.supportsColumnar) {
+        dynamicFileFilterExec :: Nil
+      } else {
+        // add a projection to ensure we have UnsafeRows required by some operations
+        ProjectExec(scanRelation.output, dynamicFileFilterExec) :: Nil
+      }
 
     case ReplaceData(_, batchWrite, query) =>
       ReplaceDataExec(batchWrite, planLater(query)) :: Nil
