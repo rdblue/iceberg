@@ -21,9 +21,14 @@ package org.apache.spark.sql.execution.datasources.v2
 
 import org.apache.spark.sql.Strategy
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.expressions.{Expression, GenericInternalRow}
-import org.apache.spark.sql.catalyst.plans.logical.{Call, DynamicFileFilter, LogicalPlan, ReplaceData}
-import org.apache.spark.sql.execution.{ProjectExec, SparkPlan}
+import org.apache.spark.sql.catalyst.expressions.Expression
+import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
+import org.apache.spark.sql.catalyst.plans.logical.Call
+import org.apache.spark.sql.catalyst.plans.logical.DynamicFileFilter
+import org.apache.spark.sql.catalyst.plans.logical.ExtendedScanRelation
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import org.apache.spark.sql.catalyst.plans.logical.ReplaceData
+import org.apache.spark.sql.execution.SparkPlan
 
 object ExtendedDataSourceV2Strategy extends Strategy {
 
@@ -31,18 +36,16 @@ object ExtendedDataSourceV2Strategy extends Strategy {
     case c @ Call(procedure, args) =>
       val input = buildInternalRow(args)
       CallExec(c.output, procedure, input) :: Nil
-    case DynamicFileFilter(scanRelation, fileFilterPlan) =>
-      // we don't use planLater here as we need ExtendedBatchScanExec, not BatchScanExec
-      val scanExec = ExtendedBatchScanExec(scanRelation.output, scanRelation.scan)
-      val dynamicFileFilter = DynamicFileFilterExec(scanExec, planLater(fileFilterPlan))
-      if (scanExec.supportsColumnar) {
-        dynamicFileFilter :: Nil
-      } else {
-        // add a projection to ensure we have UnsafeRows required by some operations
-        ProjectExec(scanRelation.output, dynamicFileFilter) :: Nil
-      }
+
+    case DynamicFileFilter(scanPlan, fileFilterPlan, filterable) =>
+      DynamicFileFilterExec(planLater(scanPlan), planLater(fileFilterPlan), filterable) :: Nil
+
+    case ExtendedScanRelation(relation) =>
+      ExtendedBatchScanExec(relation.output, relation.scan) :: Nil
+
     case ReplaceData(_, batchWrite, query) =>
       ReplaceDataExec(batchWrite, planLater(query)) :: Nil
+
     case _ => Nil
   }
 
