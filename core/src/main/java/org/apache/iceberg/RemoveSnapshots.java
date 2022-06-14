@@ -571,7 +571,7 @@ class RemoveSnapshots implements ExpireSnapshots {
           .build();
 
     } else {
-      return CloseableIterable.withNoopClose(snapshot.allManifests());
+      return CloseableIterable.withNoopClose(snapshot.allManifests(ops.io()));
     }
   }
 }
