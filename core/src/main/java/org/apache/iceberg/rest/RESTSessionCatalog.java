@@ -38,6 +38,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.BaseTable;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.CatalogUtil;
+import org.apache.iceberg.IcebergBuild;
 import org.apache.iceberg.MetadataTableType;
 import org.apache.iceberg.MetadataTableUtils;
 import org.apache.iceberg.MetadataUpdate;
@@ -702,7 +703,10 @@ public class RESTSessionCatalog extends BaseSessionCatalog implements Configurab
   }
 
   private static Map<String, String> configHeaders(Map<String, String> properties) {
-    return RESTUtil.extractPrefixMap(properties, "header.");
+    ImmutableMap.Builder<String, String> headers = ImmutableMap.builder();
+    RESTUtil.extractPrefix(properties, "header.", headers::put);
+    headers.put("X-Iceberg-Version", IcebergBuild.fullVersion());
+    return headers.build();
   }
 
   private static Cache<String, AuthSession> newSessionCache(Map<String, String> properties) {

@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.relocated.com.google.common.base.Joiner;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
@@ -88,15 +89,26 @@ public class RESTUtil {
    * from the spark configuration.
    */
   public static Map<String, String> extractPrefixMap(Map<String, String> properties, String prefix) {
-    Preconditions.checkNotNull(properties, "Invalid properties map: null");
     Map<String, String> result = Maps.newHashMap();
+    extractPrefix(properties, prefix, result::put);
+    return result;
+  }
+
+  /**
+   * Calls a consumer with a subset of a properties map where the keys start with the prefix. The prefix is removed
+   * before calling the consumer.
+   *
+   * @param properties a string map
+   * @param prefix a string prefix for matching keys
+   * @param consumer a consumer for key/value results
+   */
+  public static void extractPrefix(Map<String, String> properties, String prefix, BiConsumer<String, String> consumer) {
+    Preconditions.checkNotNull(properties, "Invalid properties map: null");
     properties.forEach((key, value) -> {
       if (key != null && key.startsWith(prefix)) {
-        result.put(key.substring(prefix.length()), value);
+        consumer.accept(key.substring(prefix.length()), value);
       }
     });
-
-    return result;
   }
 
   private static final Joiner.MapJoiner FORM_JOINER = Joiner.on("&").withKeyValueSeparator("=");
