@@ -768,6 +768,30 @@ paths:
         5XX:
           $ref: '#/components/responses/ServerErrorResponse'
 
+  /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics/scan:
+    parameters:
+      - $ref: '#/components/parameters/prefix'
+      - $ref: '#/components/parameters/namespace'
+      - $ref: '#/components/parameters/table'
+
+    post:
+      tags:
+        - Catalog API
+      summary: Send a scan report to this endpoint to be processed by the backend
+      description:
+        Send a scan report to this endpoint to be processed by the backend
+      operationId: sendScanReport
+      requestBody:
+        description: The request containing the scan report to be sent
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanReportRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+
 components:
   #######################################################
   # Common Parameter Definitions Used In Several Routes #
@@ -1627,6 +1651,98 @@ components:
       anyOf:
         - $ref: '#/components/schemas/OAuthClientCredentialsRequest'
         - $ref: '#/components/schemas/OAuthTokenExchangeRequest'
+
+    ScanReportRequest:
+      type: object
+      required:
+        - scan-report
+      properties:
+        scan-report:
+          $ref: '#/components/schemas/ScanReport'
+      example:
+        {
+          "scan-report": {
+            "table-name": "catalogName.newdb.table",
+            "snapshot-id": 2454802579694783000,
+            "projection": {
+              "type": "struct",
+              "schema-id": 0,
+              "fields": [
+                {
+                  "id": 1,
+                  "name": "id",
+                  "required": true,
+                  "type": "int",
+                  "doc": "unique ID"
+                },
+                {
+                  "id": 2,
+                  "name": "data",
+                  "required": true,
+                  "type": "string"
+                }
+              ]
+            },
+            "metrics": {
+              "total-planning-duration": {
+                "count": 1,
+                "time-unit": "nanoseconds",
+                "total-duration": 2644235116
+              },
+              "result-data-files": {
+                "unit": "count",
+                "value": 1,
+              },
+              "result-delete-files": {
+                "unit": "count",
+                "value": 0,
+              },
+              "total-data-manifests": {
+                "unit": "count",
+                "value": 1,
+              },
+              "total-delete-manifests": {
+                "unit": "count",
+                "value": 0,
+              },
+              "scanned-data-manifests": {
+                "unit": "count",
+                "value": 1,
+              },
+              "skipped-data-manifests": {
+                "unit": "count",
+                "value": 0,
+              },
+              "total-file-size-bytes": {
+                "unit": "bytes",
+                "value": 10,
+              },
+              "total-delete-file-size-bytes": {
+                "unit": "bytes",
+                "value": 0,
+              }
+            }
+          }
+        }
+
+    ScanReport:
+      type: object
+      required:
+        - table-name
+        - snapshot-id
+        - projection
+        - metrics
+      properties:
+        table-name:
+         type: string
+        snapshot-id:
+          type: integer
+          format: int64
+        projection:
+          $ref: '#/components/schemas/Schema'
+        metrics:
+          type: object
+
 
   #############################
   # Reusable Response Objects #

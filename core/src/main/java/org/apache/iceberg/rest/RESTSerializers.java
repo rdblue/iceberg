@@ -41,6 +41,8 @@ import org.apache.iceberg.UnboundSortOrder;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.catalog.TableIdentifierParser;
+import org.apache.iceberg.metrics.ScanReport;
+import org.apache.iceberg.metrics.ScanReportParser;
 import org.apache.iceberg.rest.auth.OAuth2Util;
 import org.apache.iceberg.rest.requests.UpdateRequirementParser;
 import org.apache.iceberg.rest.requests.UpdateTableRequest.UpdateRequirement;
@@ -75,7 +77,9 @@ public class RESTSerializers {
         .addSerializer(UpdateRequirement.class, new UpdateRequirementSerializer())
         .addDeserializer(UpdateRequirement.class, new UpdateRequirementDeserializer())
         .addSerializer(OAuthTokenResponse.class, new OAuthTokenResponseSerializer())
-        .addDeserializer(OAuthTokenResponse.class, new OAuthTokenResponseDeserializer());
+        .addDeserializer(OAuthTokenResponse.class, new OAuthTokenResponseDeserializer())
+        .addSerializer(ScanReport.class, new ScanReportSerializer())
+        .addDeserializer(ScanReport.class, new ScanReportDeserializer());
     mapper.registerModule(module);
   }
 
@@ -252,6 +256,22 @@ public class RESTSerializers {
         throws IOException {
       JsonNode jsonNode = p.getCodec().readTree(p);
       return OAuth2Util.tokenResponseFromJson(jsonNode);
+    }
+  }
+
+  public static class ScanReportSerializer extends JsonSerializer<ScanReport> {
+    @Override
+    public void serialize(ScanReport report, JsonGenerator gen, SerializerProvider serializers)
+        throws IOException {
+      ScanReportParser.toJson(report, gen);
+    }
+  }
+
+  public static class ScanReportDeserializer extends JsonDeserializer<ScanReport> {
+    @Override
+    public ScanReport deserialize(JsonParser p, DeserializationContext context) throws IOException {
+      JsonNode jsonNode = p.getCodec().readTree(p);
+      return ScanReportParser.fromJson(jsonNode);
     }
   }
 }
