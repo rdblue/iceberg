@@ -18,66 +18,35 @@
  */
 package org.apache.iceberg.metrics;
 
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 
-/**
- * A default {@link org.apache.iceberg.metrics.MetricsContext.Counter} implementation that uses an
- * {@link Integer} to count events.
- *
- * @deprecated Use {@link DefaultCounter} instead.
- */
-@Deprecated
-class IntCounter implements MetricsContext.Counter<Integer> {
-  static final IntCounter NOOP =
-      new IntCounter("NOOP", MetricsContext.Unit.UNDEFINED) {
-        @Override
-        public void increment() {}
-
-        @Override
-        public void increment(Integer amount) {}
-
-        @Override
-        public Optional<Integer> count() {
-          return Optional.of(value());
-        }
-
-        @Override
-        public Integer value() {
-          return 0;
-        }
-      };
-
-  private final AtomicInteger counter;
+/** A default {@link Counter} implementation that uses an {@link AtomicLong} to count events. */
+public class DefaultCounter implements Counter {
+  private final AtomicLong counter;
   private final String name;
   private final MetricsContext.Unit unit;
 
-  IntCounter(String name, MetricsContext.Unit unit) {
+  DefaultCounter(String name, MetricsContext.Unit unit) {
     Preconditions.checkArgument(null != name, "Invalid counter name: null");
     Preconditions.checkArgument(null != unit, "Invalid count unit: null");
     this.name = name;
     this.unit = unit;
-    this.counter = new AtomicInteger(0);
+    this.counter = new AtomicLong(0L);
   }
 
   @Override
   public void increment() {
-    increment(1);
+    increment(1L);
   }
 
   @Override
-  public void increment(Integer amount) {
+  public void increment(long amount) {
     counter.updateAndGet(val -> Math.addExact(val, amount));
   }
 
   @Override
-  public Optional<Integer> count() {
-    return Optional.of(counter.get());
-  }
-
-  @Override
-  public Integer value() {
+  public long value() {
     return counter.get();
   }
 
