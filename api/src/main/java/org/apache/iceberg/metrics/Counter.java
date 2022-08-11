@@ -59,7 +59,7 @@ public interface Counter {
   }
 
   Counter NOOP =
-      new Counter() {
+      new DefaultCounter("undefined", Unit.COUNT) {
         @Override
         public void increment() {}
 
@@ -68,7 +68,7 @@ public interface Counter {
 
         @Override
         public long value() {
-          return 0L;
+          throw new UnsupportedOperationException("NOOP counter has no value");
         }
       };
 }

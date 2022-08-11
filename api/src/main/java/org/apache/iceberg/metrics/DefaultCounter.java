@@ -18,6 +18,7 @@
  */
 package org.apache.iceberg.metrics;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 
@@ -26,6 +27,8 @@ public class DefaultCounter implements Counter {
   private final AtomicLong counter;
   private final String name;
   private final MetricsContext.Unit unit;
+  private AsIntCounter asIntCounter = null;
+  private AsLongCounter asLongCounter = null;
 
   DefaultCounter(String name, MetricsContext.Unit unit) {
     Preconditions.checkArgument(null != name, "Invalid counter name: null");
@@ -63,5 +66,87 @@ public class DefaultCounter implements Counter {
   @Override
   public String name() {
     return name;
+  }
+
+  MetricsContext.Counter<Integer> asIntCounter() {
+    if (null == asIntCounter) {
+      this.asIntCounter = new AsIntCounter();
+    }
+
+    return asIntCounter;
+  }
+
+  MetricsContext.Counter<Long> asLongCounter() {
+    if (null == asLongCounter) {
+      this.asLongCounter = new AsLongCounter();
+    }
+
+    return asLongCounter;
+  }
+
+  private class AsIntCounter implements MetricsContext.Counter<Integer> {
+
+    @Override
+    public void increment() {
+      DefaultCounter.this.increment();
+    }
+
+    @Override
+    public void increment(Integer amount) {
+      DefaultCounter.this.increment(amount);
+    }
+
+    @Override
+    public Optional<Integer> count() {
+      return Optional.of(value());
+    }
+
+    @Override
+    public Integer value() {
+      return Math.toIntExact(counter.get());
+    }
+
+    @Override
+    public MetricsContext.Unit unit() {
+      return unit;
+    }
+
+    @Override
+    public String name() {
+      return name;
+    }
+  }
+
+  private class AsLongCounter implements MetricsContext.Counter<Long> {
+
+    @Override
+    public void increment() {
+      DefaultCounter.this.increment();
+    }
+
+    @Override
+    public void increment(Long amount) {
+      DefaultCounter.this.increment(amount);
+    }
+
+    @Override
+    public Optional<Long> count() {
+      return Optional.of(value());
+    }
+
+    @Override
+    public Long value() {
+      return counter.get();
+    }
+
+    @Override
+    public MetricsContext.Unit unit() {
+      return unit;
+    }
+
+    @Override
+    public String name() {
+      return name;
+    }
   }
 }
