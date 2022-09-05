@@ -1038,6 +1038,110 @@ components:
               items:
                 type: integer
 
+    Expression:
+      oneOf:
+        - $ref: '#/components/schemas/AndOrExpression'
+        - $ref: '#/components/schemas/NotExpression'
+        - $ref: '#/components/schemas/SetExpression'
+        - $ref: '#/components/schemas/LiteralExpression'
+
+    ExpressionType:
+      type: string
+      example:
+        - "eq"
+        - "and"
+        - "or"
+        - "not"
+        - "in"
+        - "not-in"
+        - "lt"
+        - "lt-eq"
+        - "gt"
+        - "gt-eq"
+
+    AndOrExpression:
+      type: object
+      required:
+        - type
+        - left
+        - right
+      properties:
+        type:
+          $ref: '#/components/schemas/ExpressionType'
+          enum: ["and", "or"]
+        left:
+          $ref: '#/components/schemas/Expression'
+        right:
+          $ref: '#/components/schemas/Expression'
+
+    NotExpression:
+      type: object
+      required:
+        - type
+        - child
+      properties:
+        type:
+          $ref: '#/components/schemas/ExpressionType'
+          enum: ["not"]
+        child:
+          $ref: '#/components/schemas/Expression'
+
+    LiteralExpression:
+      type: object
+      required:
+        - type
+        - term
+        - value
+      properties:
+        type:
+          $ref: '#/components/schemas/ExpressionType'
+        term:
+          $ref: '#/components/schemas/Term'
+        value:
+          type: object
+
+    SetExpression:
+      type: object
+      required:
+        - type
+        - term
+        - values
+      properties:
+        type:
+          $ref: '#/components/schemas/ExpressionType'
+          enum: ["in", "not-in"]
+        term:
+          $ref: '#/components/schemas/Term'
+        values:
+          type: array
+          items:
+            type: object
+
+    Term:
+      oneOf:
+        - $ref: '#/components/schemas/LiteralTerm'
+        - $ref: '#/components/schemas/ComplexTerm'
+
+    LiteralTerm:
+      type: string
+      example:
+        - "column-name"
+        - "id"
+
+    ComplexTerm:
+      type: object
+      required:
+        - type
+        - transform
+        - term
+      properties:
+        type:
+          type: string
+        transform:
+          $ref: '#/components/schemas/Transform'
+        term:
+          type: string
+
     Transform:
       type: string
       example:
@@ -1659,30 +1763,28 @@ components:
       properties:
         scan-report:
           $ref: '#/components/schemas/ScanReport'
-      example:
-        {
-          "scan-report": {
-            "table-name": "catalogName.newdb.table",
-            "snapshot-id": 2454802579694783000,
-            "projection": {
-              "type": "struct",
-              "schema-id": 0,
-              "fields": [
-                {
-                  "id": 1,
-                  "name": "id",
-                  "required": true,
-                  "type": "int",
-                  "doc": "unique ID"
-                },
-                {
-                  "id": 2,
-                  "name": "data",
-                  "required": true,
-                  "type": "string"
-                }
-              ]
-            },
+
+    ScanReport:
+      type: object
+      required:
+        - table-name
+        - snapshot-id
+        - filter
+        - projection
+        - metrics
+      properties:
+        table-name:
+         type: string
+        snapshot-id:
+          type: integer
+          format: int64
+        filter:
+          $ref: '#/components/schemas/Expression'
+        projection:
+          $ref: '#/components/schemas/Schema'
+        metrics:
+          type: object
+          example:
             "metrics": {
               "total-planning-duration": {
                 "count": 1,
@@ -1722,26 +1824,6 @@ components:
                 "value": 0,
               }
             }
-          }
-        }
-
-    ScanReport:
-      type: object
-      required:
-        - table-name
-        - snapshot-id
-        - projection
-        - metrics
-      properties:
-        table-name:
-         type: string
-        snapshot-id:
-          type: integer
-          format: int64
-        projection:
-          $ref: '#/components/schemas/Schema'
-        metrics:
-          type: object
 
 
   #############################
@@ -1862,7 +1944,7 @@ components:
     #  Note that this is a representative example response for use as a shorthand in the spec.
     #  The fields `message` and `type` as indicated here are not presently prescriptive.
     UnsupportedOperationResponse:
-      description: Not Acceptable / Unsuported Operation. The server does not support this operation.
+      description: Not Acceptable / Unsupported Operation. The server does not support this operation.
       content:
         application/json:
           schema:

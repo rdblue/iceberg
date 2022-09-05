@@ -286,7 +286,7 @@ public class RESTSessionCatalog extends BaseSessionCatalog
             tableFileIO(response.config()),
             response.tableMetadata());
 
-    final TableIdentifier tableIdentifier = loadedIdent;
+    TableIdentifier tableIdentifier = loadedIdent;
     BaseTable table =
         new BaseTable(
             ops,
