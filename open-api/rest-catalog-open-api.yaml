@@ -768,7 +768,7 @@ paths:
         5XX:
           $ref: '#/components/responses/ServerErrorResponse'
 
-  /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics/scan:
+  /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics:
     parameters:
       - $ref: '#/components/parameters/prefix'
       - $ref: '#/components/parameters/namespace'
@@ -780,17 +780,39 @@ paths:
       summary: Send a scan report to this endpoint to be processed by the backend
       description:
         Send a scan report to this endpoint to be processed by the backend
-      operationId: sendScanReport
+      operationId: sendMetrics
       requestBody:
         description: The request containing the scan report to be sent
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScanReportRequest'
+              $ref: '#/components/schemas/MetricsRequest'
         required: true
       responses:
-        200:
-          description: OK
+        204:
+          description: Success, no content
+        400:
+          $ref: '#/components/responses/BadRequestErrorResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+        404:
+          description:
+            Not Found - NoSuchTableException, table to load does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+              examples:
+                TableToLoadDoesNotExist:
+                  $ref: '#/components/examples/NoSuchTableError'
+        419:
+          $ref: '#/components/responses/AuthenticationTimeoutResponse'
+        503:
+          $ref: '#/components/responses/ServiceUnavailableResponse'
+        5XX:
+          $ref: '#/components/responses/ServerErrorResponse'
 
 components:
   #######################################################
@@ -1044,6 +1066,7 @@ components:
         - $ref: '#/components/schemas/NotExpression'
         - $ref: '#/components/schemas/SetExpression'
         - $ref: '#/components/schemas/LiteralExpression'
+        - $ref: '#/components/schemas/UnaryExpression'
 
     ExpressionType:
       type: string
@@ -1058,6 +1081,13 @@ components:
         - "lt-eq"
         - "gt"
         - "gt-eq"
+        - "not-eq"
+        - "starts-with"
+        - "not-starts-with"
+        - "is-null"
+        - "not-null"
+        - "is-nan"
+        - "not-nan"
 
     AndOrExpression:
       type: object
@@ -1086,6 +1116,21 @@ components:
         child:
           $ref: '#/components/schemas/Expression'
 
+    UnaryExpression:
+      type: object
+      required:
+        - type
+        - term
+        - value
+      properties:
+        type:
+          $ref: '#/components/schemas/ExpressionType'
+          enum: ["is-null", "not-null", "is-nan", "not-nan"]
+        term:
+          $ref: '#/components/schemas/Term'
+        value:
+          type: object
+
     LiteralExpression:
       type: object
       required:
@@ -1095,6 +1140,7 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/ExpressionType'
+          enum: ["lt", "lt-eq", "gt", "gt-eq", "eq", "not-eq", "starts-with", "not-starts-with"]
         term:
           $ref: '#/components/schemas/Term'
         value:
@@ -1119,16 +1165,16 @@ components:
 
     Term:
       oneOf:
-        - $ref: '#/components/schemas/LiteralTerm'
-        - $ref: '#/components/schemas/ComplexTerm'
+        - $ref: '#/components/schemas/Reference'
+        - $ref: '#/components/schemas/TransformTerm'
 
-    LiteralTerm:
+    Reference:
       type: string
       example:
         - "column-name"
         - "id"
 
-    ComplexTerm:
+    TransformTerm:
       type: object
       required:
         - type
@@ -1756,13 +1802,47 @@ components:
         - $ref: '#/components/schemas/OAuthClientCredentialsRequest'
         - $ref: '#/components/schemas/OAuthTokenExchangeRequest'
 
-    ScanReportRequest:
+    CounterResult:
       type: object
       required:
-        - scan-report
+        - unit
+        - value
       properties:
-        scan-report:
-          $ref: '#/components/schemas/ScanReport'
+        unit:
+          type: string
+        value:
+          type: integer
+          format: int64
+
+    TimerResult:
+      type: object
+      required:
+        - time-unit
+        - count
+        - total-duration
+      properties:
+        time-unit:
+          type: string
+        count:
+          type: integer
+          format: int64
+        total-duration:
+          type: integer
+          format: int64
+
+    CounterOrTimerResult:
+      anyOf:
+        - $ref: '#/components/schemas/CounterResult'
+        - $ref: '#/components/schemas/TimerResult'
+
+    ScanMetricsResult:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/CounterOrTimerResult'
+
+    MetricsRequest:
+      anyOf:
+        - $ref: '#/components/schemas/ScanReport'
 
     ScanReport:
       type: object
@@ -1772,9 +1852,10 @@ components:
         - filter
         - projection
         - metrics
+
       properties:
         table-name:
-         type: string
+          type: string
         snapshot-id:
           type: integer
           format: int64
@@ -1783,7 +1864,7 @@ components:
         projection:
           $ref: '#/components/schemas/Schema'
         metrics:
-          type: object
+          $ref: '#/components/schemas/ScanMetricsResult'
           example:
             "metrics": {
               "total-planning-duration": {

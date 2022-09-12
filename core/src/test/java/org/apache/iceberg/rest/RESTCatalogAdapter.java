@@ -125,7 +125,7 @@ public class RESTCatalogAdapter implements RESTClient {
         LoadTableResponse.class),
     DROP_TABLE(HTTPMethod.DELETE, "v1/namespaces/{namespace}/tables/{table}"),
     RENAME_TABLE(HTTPMethod.POST, "v1/tables/rename", RenameTableRequest.class, null),
-    SEND_SCAN_REPORT(HTTPMethod.POST, "v1/namespaces/{namespace}/tables/{table}/metrics/scan", ScanReportRequest.class, null);
+    SEND_METRICS(HTTPMethod.POST, "v1/namespaces/{namespace}/tables/{table}/metrics", ScanReportRequest.class, null);
 
     private final HTTPMethod method;
     private final int requiredLength;
@@ -340,7 +340,7 @@ public class RESTCatalogAdapter implements RESTClient {
           return null;
         }
 
-      case SEND_SCAN_REPORT:
+      case SEND_METRICS:
         {
           // nothing to do here other than checking that we're getting the correct request
           castRequest(ScanReportRequest.class, body);

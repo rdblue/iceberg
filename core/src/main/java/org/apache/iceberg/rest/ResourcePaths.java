@@ -83,7 +83,6 @@ public class ResourcePaths {
         RESTUtil.encodeNamespace(identifier.namespace()),
         "tables",
         RESTUtil.encodeString(identifier.name()),
-        "metrics",
-        "scan");
+        "metrics");
   }
 }
