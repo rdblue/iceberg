@@ -41,9 +41,9 @@ import org.apache.iceberg.UnboundSortOrder;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.catalog.TableIdentifierParser;
-import org.apache.iceberg.metrics.ScanReport;
-import org.apache.iceberg.metrics.ScanReportParser;
 import org.apache.iceberg.rest.auth.OAuth2Util;
+import org.apache.iceberg.rest.requests.SendMetricsRequest;
+import org.apache.iceberg.rest.requests.SendMetricsRequestParser;
 import org.apache.iceberg.rest.requests.UpdateRequirementParser;
 import org.apache.iceberg.rest.requests.UpdateTableRequest.UpdateRequirement;
 import org.apache.iceberg.rest.responses.ErrorResponse;
@@ -78,8 +78,8 @@ public class RESTSerializers {
         .addDeserializer(UpdateRequirement.class, new UpdateRequirementDeserializer())
         .addSerializer(OAuthTokenResponse.class, new OAuthTokenResponseSerializer())
         .addDeserializer(OAuthTokenResponse.class, new OAuthTokenResponseDeserializer())
-        .addSerializer(ScanReport.class, new ScanReportSerializer())
-        .addDeserializer(ScanReport.class, new ScanReportDeserializer());
+        .addSerializer(SendMetricsRequest.class, new SendMetricsRequestSerializer())
+        .addDeserializer(SendMetricsRequest.class, new SendMetricsRequestDeserializer());
     mapper.registerModule(module);
   }
 
@@ -259,19 +259,21 @@ public class RESTSerializers {
     }
   }
 
-  public static class ScanReportSerializer extends JsonSerializer<ScanReport> {
+  public static class SendMetricsRequestSerializer extends JsonSerializer<SendMetricsRequest> {
     @Override
-    public void serialize(ScanReport report, JsonGenerator gen, SerializerProvider serializers)
+    public void serialize(
+        SendMetricsRequest request, JsonGenerator gen, SerializerProvider serializers)
         throws IOException {
-      ScanReportParser.toJson(report, gen);
+      SendMetricsRequestParser.toJson(request, gen);
     }
   }
 
-  public static class ScanReportDeserializer extends JsonDeserializer<ScanReport> {
+  public static class SendMetricsRequestDeserializer extends JsonDeserializer<SendMetricsRequest> {
     @Override
-    public ScanReport deserialize(JsonParser p, DeserializationContext context) throws IOException {
+    public SendMetricsRequest deserialize(JsonParser p, DeserializationContext context)
+        throws IOException {
       JsonNode jsonNode = p.getCodec().readTree(p);
-      return ScanReportParser.fromJson(jsonNode);
+      return SendMetricsRequestParser.fromJson(jsonNode);
     }
   }
 }

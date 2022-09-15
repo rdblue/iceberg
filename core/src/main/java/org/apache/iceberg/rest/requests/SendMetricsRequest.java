@@ -23,22 +23,33 @@ import org.apache.iceberg.relocated.com.google.common.base.MoreObjects;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.rest.RESTRequest;
 
-public class ScanReportRequest implements RESTRequest {
+public class SendMetricsRequest implements RESTRequest {
+
+  public enum MetricsType {
+    UNKNOWN,
+    SCAN_REPORT
+  }
 
   private ScanReport scanReport;
+  private MetricsType metricsType;
 
   @SuppressWarnings("unused")
-  public ScanReportRequest() {
+  public SendMetricsRequest() {
     // Needed for Jackson Deserialization.
   }
 
-  private ScanReportRequest(ScanReport scanReport) {
+  private SendMetricsRequest(ScanReport scanReport) {
     this.scanReport = scanReport;
+    metricsType = null != scanReport ? MetricsType.SCAN_REPORT : MetricsType.UNKNOWN;
     validate();
   }
 
   public ScanReport scanReport() {
     return scanReport;
+  }
+
+  public MetricsType getMetricsType() {
+    return metricsType;
   }
 
   @Override
@@ -48,11 +59,12 @@ public class ScanReportRequest implements RESTRequest {
 
   @Override
   public void validate() {
+    // new metric types might be added here, so we need to make sure that exactly one is not-null
     Preconditions.checkArgument(null != scanReport, "Invalid scan report: null");
   }
 
-  public static ScanReportRequest.Builder builder() {
-    return new ScanReportRequest.Builder();
+  public static SendMetricsRequest.Builder builder() {
+    return new SendMetricsRequest.Builder();
   }
 
   public static class Builder {
@@ -65,9 +77,10 @@ public class ScanReportRequest implements RESTRequest {
       return this;
     }
 
-    public ScanReportRequest build() {
+    public SendMetricsRequest build() {
+      // new metric types might be added here, so we need to make sure that exactly one is not-null
       Preconditions.checkArgument(null != scanReport, "Invalid scan report: null");
-      return new ScanReportRequest(scanReport);
+      return new SendMetricsRequest(scanReport);
     }
   }
 }

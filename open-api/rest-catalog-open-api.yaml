@@ -777,16 +777,14 @@ paths:
     post:
       tags:
         - Catalog API
-      summary: Send a scan report to this endpoint to be processed by the backend
-      description:
-        Send a scan report to this endpoint to be processed by the backend
+      summary: Send a metrics report to this endpoint to be processed by the backend
       operationId: sendMetrics
       requestBody:
-        description: The request containing the scan report to be sent
+        description: The request containing the metrics report to be sent
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MetricsRequest'
+              $ref: '#/components/schemas/SendMetricsRequest'
         required: true
       responses:
         204:
@@ -1172,7 +1170,6 @@ components:
       type: string
       example:
         - "column-name"
-        - "id"
 
     TransformTerm:
       type: object
@@ -1183,10 +1180,11 @@ components:
       properties:
         type:
           type: string
+          enum: ["transform"]
         transform:
           $ref: '#/components/schemas/Transform'
         term:
-          type: string
+          $ref: '#/components/schemas/Reference'
 
     Transform:
       type: string
@@ -1830,15 +1828,26 @@ components:
           type: integer
           format: int64
 
-    CounterOrTimerResult:
+    MetricResult:
       anyOf:
         - $ref: '#/components/schemas/CounterResult'
         - $ref: '#/components/schemas/TimerResult'
 
-    ScanMetricsResult:
+    Metrics:
       type: object
       additionalProperties:
-        $ref: '#/components/schemas/CounterOrTimerResult'
+        $ref: '#/components/schemas/MetricResult'
+
+    SendMetricsRequest:
+      type: object
+      required:
+        - metrics-type
+        - metrics-value
+      properties:
+        metrics-type:
+          type: string
+        metrics-value:
+          $ref: '#/components/schemas/MetricsRequest'
 
     MetricsRequest:
       anyOf:
@@ -1852,7 +1861,6 @@ components:
         - filter
         - projection
         - metrics
-
       properties:
         table-name:
           type: string
@@ -1864,7 +1872,7 @@ components:
         projection:
           $ref: '#/components/schemas/Schema'
         metrics:
-          $ref: '#/components/schemas/ScanMetricsResult'
+          $ref: '#/components/schemas/Metrics'
           example:
             "metrics": {
               "total-planning-duration": {

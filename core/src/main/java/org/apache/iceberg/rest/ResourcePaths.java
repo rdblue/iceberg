@@ -75,7 +75,7 @@ public class ResourcePaths {
     return SLASH.join("v1", prefix, "tables", "rename");
   }
 
-  public String scanReport(TableIdentifier identifier) {
+  public String metrics(TableIdentifier identifier) {
     return SLASH.join(
         "v1",
         prefix,

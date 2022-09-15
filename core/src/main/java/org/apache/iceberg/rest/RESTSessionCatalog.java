@@ -68,7 +68,7 @@ import org.apache.iceberg.rest.auth.OAuth2Util.AuthSession;
 import org.apache.iceberg.rest.requests.CreateNamespaceRequest;
 import org.apache.iceberg.rest.requests.CreateTableRequest;
 import org.apache.iceberg.rest.requests.RenameTableRequest;
-import org.apache.iceberg.rest.requests.ScanReportRequest;
+import org.apache.iceberg.rest.requests.SendMetricsRequest;
 import org.apache.iceberg.rest.requests.UpdateNamespacePropertiesRequest;
 import org.apache.iceberg.rest.responses.ConfigResponse;
 import org.apache.iceberg.rest.responses.CreateNamespaceResponse;
@@ -303,8 +303,8 @@ public class RESTSessionCatalog extends BaseSessionCatalog
       TableIdentifier tableIdentifier, ScanReport report, Supplier<Map<String, String>> headers) {
     scanReporter.reportScan(report);
     client.post(
-        paths.scanReport(tableIdentifier),
-        ScanReportRequest.builder().fromScanReport(report).build(),
+        paths.metrics(tableIdentifier),
+        SendMetricsRequest.builder().fromScanReport(report).build(),
         null,
         headers,
         ErrorHandlers.defaultErrorHandler());

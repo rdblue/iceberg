@@ -43,7 +43,7 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.rest.requests.CreateNamespaceRequest;
 import org.apache.iceberg.rest.requests.CreateTableRequest;
 import org.apache.iceberg.rest.requests.RenameTableRequest;
-import org.apache.iceberg.rest.requests.ScanReportRequest;
+import org.apache.iceberg.rest.requests.SendMetricsRequest;
 import org.apache.iceberg.rest.requests.UpdateNamespacePropertiesRequest;
 import org.apache.iceberg.rest.requests.UpdateTableRequest;
 import org.apache.iceberg.rest.responses.ConfigResponse;
@@ -125,7 +125,11 @@ public class RESTCatalogAdapter implements RESTClient {
         LoadTableResponse.class),
     DROP_TABLE(HTTPMethod.DELETE, "v1/namespaces/{namespace}/tables/{table}"),
     RENAME_TABLE(HTTPMethod.POST, "v1/tables/rename", RenameTableRequest.class, null),
-    SEND_METRICS(HTTPMethod.POST, "v1/namespaces/{namespace}/tables/{table}/metrics", ScanReportRequest.class, null);
+    SEND_METRICS(
+        HTTPMethod.POST,
+        "v1/namespaces/{namespace}/tables/{table}/metrics",
+        SendMetricsRequest.class,
+        null);
 
     private final HTTPMethod method;
     private final int requiredLength;
@@ -343,7 +347,7 @@ public class RESTCatalogAdapter implements RESTClient {
       case SEND_METRICS:
         {
           // nothing to do here other than checking that we're getting the correct request
-          castRequest(ScanReportRequest.class, body);
+          castRequest(SendMetricsRequest.class, body);
           return null;
         }
 
