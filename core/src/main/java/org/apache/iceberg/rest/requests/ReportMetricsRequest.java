@@ -18,69 +18,69 @@
  */
 package org.apache.iceberg.rest.requests;
 
-import org.apache.iceberg.metrics.ScanReport;
+import org.apache.iceberg.metrics.MetricsReport;
 import org.apache.iceberg.relocated.com.google.common.base.MoreObjects;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.rest.RESTRequest;
 
-public class SendMetricsRequest implements RESTRequest {
+public class ReportMetricsRequest implements RESTRequest {
 
-  public enum MetricsType {
+  public enum ReportType {
     UNKNOWN,
     SCAN_REPORT
   }
 
-  private ScanReport scanReport;
-  private MetricsType metricsType;
+  private MetricsReport report;
+  private ReportType reportType;
 
   @SuppressWarnings("unused")
-  public SendMetricsRequest() {
+  public ReportMetricsRequest() {
     // Needed for Jackson Deserialization.
   }
 
-  private SendMetricsRequest(ScanReport scanReport) {
-    this.scanReport = scanReport;
-    metricsType = null != scanReport ? MetricsType.SCAN_REPORT : MetricsType.UNKNOWN;
+  private ReportMetricsRequest(MetricsReport report) {
+    this.report = report;
+    reportType = null != report ? ReportType.SCAN_REPORT : ReportType.UNKNOWN;
     validate();
   }
 
-  public ScanReport scanReport() {
-    return scanReport;
+  public MetricsReport report() {
+    return report;
   }
 
-  public MetricsType getMetricsType() {
-    return metricsType;
+  public ReportType reportType() {
+    return reportType;
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("scanReport", scanReport).toString();
+    return MoreObjects.toStringHelper(this).add("report", report).toString();
   }
 
   @Override
   public void validate() {
     // new metric types might be added here, so we need to make sure that exactly one is not-null
-    Preconditions.checkArgument(null != scanReport, "Invalid scan report: null");
+    Preconditions.checkArgument(null != report, "Invalid scan report: null");
   }
 
-  public static SendMetricsRequest.Builder builder() {
-    return new SendMetricsRequest.Builder();
+  public static ReportMetricsRequest.Builder builder() {
+    return new ReportMetricsRequest.Builder();
   }
 
   public static class Builder {
-    private ScanReport scanReport;
+    private MetricsReport report;
 
     private Builder() {}
 
-    public Builder fromScanReport(ScanReport newScanReport) {
-      this.scanReport = newScanReport;
+    public Builder fromReport(MetricsReport newReport) {
+      this.report = newReport;
       return this;
     }
 
-    public SendMetricsRequest build() {
+    public ReportMetricsRequest build() {
       // new metric types might be added here, so we need to make sure that exactly one is not-null
-      Preconditions.checkArgument(null != scanReport, "Invalid scan report: null");
-      return new SendMetricsRequest(scanReport);
+      Preconditions.checkArgument(null != report, "Invalid scan report: null");
+      return new ReportMetricsRequest(report);
     }
   }
 }

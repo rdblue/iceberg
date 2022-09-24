@@ -22,56 +22,59 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.Locale;
+import org.apache.iceberg.metrics.ScanReport;
 import org.apache.iceberg.metrics.ScanReportParser;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
-import org.apache.iceberg.rest.requests.SendMetricsRequest.MetricsType;
+import org.apache.iceberg.rest.requests.ReportMetricsRequest.ReportType;
 import org.apache.iceberg.util.JsonUtil;
 
-public class SendMetricsRequestParser {
+public class ReportMetricsRequestParser {
 
-  private static final String METRICS_TYPE = "metrics-type";
-  private static final String METRICS_VALUE = "metrics-value";
+  private static final String METRICS_TYPE = "report-type";
 
-  private SendMetricsRequestParser() {}
+  private ReportMetricsRequestParser() {}
 
-  public static String toJson(SendMetricsRequest request) {
+  public static String toJson(ReportMetricsRequest request) {
     return toJson(request, false);
   }
 
-  public static String toJson(SendMetricsRequest request, boolean pretty) {
+  public static String toJson(ReportMetricsRequest request, boolean pretty) {
     return JsonUtil.generate(gen -> toJson(request, gen), pretty);
   }
 
-  public static void toJson(SendMetricsRequest request, JsonGenerator gen) throws IOException {
+  public static void toJson(ReportMetricsRequest request, JsonGenerator gen) throws IOException {
     Preconditions.checkArgument(null != request, "Invalid metrics request: null");
 
     gen.writeStartObject();
-    gen.writeStringField(METRICS_TYPE, request.getMetricsType().name().toLowerCase(Locale.ROOT));
-    gen.writeFieldName(METRICS_VALUE);
     metricsToJson(request, gen);
     gen.writeEndObject();
   }
 
-  private static void metricsToJson(SendMetricsRequest request, JsonGenerator gen)
-      throws IOException {
-    if (null != request.scanReport()) {
-      ScanReportParser.toJson(request.scanReport(), gen);
+  private static void metricsToJson(ReportMetricsRequest request, JsonGenerator gen) throws IOException {
+    if (null != request.report()) {
+      gen.writeStringField(METRICS_TYPE, request.reportType().name().toLowerCase(Locale.ROOT));
+      switch (request.reportType()) {
+        case SCAN_REPORT:
+          ScanReportParser.toJson((ScanReport) request.report(), gen);
+        default:
+
+      }
     }
   }
 
-  public static SendMetricsRequest fromJson(String json) {
-    return JsonUtil.parse(json, SendMetricsRequestParser::fromJson);
+  public static ReportMetricsRequest fromJson(String json) {
+    return JsonUtil.parse(json, ReportMetricsRequestParser::fromJson);
   }
 
-  public static SendMetricsRequest fromJson(JsonNode json) {
+  public static ReportMetricsRequest fromJson(JsonNode json) {
     Preconditions.checkArgument(null != json, "Cannot parse metrics request from null object");
     Preconditions.checkArgument(
         json.isObject(), "Cannot parse metrics request from non-object: %s", json);
 
     String type = JsonUtil.getString(METRICS_TYPE, json);
-    if (MetricsType.SCAN_REPORT == MetricsType.valueOf(type.toUpperCase(Locale.ROOT))) {
-      return SendMetricsRequest.builder()
-          .fromScanReport(ScanReportParser.fromJson(JsonUtil.get(METRICS_VALUE, json)))
+    if (ReportType.SCAN_REPORT == ReportType.valueOf(type.toUpperCase(Locale.ROOT))) {
+      return ReportMetricsRequest.builder()
+          .fromReport(ScanReportParser.fromJson(json))
           .build();
     }
     throw new IllegalArgumentException(String.format("Cannot build metrics request from %s", json));

@@ -24,8 +24,8 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import org.apache.iceberg.expressions.Expression;
 import org.apache.iceberg.expressions.Expressions;
-import org.apache.iceberg.metrics.LoggingScanReporter;
-import org.apache.iceberg.metrics.ScanReporter;
+import org.apache.iceberg.metrics.LoggingMetricsReporter;
+import org.apache.iceberg.metrics.MetricsReporter;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.util.ThreadPools;
@@ -44,7 +44,7 @@ final class TableScanContext {
   private final Long toSnapshotId;
   private final ExecutorService planExecutor;
   private final boolean fromSnapshotInclusive;
-  private final ScanReporter scanReporter;
+  private final MetricsReporter reporter;
 
   TableScanContext() {
     this.snapshotId = null;
@@ -59,7 +59,7 @@ final class TableScanContext {
     this.toSnapshotId = null;
     this.planExecutor = null;
     this.fromSnapshotInclusive = false;
-    this.scanReporter = new LoggingScanReporter();
+    this.reporter = new LoggingMetricsReporter();
   }
 
   private TableScanContext(
@@ -75,7 +75,7 @@ final class TableScanContext {
       Long toSnapshotId,
       ExecutorService planExecutor,
       boolean fromSnapshotInclusive,
-      ScanReporter scanReporter) {
+      MetricsReporter reporter) {
     this.snapshotId = snapshotId;
     this.rowFilter = rowFilter;
     this.ignoreResiduals = ignoreResiduals;
@@ -88,7 +88,7 @@ final class TableScanContext {
     this.toSnapshotId = toSnapshotId;
     this.planExecutor = planExecutor;
     this.fromSnapshotInclusive = fromSnapshotInclusive;
-    this.scanReporter = scanReporter;
+    this.reporter = reporter;
   }
 
   Long snapshotId() {
@@ -109,7 +109,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   Expression rowFilter() {
@@ -130,7 +130,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   boolean ignoreResiduals() {
@@ -151,7 +151,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   boolean caseSensitive() {
@@ -172,7 +172,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   boolean returnColumnStats() {
@@ -193,7 +193,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   Collection<String> selectedColumns() {
@@ -216,7 +216,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   Schema projectedSchema() {
@@ -239,7 +239,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   Map<String, String> options() {
@@ -263,7 +263,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   Long fromSnapshotId() {
@@ -284,7 +284,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         false,
-        scanReporter);
+        reporter);
   }
 
   TableScanContext fromSnapshotIdInclusive(long id) {
@@ -301,7 +301,7 @@ final class TableScanContext {
         toSnapshotId,
         planExecutor,
         true,
-        scanReporter);
+        reporter);
   }
 
   boolean fromSnapshotInclusive() {
@@ -326,7 +326,7 @@ final class TableScanContext {
         id,
         planExecutor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
   ExecutorService planExecutor() {
@@ -351,14 +351,14 @@ final class TableScanContext {
         toSnapshotId,
         executor,
         fromSnapshotInclusive,
-        scanReporter);
+        reporter);
   }
 
-  ScanReporter scanReporter() {
-    return scanReporter;
+  MetricsReporter scanReporter() {
+    return reporter;
   }
 
-  TableScanContext reportWith(ScanReporter reporter) {
+  TableScanContext reportWith(MetricsReporter reporter) {
     return new TableScanContext(
         snapshotId,
         rowFilter,

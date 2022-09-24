@@ -130,7 +130,7 @@ abstract class BaseTableScan extends BaseScan<TableScan, FileScanTask, CombinedS
                     .filter(ExpressionUtil.sanitize(filter()))
                     .scanMetrics(ScanMetricsResult.fromScanMetrics(scanMetrics()))
                     .build();
-            context().scanReporter().reportScan(scanReport);
+            context().scanReporter().report(scanReport);
           });
     } else {
       LOG.info("Scanning empty table {}", table());

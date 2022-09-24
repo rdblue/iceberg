@@ -43,7 +43,7 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.rest.requests.CreateNamespaceRequest;
 import org.apache.iceberg.rest.requests.CreateTableRequest;
 import org.apache.iceberg.rest.requests.RenameTableRequest;
-import org.apache.iceberg.rest.requests.SendMetricsRequest;
+import org.apache.iceberg.rest.requests.ReportMetricsRequest;
 import org.apache.iceberg.rest.requests.UpdateNamespacePropertiesRequest;
 import org.apache.iceberg.rest.requests.UpdateTableRequest;
 import org.apache.iceberg.rest.responses.ConfigResponse;
@@ -128,7 +128,7 @@ public class RESTCatalogAdapter implements RESTClient {
     SEND_METRICS(
         HTTPMethod.POST,
         "v1/namespaces/{namespace}/tables/{table}/metrics",
-        SendMetricsRequest.class,
+        ReportMetricsRequest.class,
         null);
 
     private final HTTPMethod method;
@@ -347,7 +347,7 @@ public class RESTCatalogAdapter implements RESTClient {
       case SEND_METRICS:
         {
           // nothing to do here other than checking that we're getting the correct request
-          castRequest(SendMetricsRequest.class, body);
+          castRequest(ReportMetricsRequest.class, body);
           return null;
         }
 
