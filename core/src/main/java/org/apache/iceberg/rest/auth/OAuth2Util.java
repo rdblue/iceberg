@@ -25,10 +25,11 @@ import static org.apache.iceberg.TableProperties.COMMIT_TOTAL_RETRY_TIME_MS_DEFA
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import java.time.Instant;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +101,17 @@ public class OAuth2Util {
   public static Map<String, String> authHeaders(String token) {
     if (token != null) {
       return ImmutableMap.of(AUTHORIZATION_HEADER, BEARER_PREFIX + token);
+    } else {
+      return ImmutableMap.of();
+    }
+  }
+
+  public static Map<String, String> authBasicHeader(String credential) {
+    if (credential != null) {
+      return ImmutableMap.of(
+          AUTHORIZATION_HEADER,
+          BASIC_PREFIX
+              + Base64.getEncoder().encodeToString(credential.getBytes(StandardCharsets.UTF_8)));
     } else {
       return ImmutableMap.of();
     }
@@ -306,34 +318,10 @@ public class OAuth2Util {
     return builder.build();
   }
 
-  public static boolean tokenExpired(String token) {
-    return null != token
-        && getTokenExpirationEpochMillis(token)
-            < (System.currentTimeMillis() + AuthSession.MAX_REFRESH_WINDOW_MILLIS);
-  }
-
-  public static long getTokenExpirationEpochMillis(String token) {
-    Preconditions.checkArgument(null != token, "Invalid Bearer token: null");
-    String[] parts = token.split("\\.");
-    Preconditions.checkArgument(parts.length == 3, "Invalid Bearer token: %s", token);
-    String payload = parts[1];
-
-    // Parse the payload JSON
-    try {
-      JsonNode jsonNode = JsonUtil.mapper().readTree(Base64.getUrlDecoder().decode(payload));
-      Long expiresAt = JsonUtil.getLongOrNull("exp", jsonNode);
-      if (null == expiresAt) {
-        // no expiration
-        return Long.MAX_VALUE;
-      }
-      return Instant.ofEpochSecond(expiresAt).toEpochMilli();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static long tokenExpiresInMillis(String token) {
-    return getTokenExpirationEpochMillis(token) - Instant.now().toEpochMilli();
+  public static boolean tokenExpired(Optional<JWT> jwt) {
+    return jwt.isPresent()
+        && (jwt.get()
+            .expiredAt(System.currentTimeMillis() + AuthSession.MAX_REFRESH_WINDOW_MILLIS));
   }
 
   /** Class to handle authorization headers and token refresh. */
@@ -459,7 +447,7 @@ public class OAuth2Util {
           TimeUnit.MILLISECONDS);
     }
 
-    public static AuthSession newSessionFromToken(
+    public static AuthSession sessionFromToken(
         RESTClient client,
         ScheduledExecutorService tokenRefreshExecutor,
         String token,
@@ -501,7 +489,7 @@ public class OAuth2Util {
       return session;
     }
 
-    public static AuthSession exchangeTokenSession(
+    public static AuthSession sessionFromTokenExchange(
         RESTClient client,
         ScheduledExecutorService tokenRefreshExecutor,
         String token,

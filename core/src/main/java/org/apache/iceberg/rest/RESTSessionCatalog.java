@@ -27,6 +27,7 @@ import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,6 +63,7 @@ import org.apache.iceberg.metrics.MetricsReporter;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
+import org.apache.iceberg.rest.auth.JWT;
 import org.apache.iceberg.rest.auth.OAuth2Properties;
 import org.apache.iceberg.rest.auth.OAuth2Util;
 import org.apache.iceberg.rest.auth.OAuth2Util.AuthSession;
@@ -172,7 +174,7 @@ public class RESTSessionCatalog extends BaseSessionCatalog
               client, tokenRefreshExecutor(), authResponse, startTimeMillis, catalogAuth);
     } else if (initToken != null) {
       this.catalogAuth =
-          AuthSession.newSessionFromToken(
+          AuthSession.sessionFromToken(
               client, tokenRefreshExecutor(), initToken, expiresInMs(mergedProps), catalogAuth);
     }
 
@@ -760,14 +762,39 @@ public class RESTSessionCatalog extends BaseSessionCatalog
   private AuthSession newSession(
       Map<String, String> credentials, Map<String, String> properties, AuthSession parent) {
     if (credentials != null) {
-      // use the bearer token without exchanging
       if (credentials.containsKey(OAuth2Properties.TOKEN)) {
-        return AuthSession.newSessionFromToken(
-            client,
-            tokenRefreshExecutor(),
-            credentials.get(OAuth2Properties.TOKEN),
-            expiresInMs(properties),
-            parent);
+        String token = credentials.get(OAuth2Properties.TOKEN);
+        Optional<JWT> jwt = JWT.of(token);
+
+        if (OAuth2Util.tokenExpired(jwt)) {
+          Preconditions.checkState(
+              credentials.containsKey(OAuth2Properties.CREDENTIAL),
+              "Credential is required to refresh expired token.");
+
+          // we add the credential to the Authorization header and perform a token exchange to
+          // refresh the expired token
+          AuthSession session =
+              new AuthSession(
+                  OAuth2Util.authBasicHeader(credentials.get(OAuth2Properties.CREDENTIAL)),
+                  null,
+                  null);
+
+          return AuthSession.sessionFromTokenExchange(
+              client,
+              tokenRefreshExecutor(),
+              token,
+              OAuth2Properties.ACCESS_TOKEN_TYPE,
+              session,
+              OAuth2Properties.CATALOG_SCOPE);
+        } else {
+          // use the bearer token without exchanging
+          return AuthSession.sessionFromToken(
+              client,
+              tokenRefreshExecutor(),
+              token,
+              jwt.map(JWT::expiresInMillis).orElseGet(() -> expiresInMs(properties)),
+              parent);
+        }
       }
 
       if (credentials.containsKey(OAuth2Properties.CREDENTIAL)) {
@@ -778,7 +805,7 @@ public class RESTSessionCatalog extends BaseSessionCatalog
       for (String tokenType : TOKEN_PREFERENCE_ORDER) {
         if (credentials.containsKey(tokenType)) {
           // exchange the token for an access token using the token exchange flow
-          return AuthSession.exchangeTokenSession(
+          return AuthSession.sessionFromTokenExchange(
               client,
               tokenRefreshExecutor(),
               credentials.get(tokenType),
