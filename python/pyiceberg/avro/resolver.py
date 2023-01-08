@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 # pylint: disable=arguments-renamed,unused-argument
+from functools import partial
 from typing import (
     Callable,
     Dict,
@@ -39,6 +40,7 @@ from pyiceberg.avro.reader import (
     OptionReader,
     Reader,
     StringReader,
+    StructProtocolReader,
     StructReader,
     TimeReader,
     TimestampReader,
@@ -109,16 +111,32 @@ def resolve(
 
 
 class SchemaResolver(PrimitiveWithPartnerVisitor[IcebergType, Reader]):
-    read_types: Optional[Dict[int, Callable[[Schema], StructProtocol]]]
+    read_types: Dict[int, Callable[[Schema], StructProtocol]]
+    field_ids: List[int]
 
-    def __init__(self, read_types: Optional[Dict[int, Callable[[Schema], StructProtocol]]]):
+    def before_field(self, field: NestedField, field_partner: Optional[IcebergType]) -> None:
+        self.field_ids.append(field.field_id)
+
+    def after_field(self, field: NestedField, field_partner: Optional[IcebergType]) -> None:
+        self.field_ids.pop()
+
+    def create_struct_reader(self, read_schema: StructType, field_readers: Tuple[Tuple[Optional[int], Reader], ...]) -> Reader:
+        current_field_id = self.field_ids[-1] if self.field_ids else -1
+        if constructor := self.read_types.get(current_field_id):
+            return StructProtocolReader(field_readers, partial(constructor, read_schema))
+
+        return StructReader(field_readers)
+
+    def __init__(self, read_types: Dict[int, Callable[[Schema], StructProtocol]]):
         self.read_types = read_types
+        self.field_ids = []
 
     def schema(self, schema: Schema, expected_schema: Optional[IcebergType], result: Reader) -> Reader:
         return result
 
     def struct(self, struct: StructType, expected_struct: Optional[IcebergType], field_readers: List[Reader]) -> Reader:
         if not expected_struct:
+            # no values are expected so the reader will only be used for skipping
             return StructReader(tuple(enumerate(field_readers)))
 
         if not isinstance(expected_struct, StructType):
@@ -140,7 +158,7 @@ class SchemaResolver(PrimitiveWithPartnerVisitor[IcebergType, Reader]):
                 # Just set the new field to None
                 results.append((pos, NoneReader()))
 
-        return StructReader(tuple(results))
+        return self.create_struct_reader(expected_struct, tuple(results))
 
     def field(self, field: NestedField, expected_field: Optional[IcebergType], field_reader: Reader) -> Reader:
         return field_reader if field.required else OptionReader(field_reader)
