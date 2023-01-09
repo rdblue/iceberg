@@ -106,7 +106,7 @@ public class OAuth2Util {
     }
   }
 
-  public static Map<String, String> authBasicHeader(String credential) {
+  public static Map<String, String> basicAuthHeaders(String credential) {
     if (credential != null) {
       return ImmutableMap.of(
           AUTHORIZATION_HEADER,
@@ -318,12 +318,6 @@ public class OAuth2Util {
     return builder.build();
   }
 
-  public static boolean tokenExpired(Optional<JWT> jwt) {
-    return jwt.isPresent()
-        && (jwt.get()
-            .expiredAt(System.currentTimeMillis() + AuthSession.MAX_REFRESH_WINDOW_MILLIS));
-  }
-
   /** Class to handle authorization headers and token refresh. */
   public static class AuthSession {
     private static final long MAX_REFRESH_WINDOW_MILLIS = 300_000; // 5 minutes
@@ -451,21 +445,43 @@ public class OAuth2Util {
         RESTClient client,
         ScheduledExecutorService tokenRefreshExecutor,
         String token,
-        Long expiresIn,
+        String credential,
+        Long defaultExpirationMillis,
         AuthSession parent) {
-      AuthSession session =
-          new AuthSession(parent.headers(), token, OAuth2Properties.ACCESS_TOKEN_TYPE);
-      if (null != expiresIn) {
-        scheduleTokenRefresh(
+      Optional<JWT> jwt = JWT.of(token);
+
+      if (jwt.isPresent() && jwt.get().isExpired()) {
+        Preconditions.checkState(
+            null != credential, "Credential is required to refresh expired token.");
+
+        // we add the credential to the Authorization header and perform a token exchange to
+        // refresh the expired token
+        AuthSession session = new AuthSession(OAuth2Util.basicAuthHeaders(credential), null, null);
+
+        return AuthSession.sessionFromTokenExchange(
             client,
             tokenRefreshExecutor,
+            token,
+            OAuth2Properties.ACCESS_TOKEN_TYPE,
             session,
-            System.currentTimeMillis(),
-            expiresIn,
-            TimeUnit.MILLISECONDS);
-      }
+            OAuth2Properties.CATALOG_SCOPE);
+      } else {
+        AuthSession session =
+            new AuthSession(parent.headers(), token, OAuth2Properties.ACCESS_TOKEN_TYPE);
+        Long expiresInMillis = jwt.map(JWT::expiresInMillis).orElse(defaultExpirationMillis);
 
-      return session;
+        if (null != expiresInMillis) {
+          scheduleTokenRefresh(
+              client,
+              tokenRefreshExecutor,
+              session,
+              System.currentTimeMillis(),
+              expiresInMillis,
+              TimeUnit.MILLISECONDS);
+        }
+
+        return session;
+      }
     }
 
     public static AuthSession sessionFromFetchedToken(

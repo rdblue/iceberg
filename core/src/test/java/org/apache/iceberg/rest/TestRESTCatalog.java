@@ -1150,8 +1150,22 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
             UUID.randomUUID().toString(), "user", contextCredentials, ImmutableMap.of());
 
     RESTCatalog catalog = new RESTCatalog(context, (config) -> adapter);
-    catalog.initialize("prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", token));
 
+    // init token is expired, and we don't provide a credential to refresh it
+    assertThatThrownBy(
+            () ->
+                catalog.initialize(
+                    "prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", token)))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("Credential is required to refresh expired token.");
+
+    // init token is expired, but we have a credential to refresh it
+    catalog.initialize(
+        "prod",
+        ImmutableMap.of(
+            CatalogProperties.URI, "ignored", "token", token, "credential", "catalog:12345"));
+
+    // no credential available here to refresh the expired token
     assertThatThrownBy(() -> catalog.tableExists(TableIdentifier.of("ns", "table")))
         .isInstanceOf(IllegalStateException.class)
         .hasMessage("Credential is required to refresh expired token.");
@@ -1162,7 +1176,7 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
     // expires at epoch second = 1
     String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjF9.gQADTbdEv-rpDWKSkGLbmafyB5UUjTdm9B_1izpuZ6E";
-    Map<String, String> catalogHeaders = ImmutableMap.of("Authorization", "Bearer " + token);
+    Map<String, String> catalogHeaders = ImmutableMap.of("Authorization", "Bearer token");
 
     RESTCatalogAdapter adapter = Mockito.spy(new RESTCatalogAdapter(backendCatalog));
 
@@ -1174,7 +1188,8 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
             UUID.randomUUID().toString(), "user", contextCredentials, ImmutableMap.of());
 
     RESTCatalog catalog = new RESTCatalog(context, (config) -> adapter);
-    catalog.initialize("prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", token));
+    // the init token at the catalog level is a valid token
+    catalog.initialize("prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", "token"));
 
     Assertions.assertFalse(catalog.tableExists(TableIdentifier.of("ns", "table")));
 
@@ -1201,7 +1216,7 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
             any(),
             Mockito.argThat(firstRefreshRequest::equals),
             eq(OAuthTokenResponse.class),
-            eq(OAuth2Util.authBasicHeader(credential)),
+            eq(OAuth2Util.basicAuthHeaders(credential)),
             any());
 
     // verify that a second exchange occurs
@@ -1218,7 +1233,7 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
             any(),
             Mockito.argThat(secondRefreshRequest::equals),
             eq(OAuthTokenResponse.class),
-            eq(OAuth2Util.authBasicHeader(credential)),
+            eq(OAuth2Util.basicAuthHeaders(credential)),
             any());
 
     Mockito.verify(adapter)

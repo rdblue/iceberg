@@ -27,12 +27,8 @@ public class TestJWT {
 
   @Test
   public void invalidToken() {
-    assertThat(OAuth2Util.tokenExpired(JWT.of(null))).isFalse();
     assertThat(JWT.of(null)).isNotPresent();
-
-    Optional<JWT> token = JWT.of("token");
-    assertThat(OAuth2Util.tokenExpired(token)).isFalse();
-    assertThat(token).isNotPresent();
+    assertThat(JWT.of("token")).isNotPresent();
   }
 
   @Test
@@ -41,8 +37,8 @@ public class TestJWT {
     String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjF9.gQADTbdEv-rpDWKSkGLbmafyB5UUjTdm9B_1izpuZ6E";
     Optional<JWT> jwtToken = JWT.of(token);
-    assertThat(OAuth2Util.tokenExpired(jwtToken)).isTrue();
     assertThat(jwtToken).isPresent();
+    assertThat(jwtToken.get().isExpired()).isTrue();
     assertThat(jwtToken.get().expiresAtEpochMillis()).isEqualTo(1000L);
     assertThat(jwtToken.get().expiresInMillis()).isLessThan(0);
   }
@@ -53,8 +49,8 @@ public class TestJWT {
     String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE5OTk5OTk5OTk5fQ._3k92KJi2NTyTG6V1s2mzJ__GiQtL36DnzsZSkBdYPw";
     Optional<JWT> jwtToken = JWT.of(token);
-    assertThat(OAuth2Util.tokenExpired(jwtToken)).isFalse();
     assertThat(jwtToken).isPresent();
+    assertThat(jwtToken.get().isExpired()).isFalse();
     assertThat(jwtToken.get().expiresAtEpochMillis()).isEqualTo(19999999999000L);
     assertThat(jwtToken.get().expiresInMillis()).isGreaterThan(1);
   }
@@ -64,8 +60,8 @@ public class TestJWT {
     String token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
     Optional<JWT> jwtToken = JWT.of(token);
-    assertThat(OAuth2Util.tokenExpired(jwtToken)).isFalse();
     assertThat(jwtToken).isPresent();
+    assertThat(jwtToken.get().isExpired()).isFalse();
     assertThat(jwtToken.get().expiresAtEpochMillis()).isEqualTo(Long.MAX_VALUE);
     assertThat(jwtToken.get().expiresInMillis()).isGreaterThan(1);
   }

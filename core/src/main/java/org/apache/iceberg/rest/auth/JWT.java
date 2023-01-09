@@ -27,21 +27,21 @@ import org.apache.iceberg.util.JsonUtil;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface JWT {
+public abstract class JWT {
 
-  String token();
+  public abstract String token();
 
-  long expiresAtEpochMillis();
+  public abstract long expiresAtEpochMillis();
 
-  default long expiresInMillis() {
+  public long expiresInMillis() {
     return expiresAtEpochMillis() - Instant.now().toEpochMilli();
   }
 
-  default boolean expiredAt(long expiredAtEpochMillis) {
-    return expiresAtEpochMillis() < expiredAtEpochMillis;
+  public boolean isExpired() {
+    return expiresAtEpochMillis() <= Instant.now().toEpochMilli();
   }
 
-  static Optional<JWT> of(String token) {
+  public static Optional<JWT> of(String token) {
     try {
       Preconditions.checkArgument(null != token, "Invalid JWT: null");
       String[] parts = token.split("\\.");
