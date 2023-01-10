@@ -325,12 +325,19 @@ public class OAuth2Util {
     private Map<String, String> headers;
     private String token;
     private String tokenType;
+    private final String credential;
     private volatile boolean keepRefreshed = true;
 
     public AuthSession(Map<String, String> baseHeaders, String token, String tokenType) {
+      this(baseHeaders, token, tokenType, null);
+    }
+
+    public AuthSession(
+        Map<String, String> baseHeaders, String token, String tokenType, String credential) {
       this.headers = RESTUtil.merge(baseHeaders, authHeaders(token));
       this.token = token;
       this.tokenType = tokenType;
+      this.credential = credential;
     }
 
     public Map<String, String> headers() {
@@ -349,13 +356,17 @@ public class OAuth2Util {
       this.keepRefreshed = false;
     }
 
+    public String credential() {
+      return credential;
+    }
+
     /**
      * A new {@link AuthSession} with empty headers.
      *
      * @return A new {@link AuthSession} with empty headers.
      */
     public static AuthSession empty() {
-      return new AuthSession(ImmutableMap.of(), null, null);
+      return new AuthSession(ImmutableMap.of(), null, null, null);
     }
 
     /**
@@ -371,7 +382,20 @@ public class OAuth2Util {
             Tasks.foreach(ref)
                 .suppressFailureWhenFinished()
                 .retry(5)
-                .onFailure((task, err) -> LOG.warn("Failed to refresh token", err))
+                .onFailure(
+                    (holder, err) -> {
+                      if (null != credential) {
+                        holder.set(
+                            refreshToken(
+                                client,
+                                RESTUtil.merge(headers(), basicAuthHeaders(credential)),
+                                token,
+                                tokenType,
+                                OAuth2Properties.CATALOG_SCOPE));
+                      } else {
+                        LOG.warn("Failed to refresh token", err);
+                      }
+                    })
                 .exponentialBackoff(
                     COMMIT_MIN_RETRY_WAIT_MS_DEFAULT,
                     COMMIT_MAX_RETRY_WAIT_MS_DEFAULT,
@@ -456,7 +480,8 @@ public class OAuth2Util {
 
         // we add the credential to the Authorization header and perform a token exchange to
         // refresh the expired token
-        AuthSession session = new AuthSession(OAuth2Util.basicAuthHeaders(credential), null, null);
+        AuthSession session =
+            new AuthSession(OAuth2Util.basicAuthHeaders(credential), null, null, credential);
 
         return AuthSession.sessionFromTokenExchange(
             client,
@@ -467,7 +492,8 @@ public class OAuth2Util {
             OAuth2Properties.CATALOG_SCOPE);
       } else {
         AuthSession session =
-            new AuthSession(parent.headers(), token, OAuth2Properties.ACCESS_TOKEN_TYPE);
+            new AuthSession(
+                parent.headers(), token, OAuth2Properties.ACCESS_TOKEN_TYPE, credential);
         Long expiresInMillis = jwt.map(JWT::expiresInMillis).orElse(defaultExpirationMillis);
 
         if (null != expiresInMillis) {
@@ -491,7 +517,8 @@ public class OAuth2Util {
         long startTimeMillis,
         AuthSession parent) {
       AuthSession session =
-          new AuthSession(parent.headers(), response.token(), response.issuedTokenType());
+          new AuthSession(
+              parent.headers(), response.token(), response.issuedTokenType(), parent.credential());
       if (response.expiresInSeconds() != null) {
         scheduleTokenRefresh(
             client,

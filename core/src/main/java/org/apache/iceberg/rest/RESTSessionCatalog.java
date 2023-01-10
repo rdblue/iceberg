@@ -165,7 +165,8 @@ public class RESTSessionCatalog extends BaseSessionCatalog
             CatalogProperties.AUTH_DEFAULT_REFRESH_ENABLED_DEFAULT);
     this.paths = ResourcePaths.forCatalogProperties(mergedProps);
 
-    this.catalogAuth = new AuthSession(baseHeaders, null, null);
+    this.catalogAuth =
+        new AuthSession(baseHeaders, null, null, props.get(OAuth2Properties.CREDENTIAL));
     if (authResponse != null) {
       this.catalogAuth =
           AuthSession.sessionFromFetchedToken(
