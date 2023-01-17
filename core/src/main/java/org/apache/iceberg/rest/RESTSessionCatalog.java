@@ -133,18 +133,16 @@ public class RESTSessionCatalog extends BaseSessionCatalog
     // fetch auth and config to complete initialization
     ConfigResponse config;
     OAuthTokenResponse authResponse;
+    String credential = props.get(OAuth2Properties.CREDENTIAL);
+    // TODO: if scope can be overridden, it should be done consistently
     try (RESTClient initClient = clientBuilder.apply(props)) {
       Map<String, String> initHeaders =
           RESTUtil.merge(configHeaders(props), OAuth2Util.authHeaders(initToken));
-      String credential = props.get(OAuth2Properties.CREDENTIAL);
       if (credential != null && !credential.isEmpty()) {
-        String scope = props.getOrDefault(OAuth2Properties.SCOPE, OAuth2Properties.CATALOG_SCOPE);
-        authResponse = OAuth2Util.fetchToken(initClient, initHeaders, credential, scope);
-        config =
-            fetchConfig(
-                initClient,
-                RESTUtil.merge(initHeaders, OAuth2Util.authHeaders(authResponse.token())),
-                props);
+        authResponse = OAuth2Util.fetchToken(initClient, initHeaders, credential, OAuth2Properties.CATALOG_SCOPE);
+        Map<String, String> authHeaders =
+            RESTUtil.merge(initHeaders, OAuth2Util.authHeaders(authResponse.token()));
+        config = fetchConfig(initClient, authHeaders, props);
       } else {
         authResponse = null;
         config = fetchConfig(initClient, initHeaders, props);
@@ -156,30 +154,25 @@ public class RESTSessionCatalog extends BaseSessionCatalog
     // build the final configuration and set up the catalog's auth
     Map<String, String> mergedProps = config.merge(props);
     Map<String, String> baseHeaders = configHeaders(mergedProps);
-    this.client = clientBuilder.apply(mergedProps);
+
     this.sessions = newSessionCache(mergedProps);
     this.refreshAuthByDefault =
         PropertyUtil.propertyAsBoolean(
             mergedProps,
             CatalogProperties.AUTH_DEFAULT_REFRESH_ENABLED,
             CatalogProperties.AUTH_DEFAULT_REFRESH_ENABLED_DEFAULT);
+    this.client = clientBuilder.apply(mergedProps);
     this.paths = ResourcePaths.forCatalogProperties(mergedProps);
 
-    this.catalogAuth =
-        new AuthSession(baseHeaders, null, null, props.get(OAuth2Properties.CREDENTIAL));
+    this.catalogAuth = new AuthSession(baseHeaders, null, null, credential);
     if (authResponse != null) {
       this.catalogAuth =
-          AuthSession.sessionFromFetchedToken(
+          AuthSession.fromTokenResponse(
               client, tokenRefreshExecutor(), authResponse, startTimeMillis, catalogAuth);
     } else if (initToken != null) {
       this.catalogAuth =
-          AuthSession.sessionFromToken(
-              client,
-              tokenRefreshExecutor(),
-              initToken,
-              props.get(OAuth2Properties.CREDENTIAL),
-              expiresInMs(mergedProps),
-              catalogAuth);
+          AuthSession.fromAccessToken(
+              client, tokenRefreshExecutor(), initToken, expiresInMs(mergedProps), catalogAuth);
     }
 
     String ioImpl = mergedProps.get(CatalogProperties.FILE_IO_IMPL);
@@ -766,25 +759,30 @@ public class RESTSessionCatalog extends BaseSessionCatalog
   private AuthSession newSession(
       Map<String, String> credentials, Map<String, String> properties, AuthSession parent) {
     if (credentials != null) {
+      // use the bearer token without exchanging
       if (credentials.containsKey(OAuth2Properties.TOKEN)) {
-        return AuthSession.sessionFromToken(
+        return AuthSession.fromAccessToken(
             client,
             tokenRefreshExecutor(),
             credentials.get(OAuth2Properties.TOKEN),
-            credentials.get(OAuth2Properties.CREDENTIAL),
             expiresInMs(properties),
             parent);
       }
 
       if (credentials.containsKey(OAuth2Properties.CREDENTIAL)) {
         // fetch a token using the client credentials flow
-        return newSession(credentials.get(OAuth2Properties.CREDENTIAL), parent);
+        return AuthSession.fromCredential(
+            client,
+            tokenRefreshExecutor(),
+            credentials.get(OAuth2Properties.CREDENTIAL),
+            parent,
+            OAuth2Properties.CATALOG_SCOPE);
       }
 
       for (String tokenType : TOKEN_PREFERENCE_ORDER) {
         if (credentials.containsKey(tokenType)) {
           // exchange the token for an access token using the token exchange flow
-          return AuthSession.sessionFromTokenExchange(
+          return AuthSession.fromTokenExchange(
               client,
               tokenRefreshExecutor(),
               credentials.get(tokenType),
@@ -796,14 +794,6 @@ public class RESTSessionCatalog extends BaseSessionCatalog
     }
 
     return parent;
-  }
-
-  private AuthSession newSession(String credential, AuthSession parent) {
-    long startTimeMillis = System.currentTimeMillis();
-    OAuthTokenResponse response =
-        OAuth2Util.fetchToken(client, parent.headers(), credential, OAuth2Properties.CATALOG_SCOPE);
-    return AuthSession.sessionFromFetchedToken(
-        client, tokenRefreshExecutor(), response, startTimeMillis, parent);
   }
 
   private Long expiresInMs(Map<String, String> properties) {
