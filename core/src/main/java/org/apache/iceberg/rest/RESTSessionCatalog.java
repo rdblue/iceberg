@@ -139,7 +139,9 @@ public class RESTSessionCatalog extends BaseSessionCatalog
       Map<String, String> initHeaders =
           RESTUtil.merge(configHeaders(props), OAuth2Util.authHeaders(initToken));
       if (credential != null && !credential.isEmpty()) {
-        authResponse = OAuth2Util.fetchToken(initClient, initHeaders, credential, OAuth2Properties.CATALOG_SCOPE);
+        authResponse =
+            OAuth2Util.fetchToken(
+                initClient, initHeaders, credential, OAuth2Properties.CATALOG_SCOPE);
         Map<String, String> authHeaders =
             RESTUtil.merge(initHeaders, OAuth2Util.authHeaders(authResponse.token()));
         config = fetchConfig(initClient, authHeaders, props);

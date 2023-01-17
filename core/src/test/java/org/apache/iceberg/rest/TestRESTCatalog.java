@@ -1150,8 +1150,7 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
 
     RESTCatalog catalog = new RESTCatalog(context, (config) -> adapter);
 
-    catalog.initialize(
-        "prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", token));
+    catalog.initialize("prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "token", token));
   }
 
   @Test
@@ -1173,7 +1172,8 @@ public class TestRESTCatalog extends CatalogTests<RESTCatalog> {
 
     RESTCatalog catalog = new RESTCatalog(context, (config) -> adapter);
     // the init token at the catalog level is a valid token
-    catalog.initialize("prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "credential", credential));
+    catalog.initialize(
+        "prod", ImmutableMap.of(CatalogProperties.URI, "ignored", "credential", credential));
 
     Assertions.assertFalse(catalog.tableExists(TableIdentifier.of("ns", "table")));
 
