@@ -42,11 +42,14 @@ import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.NamespaceNotEmptyException;
 import org.apache.iceberg.exceptions.NoSuchNamespaceException;
 import org.apache.iceberg.exceptions.NoSuchTableException;
+import org.apache.iceberg.exceptions.NoSuchViewException;
 import org.apache.iceberg.io.FileIO;
 import org.apache.iceberg.relocated.com.google.common.base.Joiner;
 import org.apache.iceberg.relocated.com.google.common.base.Objects;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
+import org.apache.iceberg.view.BaseViewOperations;
+import org.apache.iceberg.view.ViewMetadata;
 
 /**
  * Catalog implementation that uses in-memory data-structures to store the namespaces and tables.
@@ -59,6 +62,7 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
 
   private final ConcurrentMap<Namespace, Map<String, String>> namespaces;
   private final ConcurrentMap<TableIdentifier, String> tables;
+  private final ConcurrentMap<TableIdentifier, String> views;
   private FileIO io;
   private String catalogName;
   private String warehouseLocation;
@@ -66,6 +70,7 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
   public InMemoryCatalog() {
     this.namespaces = Maps.newConcurrentMap();
     this.tables = Maps.newConcurrentMap();
+    this.views = Maps.newConcurrentMap();
   }
 
   @Override
@@ -278,6 +283,58 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
   public void close() throws IOException {
     namespaces.clear();
     tables.clear();
+    views.clear();
+  }
+
+  @Override
+  public List<TableIdentifier> listViews(Namespace namespace) {
+    if (!namespaceExists(namespace) && !namespace.isEmpty()) {
+      throw new NoSuchNamespaceException(
+          "Cannot list views for namespace. Namespace does not exist: %s", namespace);
+    }
+
+    return views.keySet().stream()
+        .filter(v -> namespace.isEmpty() || v.namespace().equals(namespace))
+        .sorted(Comparator.comparing(TableIdentifier::toString))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  protected InMemoryViewOperations newViewOps(TableIdentifier identifier) {
+    return new InMemoryViewOperations(io, identifier);
+  }
+
+  @Override
+  public boolean dropView(TableIdentifier identifier) {
+    return null != views.remove(identifier);
+  }
+
+  @Override
+  public synchronized void renameView(TableIdentifier from, TableIdentifier to) {
+    if (from.equals(to)) {
+      return;
+    }
+
+    if (!namespaceExists(to.namespace())) {
+      throw new NoSuchNamespaceException(
+          "Cannot rename %s to %s. Namespace does not exist: %s", from, to, to.namespace());
+    }
+
+    String fromViewLocation = views.get(from);
+    if (null == fromViewLocation) {
+      throw new NoSuchViewException("Cannot rename %s to %s. View does not exist", from, to);
+    }
+
+    if (tables.containsKey(to)) {
+      throw new AlreadyExistsException("Cannot rename %s to %s. Table already exists", from, to);
+    }
+
+    if (views.containsKey(to)) {
+      throw new AlreadyExistsException("Cannot rename %s to %s. View already exists", from, to);
+    }
+
+    views.put(to, fromViewLocation);
+    views.remove(from);
   }
 
   private class InMemoryTableOperations extends BaseMetastoreTableOperations {
@@ -335,6 +392,69 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
     @Override
     protected String tableName() {
       return tableIdentifier.toString();
+    }
+  }
+
+  private class InMemoryViewOperations extends BaseViewOperations {
+    private final FileIO fileIO;
+    private final TableIdentifier identifier;
+
+    InMemoryViewOperations(FileIO fileIO, TableIdentifier identifier) {
+      this.fileIO = fileIO;
+      this.identifier = identifier;
+    }
+
+    @Override
+    public void doRefresh() {
+      String latestLocation = views.get(identifier);
+      if (latestLocation == null) {
+        disableRefresh();
+      } else {
+        refreshFromMetadataLocation(latestLocation);
+      }
+    }
+
+    @Override
+    public void doCommit(ViewMetadata base, ViewMetadata metadata) {
+      String newLocation = writeNewMetadata(metadata, currentVersion() + 1);
+      String oldLocation = base == null ? null : currentMetadataLocation();
+
+      if (null == base && !namespaceExists(identifier.namespace())) {
+        throw new NoSuchNamespaceException(
+            "Cannot create view %s. Namespace does not exist: %s",
+            identifier, identifier.namespace());
+      }
+
+      if (tables.containsKey(identifier)) {
+        throw new AlreadyExistsException("Table with same name already exists: %s", viewName());
+      }
+
+      views.compute(
+          identifier,
+          (k, existingLocation) -> {
+            if (!Objects.equal(existingLocation, oldLocation)) {
+              if (null == base) {
+                throw new AlreadyExistsException("View already exists: %s", viewName());
+              }
+
+              throw new CommitFailedException(
+                  "Cannot commit to view %s metadata location from %s to %s "
+                      + "because it has been concurrently modified to %s",
+                  identifier, oldLocation, newLocation, existingLocation);
+            }
+
+            return newLocation;
+          });
+    }
+
+    @Override
+    public FileIO io() {
+      return fileIO;
+    }
+
+    @Override
+    protected String viewName() {
+      return identifier.toString();
     }
   }
 }
