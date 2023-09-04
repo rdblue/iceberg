@@ -18,36 +18,23 @@
  */
 package org.apache.iceberg;
 
-import java.util.List;
 import java.util.Map;
-import org.apache.iceberg.catalog.CatalogWithViews;
-import org.apache.iceberg.catalog.Namespace;
+import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.CommitFailedException;
 import org.apache.iceberg.exceptions.NoSuchTableException;
-import org.apache.iceberg.exceptions.NoSuchViewException;
 import org.apache.iceberg.io.InputFile;
 import org.apache.iceberg.metrics.MetricsReporter;
 import org.apache.iceberg.relocated.com.google.common.base.MoreObjects;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
-import org.apache.iceberg.relocated.com.google.common.collect.Lists;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
 import org.apache.iceberg.util.PropertyUtil;
-import org.apache.iceberg.view.BaseView;
-import org.apache.iceberg.view.ImmutableSQLViewRepresentation;
-import org.apache.iceberg.view.ImmutableViewVersion;
-import org.apache.iceberg.view.View;
-import org.apache.iceberg.view.ViewBuilder;
-import org.apache.iceberg.view.ViewMetadata;
-import org.apache.iceberg.view.ViewOperations;
-import org.apache.iceberg.view.ViewRepresentation;
-import org.apache.iceberg.view.ViewVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseMetastoreCatalog implements CatalogWithViews {
+public abstract class BaseMetastoreCatalog implements Catalog {
   private static final Logger LOG = LoggerFactory.getLogger(BaseMetastoreCatalog.class);
 
   private MetricsReporter metricsReporter;
@@ -324,183 +311,5 @@ public abstract class BaseMetastoreCatalog implements CatalogWithViews {
     }
 
     return metricsReporter;
-  }
-
-  protected ViewOperations newViewOps(TableIdentifier identifier) {
-    throw new UnsupportedOperationException("Not implemented: newViewOps");
-  }
-
-  @Override
-  public List<TableIdentifier> listViews(Namespace namespace) {
-    throw new UnsupportedOperationException("Not implemented: listViews");
-  }
-
-  @Override
-  public View loadView(TableIdentifier identifier) {
-    View result;
-    if (isValidIdentifier(identifier)) {
-      ViewOperations ops = newViewOps(identifier);
-      if (ops.current() == null) {
-        throw new NoSuchViewException("View does not exist: %s", identifier);
-      } else {
-        result = new BaseView(newViewOps(identifier), fullTableName(name(), identifier));
-      }
-    } else {
-      throw new NoSuchViewException("Invalid view identifier: %s", identifier);
-    }
-
-    LOG.info("View loaded by catalog: {}", result);
-    return result;
-  }
-
-  @Override
-  public boolean dropView(TableIdentifier identifier) {
-    throw new UnsupportedOperationException("Not implemented: dropView");
-  }
-
-  @Override
-  public void renameView(TableIdentifier from, TableIdentifier to) {
-    throw new UnsupportedOperationException("Not implemented: renameView");
-  }
-
-  @Override
-  public ViewBuilder buildView(TableIdentifier identifier) {
-    return new BaseViewBuilder(identifier);
-  }
-
-  protected class BaseViewBuilder implements ViewBuilder {
-    private final TableIdentifier identifier;
-    private final ImmutableViewVersion.Builder viewVersionBuilder = ImmutableViewVersion.builder();
-    private final List<ViewRepresentation> viewRepresentations = Lists.newArrayList();
-    private Schema schema;
-    private final Map<String, String> properties = Maps.newHashMap();
-
-    public BaseViewBuilder(TableIdentifier identifier) {
-      Preconditions.checkArgument(
-          isValidIdentifier(identifier), "Invalid view identifier: %s", identifier);
-      this.identifier = identifier;
-    }
-
-    @Override
-    public ViewBuilder withSchema(Schema newSchema) {
-      this.schema = newSchema;
-      viewVersionBuilder.schemaId(newSchema.schemaId());
-      return this;
-    }
-
-    @Override
-    public ViewBuilder withQuery(String dialect, String sql) {
-      viewRepresentations.add(
-          ImmutableSQLViewRepresentation.builder().dialect(dialect).sql(sql).build());
-      return this;
-    }
-
-    @Override
-    public ViewBuilder withDefaultCatalog(String catalog) {
-      viewVersionBuilder.defaultCatalog(catalog);
-      return this;
-    }
-
-    @Override
-    public ViewBuilder withDefaultNamespace(Namespace namespace) {
-      viewVersionBuilder.defaultNamespace(namespace);
-      return this;
-    }
-
-    @Override
-    public ViewBuilder withProperties(Map<String, String> newProperties) {
-      this.properties.putAll(newProperties);
-      return this;
-    }
-
-    @Override
-    public ViewBuilder withProperty(String key, String value) {
-      this.properties.put(key, value);
-      return this;
-    }
-
-    @Override
-    public View create() {
-      ViewOperations ops = newViewOps(identifier);
-      if (null != ops.current()) {
-        throw new AlreadyExistsException("View already exists: %s", identifier);
-      }
-
-      long timestampMillis = System.currentTimeMillis();
-
-      ViewVersion viewVersion =
-          viewVersionBuilder
-              .versionId(1)
-              .addAllRepresentations(viewRepresentations)
-              .timestampMillis(timestampMillis)
-              .putSummary("operation", "create")
-              .build();
-
-      ViewMetadata.Builder builder =
-          ViewMetadata.builder()
-              .setProperties(properties)
-              .setLocation(defaultWarehouseLocation(identifier));
-
-      if (null != schema) {
-        builder.addSchema(schema);
-      }
-
-      ViewMetadata viewMetadata =
-          builder.addVersion(viewVersion).setCurrentVersionId(viewVersion.versionId()).build();
-
-      try {
-        ops.commit(null, viewMetadata);
-      } catch (CommitFailedException ignored) {
-        throw new AlreadyExistsException("View was created concurrently: %s", identifier);
-      }
-
-      return new BaseView(ops, fullTableName(name(), identifier));
-    }
-
-    @Override
-    public View replace() {
-      ViewOperations ops = newViewOps(identifier);
-      if (null == ops.current()) {
-        throw new NoSuchViewException("View does not exist: %s", identifier);
-      }
-
-      ViewMetadata metadata = ops.current();
-
-      long timestampMillis = System.currentTimeMillis();
-
-      ViewVersion viewVersion =
-          viewVersionBuilder
-              .versionId(metadata.currentVersionId() + 1)
-              .addAllRepresentations(viewRepresentations)
-              .timestampMillis(timestampMillis)
-              .putSummary("operation", "replace")
-              .build();
-
-      ViewMetadata.Builder builder = ViewMetadata.buildFrom(metadata).setProperties(properties);
-
-      if (null != schema) {
-        builder.addSchema(schema);
-      }
-
-      ViewMetadata replacement =
-          builder.addVersion(viewVersion).setCurrentVersionId(viewVersion.versionId()).build();
-
-      try {
-        ops.commit(metadata, replacement);
-      } catch (CommitFailedException ignored) {
-        throw new AlreadyExistsException("View was updated concurrently: %s", identifier);
-      }
-
-      return new BaseView(ops, fullTableName(name(), identifier));
-    }
-
-    @Override
-    public View createOrReplace() {
-      if (null == newViewOps(identifier).current()) {
-        return create();
-      } else {
-        return replace();
-      }
-    }
   }
 }

@@ -48,6 +48,7 @@ import org.apache.iceberg.relocated.com.google.common.base.Joiner;
 import org.apache.iceberg.relocated.com.google.common.base.Objects;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
+import org.apache.iceberg.view.BaseViewCatalog;
 import org.apache.iceberg.view.BaseViewOperations;
 import org.apache.iceberg.view.ViewMetadata;
 
@@ -56,7 +57,7 @@ import org.apache.iceberg.view.ViewMetadata;
  * This class doesn't touch external resources and can be utilized to write unit tests without side
  * effects. It uses {@link InMemoryFileIO}.
  */
-public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNamespaces, Closeable {
+public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNamespaces, BaseViewCatalog, Closeable {
   private static final Joiner SLASH = Joiner.on("/");
   private static final Joiner DOT = Joiner.on(".");
 
@@ -79,6 +80,11 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
   }
 
   @Override
+  public boolean isValidIdentifier(TableIdentifier identifier) {
+    return super.isValidIdentifier(identifier);
+  }
+
+  @Override
   public void initialize(String name, Map<String, String> properties) {
     this.catalogName = name != null ? name : InMemoryCatalog.class.getSimpleName();
 
@@ -93,7 +99,7 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
   }
 
   @Override
-  protected String defaultWarehouseLocation(TableIdentifier tableIdentifier) {
+  public String defaultWarehouseLocation(TableIdentifier tableIdentifier) {
     return SLASH.join(
         defaultNamespaceLocation(tableIdentifier.namespace()), tableIdentifier.name());
   }
@@ -300,7 +306,7 @@ public class InMemoryCatalog extends BaseMetastoreCatalog implements SupportsNam
   }
 
   @Override
-  protected InMemoryViewOperations newViewOps(TableIdentifier identifier) {
+  public InMemoryViewOperations newViewOps(TableIdentifier identifier) {
     return new InMemoryViewOperations(io, identifier);
   }
 

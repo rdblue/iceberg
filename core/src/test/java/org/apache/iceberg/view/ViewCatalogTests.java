@@ -22,10 +22,11 @@ import static org.apache.iceberg.types.Types.NestedField.required;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.iceberg.Schema;
-import org.apache.iceberg.catalog.CatalogWithViews;
+import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.SupportsNamespaces;
 import org.apache.iceberg.catalog.TableIdentifier;
+import org.apache.iceberg.catalog.ViewCatalog;
 import org.apache.iceberg.exceptions.AlreadyExistsException;
 import org.apache.iceberg.exceptions.NoSuchNamespaceException;
 import org.apache.iceberg.exceptions.NoSuchViewException;
@@ -33,11 +34,12 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.types.Types;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsNamespaces> {
+public abstract class ViewCatalogTests<C extends ViewCatalog & SupportsNamespaces> {
   protected static final Schema SCHEMA =
       new Schema(
           1,
@@ -49,8 +51,21 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
 
   protected abstract C catalog();
 
+  protected Catalog asTableCatalog() {
+    C catalog = catalog();
+    if (catalog instanceof Catalog) {
+      return (Catalog) catalog;
+    }
+
+    throw new IllegalStateException("Cannot use catalog as a table catalog: " + catalog);
+  }
+
   protected boolean requiresNamespaceCreate() {
     return false;
+  }
+
+  protected boolean supportsTables() {
+    return catalog() instanceof Catalog;
   }
 
   @Test
@@ -169,6 +184,8 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
 
   @Test
   public void createViewThatAlreadyExists() {
+    Assumptions.assumeTrue(supportsTables(), "Only valid for catalogs that support tables");
+
     TableIdentifier tableIdentifier = TableIdentifier.of("ns", "table");
     TableIdentifier viewIdentifier = TableIdentifier.of("ns", "view");
 
@@ -200,8 +217,8 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
         .isInstanceOf(AlreadyExistsException.class)
         .hasMessageStartingWith("View already exists: ns.view");
 
-    catalog().buildTable(tableIdentifier, SCHEMA).create();
-    assertThat(catalog().tableExists(tableIdentifier)).isTrue();
+    asTableCatalog().buildTable(tableIdentifier, SCHEMA).create();
+    assertThat(asTableCatalog().tableExists(tableIdentifier)).isTrue();
     assertThat(catalog().viewExists(tableIdentifier)).isFalse();
 
     Assertions.assertThatThrownBy(
@@ -372,6 +389,8 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
 
   @Test
   public void renameViewTargetAlreadyExists() {
+    Assumptions.assumeTrue(supportsTables(), "Only valid for catalogs that support tables");
+
     TableIdentifier from = TableIdentifier.of("ns", "view");
     TableIdentifier to = TableIdentifier.of("ns", "renamedView");
 
@@ -394,7 +413,7 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
 
     // rename view where a table with the same name already exists
     TableIdentifier identifier = TableIdentifier.of("ns", "tbl");
-    catalog().buildTable(identifier, SCHEMA).create();
+    asTableCatalog().buildTable(identifier, SCHEMA).create();
 
     Assertions.assertThatThrownBy(() -> catalog().renameView(from, identifier))
         .isInstanceOf(AlreadyExistsException.class)
@@ -403,6 +422,8 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
 
   @Test
   public void listViews() {
+    Assumptions.assumeTrue(supportsTables(), "Only valid for catalogs that support tables");
+
     Namespace ns1 = Namespace.of("ns1");
     Namespace ns2 = Namespace.of("ns2");
 
@@ -416,9 +437,9 @@ public abstract class ViewCatalogTests<C extends CatalogWithViews & SupportsName
       catalog().createNamespace(ns2);
     }
 
-    catalog().buildTable(tableIdentifier, SCHEMA).create();
+    asTableCatalog().buildTable(tableIdentifier, SCHEMA).create();
 
-    assertThat(catalog().listTables(view1.namespace())).containsExactly(tableIdentifier);
+    assertThat(asTableCatalog().listTables(view1.namespace())).containsExactly(tableIdentifier);
     assertThat(catalog().listViews(ns1)).isEmpty();
     assertThat(catalog().listViews(ns2)).isEmpty();
 
