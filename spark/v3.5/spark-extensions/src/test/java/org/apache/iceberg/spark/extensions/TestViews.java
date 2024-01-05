@@ -19,6 +19,7 @@
 package org.apache.iceberg.spark.extensions;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
@@ -590,10 +591,7 @@ public class TestViews extends SparkExtensionsTestBase {
   @Test
   public void fullFunctionIdentifierNotRewrittenLoadFailure() {
     String viewName = "fullFunctionIdentifierNotRewrittenLoadFailure";
-    String sql =
-        String.format(
-            "SELECT spark_catalog.system.bucket(100, 'a') AS bucket_result, 'a' AS value",
-            catalogName);
+    String sql = "SELECT spark_catalog.system.bucket(100, 'a') AS bucket_result, 'a' AS value";
 
     // avoid namespace failures
     sql("USE spark_catalog");
@@ -633,6 +631,51 @@ public class TestViews extends SparkExtensionsTestBase {
 
   private Catalog tableCatalog() {
     return Spark3Util.loadIcebergCatalog(spark, catalogName);
+  }
+
+  @Test
+  public void dropView() {
+    String viewName = "viewToBeDropped";
+    String sql = String.format("SELECT id FROM %s", tableName);
+
+    ViewCatalog viewCatalog = viewCatalog();
+
+    TableIdentifier identifier = TableIdentifier.of(NAMESPACE, viewName);
+    viewCatalog
+        .buildView(identifier)
+        .withQuery("spark", sql)
+        .withDefaultNamespace(NAMESPACE)
+        .withDefaultCatalog(catalogName)
+        .withSchema(schema(sql))
+        .create();
+
+    assertThat(viewCatalog.viewExists(identifier)).isTrue();
+
+    sql("DROP VIEW %s", viewName);
+    assertThat(viewCatalog.viewExists(identifier)).isFalse();
+  }
+
+  @Test
+  public void dropNonExistingView() {
+    assertThatThrownBy(() -> sql("DROP VIEW non_existing"))
+        .isInstanceOf(AnalysisException.class)
+        .hasMessageContaining("The view %s.%s cannot be found", NAMESPACE, "non_existing");
+
+    assertThatNoException().isThrownBy(() -> sql("DROP VIEW IF EXISTS non_existing"));
+  }
+
+  @Test
+  public void dropGlobalTempView() {
+    String globalTempView = "globalViewToBeDropped";
+    sql("CREATE GLOBAL TEMPORARY VIEW %s AS SELECT id FROM %s", globalTempView, tableName);
+    sql("DROP VIEW global_temp.%s", globalTempView);
+  }
+
+  @Test
+  public void dropTempView() {
+    String tempView = "tempViewToBeDropped";
+    sql("CREATE TEMPORARY VIEW %s AS SELECT id FROM %s", tempView, tableName);
+    sql("DROP VIEW %s", tempView);
   }
 
   private void insertRows(int numRows) throws NoSuchTableException {
