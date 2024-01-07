@@ -17,32 +17,21 @@
  * under the License.
  */
 
-package org.apache.spark.sql.execution.datasources.v2
+package org.apache.spark.sql.catalyst.analysis
 
-import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.NoSuchViewException
-import org.apache.spark.sql.catalyst.expressions.Attribute
-import org.apache.spark.sql.connector.catalog.Identifier
-import org.apache.spark.sql.connector.catalog.ViewCatalog
+import org.apache.spark.sql.catalyst.plans.logical.DropView
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import org.apache.spark.sql.catalyst.plans.logical.views.DropIcebergView
+import org.apache.spark.sql.catalyst.rules.Rule
 
+/**
+ * ResolveSessionCatalog exits early for some v2 View commands,
+ * thus they are pre-substituted here and then handled in ResolveViews
+ */
+object HijackViewCommands extends Rule[LogicalPlan] {
 
-case class DropV2ViewExec(
-  catalog: ViewCatalog,
-  ident: Identifier,
-  ifExists: Boolean) extends LeafV2CommandExec {
-
-  override lazy val output: Seq[Attribute] = Nil
-
-  override protected def run(): Seq[InternalRow] = {
-    val dropped = catalog.dropView(ident)
-    if (!dropped && !ifExists) {
-      throw new NoSuchViewException(ident)
-    }
-
-    Nil
-  }
-
-  override def simpleString(maxFields: Int): String = {
-    s"DropV2View: ${ident}"
+  override def apply(plan: LogicalPlan): LogicalPlan = plan.resolveOperatorsUp {
+    case DropView(UnresolvedIdentifier(nameParts, allowTemp), ifExists) =>
+      DropIcebergView(UnresolvedIdentifier(nameParts, allowTemp), ifExists)
   }
 }
