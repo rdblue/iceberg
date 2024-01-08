@@ -19,19 +19,35 @@
 
 package org.apache.spark.sql.catalyst.analysis
 
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.plans.logical.DropView
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.plans.logical.views.DropIcebergView
 import org.apache.spark.sql.catalyst.rules.Rule
+import org.apache.spark.sql.connector.catalog.CatalogManager
+import org.apache.spark.sql.connector.catalog.CatalogPlugin
+import org.apache.spark.sql.connector.catalog.LookupCatalog
+import org.apache.spark.sql.connector.catalog.ViewCatalog
 
 /**
  * ResolveSessionCatalog exits early for some v2 View commands,
  * thus they are pre-substituted here and then handled in ResolveViews
  */
-object HijackViewCommands extends Rule[LogicalPlan] {
+case class HijackViewCommands(spark: SparkSession) extends Rule[LogicalPlan] with LookupCatalog {
+
+  protected lazy val catalogManager: CatalogManager = spark.sessionState.catalogManager
 
   override def apply(plan: LogicalPlan): LogicalPlan = plan.resolveOperatorsUp {
-    case DropView(UnresolvedIdentifier(nameParts, allowTemp), ifExists) =>
+    case DropView(UnresolvedIdentifier(nameParts, allowTemp), ifExists)
+      if isViewCatalog(catalogManager.currentCatalog) && !isTempView(nameParts) =>
       DropIcebergView(UnresolvedIdentifier(nameParts, allowTemp), ifExists)
+  }
+
+  private def isTempView(nameParts: Seq[String]): Boolean = {
+    catalogManager.v1SessionCatalog.isTempView(nameParts)
+  }
+
+  private def isViewCatalog(catalog: CatalogPlugin): Boolean = {
+    catalog.isInstanceOf[ViewCatalog]
   }
 }

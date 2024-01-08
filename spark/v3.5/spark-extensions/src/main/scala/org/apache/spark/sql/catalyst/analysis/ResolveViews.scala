@@ -24,11 +24,9 @@ import org.apache.spark.sql.catalyst.FunctionIdentifier
 import org.apache.spark.sql.catalyst.expressions.Alias
 import org.apache.spark.sql.catalyst.expressions.UpCast
 import org.apache.spark.sql.catalyst.parser.ParseException
-import org.apache.spark.sql.catalyst.plans.logical.DropView
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.plans.logical.Project
 import org.apache.spark.sql.catalyst.plans.logical.SubqueryAlias
-import org.apache.spark.sql.catalyst.plans.logical.views.DropIcebergView
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.catalyst.trees.CurrentOrigin
 import org.apache.spark.sql.catalyst.trees.Origin
@@ -47,17 +45,14 @@ case class ResolveViews(spark: SparkSession) extends Rule[LogicalPlan] with Look
   protected lazy val catalogManager: CatalogManager = spark.sessionState.catalogManager
 
   override def apply(plan: LogicalPlan): LogicalPlan = plan resolveOperators {
-    case u@UnresolvedRelation(nameParts, _, _) if isTempView(nameParts) =>
+    case u@UnresolvedRelation(nameParts, _, _)
+      if catalogManager.v1SessionCatalog.isTempView(nameParts) =>
       u
 
     case u@UnresolvedRelation(parts@CatalogAndIdentifier(catalog, ident), _, _) =>
       loadView(catalog, ident)
         .map(createViewRelation(parts, _))
         .getOrElse(u)
-
-    case DropIcebergView(r@ResolvedIdentifier(catalog, ident), ifExists)
-      if isTempView(ident.asMultipartIdentifier) || !isViewCatalog(catalog) =>
-      DropView(r, ifExists)
   }
 
   def loadView(catalog: CatalogPlugin, ident: Identifier): Option[View] = catalog match {
@@ -147,13 +142,5 @@ case class ResolveViews(spark: SparkSession) extends Rule[LogicalPlan] with Look
 
   private def isBuiltinFunction(name: String): Boolean = {
     catalogManager.v1SessionCatalog.isBuiltinFunction(FunctionIdentifier(name))
-  }
-
-  private def isTempView(nameParts: Seq[String]): Boolean = {
-    catalogManager.v1SessionCatalog.isTempView(nameParts)
-  }
-
-  private def isViewCatalog(catalog: CatalogPlugin): Boolean = {
-    catalog.isInstanceOf[ViewCatalog]
   }
 }

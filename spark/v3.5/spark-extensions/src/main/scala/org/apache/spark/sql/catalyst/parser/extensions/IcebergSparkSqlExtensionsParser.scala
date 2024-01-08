@@ -123,7 +123,7 @@ class IcebergSparkSqlExtensionsParser(delegate: ParserInterface) extends ParserI
     if (isIcebergCommand(sqlTextAfterSubstitution)) {
       parse(sqlTextAfterSubstitution) { parser => astBuilder.visit(parser.singleStatement()) }.asInstanceOf[LogicalPlan]
     } else {
-      HijackViewCommands.apply(delegate.parsePlan(sqlText))
+      HijackViewCommands(SparkSession.active).apply(delegate.parsePlan(sqlText))
     }
   }
 

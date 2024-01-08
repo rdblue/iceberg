@@ -661,8 +661,6 @@ public class TestViews extends SparkExtensionsTestBase {
     assertThatThrownBy(() -> sql("DROP VIEW non_existing"))
         .isInstanceOf(AnalysisException.class)
         .hasMessageContaining("The view %s.%s cannot be found", NAMESPACE, "non_existing");
-
-    assertThatNoException().isThrownBy(() -> sql("DROP VIEW IF EXISTS non_existing"));
   }
 
   @Test
@@ -685,6 +683,8 @@ public class TestViews extends SparkExtensionsTestBase {
 
     sql("DROP VIEW IF EXISTS %s", viewName);
     assertThat(viewCatalog.viewExists(identifier)).isFalse();
+
+    assertThatNoException().isThrownBy(() -> sql("DROP VIEW IF EXISTS %s", viewName));
   }
 
   /** The purpose of this test is mainly to make sure that normal view deletion isn't messed up */
