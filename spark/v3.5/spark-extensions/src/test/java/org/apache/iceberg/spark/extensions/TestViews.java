@@ -717,12 +717,13 @@ public class TestViews extends SparkExtensionsTestBase {
     sql("CREATE NAMESPACE IF NOT EXISTS %s", NAMESPACE);
     sql("CREATE TABLE %s (id INT, data STRING)", tableName);
     sql("CREATE VIEW %s AS SELECT id FROM %s", v1View, tableName);
+    sql("USE %s", catalogName);
     assertThat(
             v1SessionCatalog()
                 .tableExists(new org.apache.spark.sql.catalyst.TableIdentifier(v1View)))
         .isTrue();
 
-    sql("DROP VIEW %s", v1View);
+    sql("DROP VIEW spark_catalog.%s.%s", NAMESPACE, v1View);
     assertThat(
             v1SessionCatalog()
                 .tableExists(new org.apache.spark.sql.catalyst.TableIdentifier(v1View)))

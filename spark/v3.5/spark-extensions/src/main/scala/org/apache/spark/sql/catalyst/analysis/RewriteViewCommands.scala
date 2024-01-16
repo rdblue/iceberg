@@ -33,14 +33,13 @@ import org.apache.spark.sql.connector.catalog.ViewCatalog
  * ResolveSessionCatalog exits early for some v2 View commands,
  * thus they are pre-substituted here and then handled in ResolveViews
  */
-case class HijackViewCommands(spark: SparkSession) extends Rule[LogicalPlan] with LookupCatalog {
+case class RewriteViewCommands(spark: SparkSession) extends Rule[LogicalPlan] with LookupCatalog {
 
   protected lazy val catalogManager: CatalogManager = spark.sessionState.catalogManager
 
   override def apply(plan: LogicalPlan): LogicalPlan = plan.resolveOperatorsUp {
-    case DropView(UnresolvedIdentifier(nameParts, allowTemp), ifExists)
-      if isViewCatalog(catalogManager.currentCatalog) && !isTempView(nameParts) =>
-      DropIcebergView(UnresolvedIdentifier(nameParts, allowTemp), ifExists)
+    case DropView(ResolvedView(resolved), ifExists) =>
+      DropIcebergView(resolved, ifExists)
   }
 
   private def isTempView(nameParts: Seq[String]): Boolean = {
@@ -49,5 +48,18 @@ case class HijackViewCommands(spark: SparkSession) extends Rule[LogicalPlan] wit
 
   private def isViewCatalog(catalog: CatalogPlugin): Boolean = {
     catalog.isInstanceOf[ViewCatalog]
+  }
+
+  object ResolvedView {
+    def unapply(unresolved: UnresolvedIdentifier): Option[ResolvedIdentifier] = unresolved match {
+      case UnresolvedIdentifier(nameParts, true) if isTempView(nameParts) =>
+        None
+
+      case UnresolvedIdentifier(CatalogAndIdentifier(catalog, ident), _) if isViewCatalog(catalog) =>
+        Some(ResolvedIdentifier(catalog, ident))
+
+      case _ =>
+        None
+    }
   }
 }
