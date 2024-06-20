@@ -24,10 +24,9 @@ with the pyarrow library.
 """
 from __future__ import annotations
 
-import concurrent.futures
 import os
-from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
+from multiprocessing.pool import ThreadPool
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -546,14 +545,8 @@ def project_table(
     else:
         raise ValueError(f"Expected PyArrowFileIO, got: {table.io}")
 
-    tables = []
-    with ThreadPoolExecutor() as executor:
-        futures = []
-        for task in files:
-            futures.append(executor.submit(open_task, task, fs, table, row_filter, projected_schema, case_sensitive))
-
-        for future in concurrent.futures.as_completed(futures):
-            tables.append(future.result())
+    with ThreadPool() as pool:
+        tables = pool.starmap(open_task, [(task, fs, table, row_filter, projected_schema, case_sensitive) for task in files])
 
     if len(tables) > 1:
         return pa.concat_tables(tables)
