@@ -32,6 +32,11 @@ class GenericDeleteFile extends BaseFile<DeleteFile> implements DeleteFile {
     super(avroSchema);
   }
 
+  /** Used by InternalReaders.PlannedStructLikeReader instantiate this class when reading. */
+  GenericDeleteFile(Types.StructType projection) {
+    super(projection);
+  }
+
   GenericDeleteFile(
       int specId,
       FileContent content,

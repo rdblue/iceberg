@@ -32,6 +32,11 @@ class GenericDataFile extends BaseFile<DataFile> implements DataFile {
     super(avroSchema);
   }
 
+  /** Used by InternalReaders.PlannedStructLikeReader instantiate this class when reading. */
+  GenericDataFile(Types.StructType projection) {
+    super(projection);
+  }
+
   GenericDataFile(
       int specId,
       String filePath,

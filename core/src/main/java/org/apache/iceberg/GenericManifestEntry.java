@@ -22,6 +22,7 @@ import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.specific.SpecificData;
 import org.apache.iceberg.avro.AvroSchemaUtil;
 import org.apache.iceberg.relocated.com.google.common.base.MoreObjects;
+import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.types.Types;
 
 class GenericManifestEntry<F extends ContentFile<F>>
@@ -38,8 +39,8 @@ class GenericManifestEntry<F extends ContentFile<F>>
     this.schema = schema;
   }
 
-  GenericManifestEntry(Types.StructType partitionType) {
-    this.schema = AvroSchemaUtil.convert(V1Metadata.entrySchema(partitionType), "manifest_entry");
+  GenericManifestEntry(Types.StructType schema) {
+    this.schema = AvroSchemaUtil.convert(schema, "manifest_entry");
   }
 
   private GenericManifestEntry(GenericManifestEntry<F> toCopy, boolean fullCopy) {
@@ -201,7 +202,7 @@ class GenericManifestEntry<F extends ContentFile<F>>
 
   @Override
   public org.apache.avro.Schema getSchema() {
-    return schema;
+    return Preconditions.checkNotNull(schema);
   }
 
   @Override

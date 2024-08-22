@@ -40,7 +40,11 @@ public class TestManifestReader extends TestBase {
   private static final RecursiveComparisonConfiguration FILE_COMPARISON_CONFIG =
       RecursiveComparisonConfiguration.builder()
           .withIgnoredFields(
-              "dataSequenceNumber", "fileOrdinal", "fileSequenceNumber", "fromProjectionPos")
+              "dataSequenceNumber",
+              "fileOrdinal",
+              "fileSequenceNumber",
+              "fromProjectionPos",
+              "partitionData.partitionType.fieldsById")
           .build();
 
   @TestTemplate

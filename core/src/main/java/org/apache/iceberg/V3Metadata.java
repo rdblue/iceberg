@@ -18,15 +18,19 @@
  */
 package org.apache.iceberg;
 
+import static org.apache.iceberg.types.Types.NestedField.optional;
 import static org.apache.iceberg.types.Types.NestedField.required;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.iceberg.avro.AvroSchemaUtil;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
+import org.apache.iceberg.types.Type;
+import org.apache.iceberg.types.TypeUtil;
 import org.apache.iceberg.types.Types;
 
 class V3Metadata {
@@ -242,8 +246,12 @@ class V3Metadata {
     }
   }
 
-  static Schema entrySchema(Types.StructType partitionType) {
-    return wrapFileSchema(fileType(partitionType));
+  static Schema entrySchemaWithoutStats(Types.StructType partitionType) {
+    return wrapFileSchema(fileType(partitionType, Types.StructType.of()));
+  }
+
+  static Schema entrySchema(Types.StructType partitionType, Types.StructType boundsType) {
+    return wrapFileSchema(fileType(partitionType, boundsType));
   }
 
   static Schema wrapFileSchema(Types.StructType fileSchema) {
@@ -256,7 +264,10 @@ class V3Metadata {
         required(ManifestEntry.DATA_FILE_ID, "data_file", fileSchema));
   }
 
-  static Types.StructType fileType(Types.StructType partitionType) {
+  static Types.StructType fileType(Types.StructType partitionType, Types.StructType boundsType) {
+    AtomicInteger nextId = new AtomicInteger(DataFile.BOUNDS_COLUMNS_START_ID);
+    Type lowerBoundsStruct = TypeUtil.assignFreshIds(boundsType, nextId::getAndIncrement);
+    Type upperBoundsStruct = TypeUtil.assignFreshIds(boundsType, nextId::getAndIncrement);
     return Types.StructType.of(
         DataFile.CONTENT.asRequired(),
         DataFile.FILE_PATH,
@@ -269,8 +280,16 @@ class V3Metadata {
         DataFile.VALUE_COUNTS,
         DataFile.NULL_VALUE_COUNTS,
         DataFile.NAN_VALUE_COUNTS,
-        DataFile.LOWER_BOUNDS,
-        DataFile.UPPER_BOUNDS,
+        optional(
+            DataFile.LOWER_BOUNDS_STRUCT_ID,
+            DataFile.LOWER_BOUNDS_STRUCT_NAME,
+            lowerBoundsStruct,
+            DataFile.LOWER_BOUNDS_STRUCT_DOC),
+        optional(
+            DataFile.UPPER_BOUNDS_STRUCT_ID,
+            DataFile.UPPER_BOUNDS_STRUCT_NAME,
+            upperBoundsStruct,
+            DataFile.UPPER_BOUNDS_STRUCT_DOC),
         DataFile.KEY_METADATA,
         DataFile.SPLIT_OFFSETS,
         DataFile.EQUALITY_IDS,
@@ -284,10 +303,12 @@ class V3Metadata {
     private final IndexedDataFile<?> fileWrapper;
     private ManifestEntry<F> wrapped = null;
 
-    IndexedManifestEntry(Long commitSnapshotId, Types.StructType partitionType) {
-      this.avroSchema = AvroSchemaUtil.convert(entrySchema(partitionType), "manifest_entry");
+    IndexedManifestEntry(
+        Long commitSnapshotId, Types.StructType partitionType, Types.StructType boundsType) {
+      this.avroSchema =
+          AvroSchemaUtil.convert(entrySchema(partitionType, boundsType), "manifest_entry");
       this.commitSnapshotId = commitSnapshotId;
-      this.fileWrapper = new IndexedDataFile<>(partitionType);
+      this.fileWrapper = new IndexedDataFile<>(partitionType, boundsType);
     }
 
     public IndexedManifestEntry<F> wrap(ManifestEntry<F> entry) {
@@ -397,8 +418,8 @@ class V3Metadata {
     private final IndexedStructLike partitionWrapper;
     private ContentFile<F> wrapped = null;
 
-    IndexedDataFile(Types.StructType partitionType) {
-      this.avroSchema = AvroSchemaUtil.convert(fileType(partitionType), "data_file");
+    IndexedDataFile(Types.StructType partitionType, Types.StructType boundsType) {
+      this.avroSchema = AvroSchemaUtil.convert(fileType(partitionType, boundsType), "data_file");
       this.partitionWrapper = new IndexedStructLike(avroSchema.getField("partition").schema());
     }
 
@@ -437,9 +458,9 @@ class V3Metadata {
         case 9:
           return wrapped.nanValueCounts();
         case 10:
-          return wrapped.lowerBounds();
+          return wrapped.lowerBoundsStruct();
         case 11:
-          return wrapped.upperBounds();
+          return wrapped.upperBoundsStruct();
         case 12:
           return wrapped.keyMetadata();
         case 13:

@@ -81,6 +81,16 @@ public interface ContentFile<F> {
   /** Returns if collected, map from column ID to value upper bounds, null otherwise. */
   Map<Integer, ByteBuffer> upperBounds();
 
+  /** Returns the struct of lower bounds in v3 tables, null otherwise. */
+  default StructLike lowerBoundsStruct() {
+    return null;
+  }
+
+  /** Returns the struct of upper bounds in v3 tables, null otherwise. */
+  default StructLike upperBoundsStruct() {
+    return null;
+  }
+
   /**
    * Returns metadata about how this file is encrypted, or null if the file is stored in plain text.
    */

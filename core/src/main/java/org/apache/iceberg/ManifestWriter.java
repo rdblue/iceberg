@@ -26,6 +26,7 @@ import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.io.FileAppender;
 import org.apache.iceberg.io.OutputFile;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
+import org.apache.iceberg.types.Types;
 
 /**
  * Writer for manifest files.
@@ -60,7 +61,7 @@ public abstract class ManifestWriter<F extends ContentFile<F>> implements FileAp
     this.specId = spec.specId();
     this.writer = newAppender(spec, this.file);
     this.snapshotId = snapshotId;
-    this.reused = new GenericManifestEntry<>(spec.partitionType());
+    this.reused = new GenericManifestEntry<>(V1Metadata.entrySchema(spec.partitionType()).asStruct());
     this.stats = new PartitionSummary(spec);
     this.keyMetadataBuffer = (file.keyMetadata() == null) ? null : file.keyMetadata().buffer();
   }
@@ -222,7 +223,9 @@ public abstract class ManifestWriter<F extends ContentFile<F>> implements FileAp
 
     V3Writer(PartitionSpec spec, EncryptedOutputFile file, Long snapshotId) {
       super(spec, file, snapshotId);
-      this.entryWrapper = new V3Metadata.IndexedManifestEntry<>(snapshotId, spec.partitionType());
+      this.entryWrapper =
+          new V3Metadata.IndexedManifestEntry<>(
+              snapshotId, spec.partitionType(), Types.StructType.of());
     }
 
     @Override
@@ -233,7 +236,7 @@ public abstract class ManifestWriter<F extends ContentFile<F>> implements FileAp
     @Override
     protected FileAppender<ManifestEntry<DataFile>> newAppender(
         PartitionSpec spec, OutputFile file) {
-      Schema manifestSchema = V3Metadata.entrySchema(spec.partitionType());
+      Schema manifestSchema = V3Metadata.entrySchema(spec.partitionType(), Types.StructType.of());
       try {
         return Avro.write(file)
             .schema(manifestSchema)
@@ -256,7 +259,9 @@ public abstract class ManifestWriter<F extends ContentFile<F>> implements FileAp
 
     V3DeleteWriter(PartitionSpec spec, EncryptedOutputFile file, Long snapshotId) {
       super(spec, file, snapshotId);
-      this.entryWrapper = new V3Metadata.IndexedManifestEntry<>(snapshotId, spec.partitionType());
+      this.entryWrapper =
+          new V3Metadata.IndexedManifestEntry<>(
+              snapshotId, spec.partitionType(), Types.StructType.of());
     }
 
     @Override
@@ -267,7 +272,7 @@ public abstract class ManifestWriter<F extends ContentFile<F>> implements FileAp
     @Override
     protected FileAppender<ManifestEntry<DeleteFile>> newAppender(
         PartitionSpec spec, OutputFile file) {
-      Schema manifestSchema = V3Metadata.entrySchema(spec.partitionType());
+      Schema manifestSchema = V3Metadata.entrySchema(spec.partitionType(), Types.StructType.of());
       try {
         return Avro.write(file)
             .schema(manifestSchema)

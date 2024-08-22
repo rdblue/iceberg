@@ -102,7 +102,17 @@ public interface DataFile extends ContentFile<DataFile> {
   int PARTITION_ID = 102;
   String PARTITION_NAME = "partition";
   String PARTITION_DOC = "Partition data tuple, schema based on the partition spec";
-  // NEXT ID TO ASSIGN: 142
+
+  int LOWER_BOUNDS_STRUCT_ID = 142;
+  String LOWER_BOUNDS_STRUCT_NAME = "lower_bounds";
+  String LOWER_BOUNDS_STRUCT_DOC = "Struct of column lower bounds";
+
+  int UPPER_BOUNDS_STRUCT_ID = 143;
+  String UPPER_BOUNDS_STRUCT_NAME = "upper_bounds";
+  String UPPER_BOUNDS_STRUCT_DOC = "Struct of column upper bounds";
+
+  int BOUNDS_COLUMNS_START_ID = 10_000;
+  // NEXT ID TO ASSIGN: 144
 
   static StructType getType(StructType partitionType) {
     // IDs start at 100 to leave room for changes to ManifestEntry
