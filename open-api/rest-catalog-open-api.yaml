@@ -716,10 +716,8 @@ paths:
         - A plan-id has produced a "failed" or "cancelled" status from
           planTableScan or fetchPlanningResult
       responses:
-        200:
-          description: Accepted, no content
-        202:
-          description: Accepted, no content
+        204:
+          description: Success, no content
         400:
           $ref: '#/components/responses/BadRequestErrorResponse'
         401:
