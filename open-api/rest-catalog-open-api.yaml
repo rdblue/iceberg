@@ -703,7 +703,10 @@ paths:
         Cancels scan planning for a plan-id.
 
 
-        This notifies the service that it can release resources for the scan.
+        This notifies the service that it can release resources held for the
+        scan. Clients should cancel scans that are no longer needed, either
+        while the plan-id returns a "submitted" status or while there are
+        remaining plan tasks that have not been fetched.
 
 
         Cancellation is not necessary when
@@ -3070,7 +3073,7 @@ components:
         - `delete-files` contains delete files referenced by file scan tasks
 
         Each plan task must be passed to the fetchScanTasks endpoint to fetch
-        the file scan tasks for the planning task.
+        the file scan tasks for the plan task.
 
         The list of delete files must contain all delete files referenced by
         the file scan tasks.
