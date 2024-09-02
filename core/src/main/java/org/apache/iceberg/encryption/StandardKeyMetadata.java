@@ -51,24 +51,30 @@ class StandardKeyMetadata implements NativeEncryptionKeyMetadata, IndexedRecord 
   private ByteBuffer encryptionKey;
   private ByteBuffer aadPrefix;
   private Long fileLength;
-  private org.apache.avro.Schema avroSchema;
 
   /** Used by Avro reflection to instantiate this class * */
   StandardKeyMetadata() {}
 
   StandardKeyMetadata(byte[] key, byte[] aad) {
+    this(key, aad, null);
+  }
+
+  StandardKeyMetadata(byte[] key, byte[] aad, Long fileLength) {
     this.encryptionKey = ByteBuffer.wrap(key);
     this.aadPrefix = ByteBuffer.wrap(aad);
-  }
-
-  private StandardKeyMetadata(ByteBuffer encryptionKey, ByteBuffer aadPrefix) {
-    this.encryptionKey = encryptionKey;
-    this.aadPrefix = aadPrefix;
-    this.avroSchema = AVRO_SCHEMA_V1;
-  }
-
-  void setFileLength(long fileLength) {
     this.fileLength = fileLength;
+  }
+
+  /**
+   * Copy constructor.
+   *
+   * @param toCopy a StandardKeymetadata to copy
+   * @param fileLength file length that overrides toCopy if not null
+   */
+  private StandardKeyMetadata(StandardKeyMetadata toCopy, Long fileLength) {
+    this.encryptionKey = toCopy.encryptionKey;
+    this.aadPrefix = toCopy.aadPrefix;
+    this.fileLength = fileLength != null ? fileLength : toCopy.fileLength;
   }
 
   static Map<Byte, Schema> supportedSchemaVersions() {
@@ -89,7 +95,8 @@ class StandardKeyMetadata implements NativeEncryptionKeyMetadata, IndexedRecord 
     return aadPrefix;
   }
 
-  Long fileLength() {
+  @Override
+  public Long fileLength() {
     return fileLength;
   }
 
@@ -126,7 +133,12 @@ class StandardKeyMetadata implements NativeEncryptionKeyMetadata, IndexedRecord 
 
   @Override
   public EncryptionKeyMetadata copy() {
-    return new StandardKeyMetadata(encryptionKey(), aadPrefix());
+    return new StandardKeyMetadata(this, null);
+  }
+
+  @Override
+  public NativeEncryptionKeyMetadata copyWithLength(long length) {
+    return new StandardKeyMetadata(this, length);
   }
 
   @Override
@@ -162,6 +174,6 @@ class StandardKeyMetadata implements NativeEncryptionKeyMetadata, IndexedRecord 
 
   @Override
   public org.apache.avro.Schema getSchema() {
-    return avroSchema;
+    return AVRO_SCHEMA_V1;
   }
 }

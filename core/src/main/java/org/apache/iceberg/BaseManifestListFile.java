@@ -20,22 +20,26 @@ package org.apache.iceberg;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import org.apache.iceberg.encryption.EncryptionManager;
+import org.apache.iceberg.encryption.EncryptionUtil;
+import org.apache.iceberg.util.ByteBuffers;
 
-public class BaseManifestListFile implements ManifestListFile, Serializable {
+class BaseManifestListFile implements ManifestListFile, Serializable {
   private final String location;
-  private final String mdEncryptionKeyID;
-  private final ByteBuffer encryptedKeyMetadata;
-  private ByteBuffer keyMetadata;
+  private final long snapshotId;
+  private final String keyMetadataKeyID;
+  // stored as a byte array to be Serializable
+  private final byte[] encryptedKeyMetadata;
 
-  public BaseManifestListFile(
+  BaseManifestListFile(
       String location,
-      ByteBuffer keyMetadata,
-      String mdEncryptionKeyID,
+      long snapshotId,
+      String keyMetadataKeyID,
       ByteBuffer encryptedKeyMetadata) {
     this.location = location;
-    this.keyMetadata = keyMetadata;
-    this.encryptedKeyMetadata = encryptedKeyMetadata;
-    this.mdEncryptionKeyID = mdEncryptionKeyID;
+    this.snapshotId = snapshotId;
+    this.encryptedKeyMetadata = ByteBuffers.toByteArray(encryptedKeyMetadata);
+    this.keyMetadataKeyID = keyMetadataKeyID;
   }
 
   @Override
@@ -44,17 +48,22 @@ public class BaseManifestListFile implements ManifestListFile, Serializable {
   }
 
   @Override
-  public ByteBuffer keyMetadata() {
-    return keyMetadata;
+  public long snapshotId() {
+    return snapshotId;
   }
 
   @Override
-  public String metadataEncryptionKeyID() {
-    return mdEncryptionKeyID;
+  public String keyMetadataKeyId() {
+    return keyMetadataKeyID;
   }
 
   @Override
   public ByteBuffer encryptedKeyMetadata() {
-    return encryptedKeyMetadata;
+    return ByteBuffer.wrap(encryptedKeyMetadata);
+  }
+
+  @Override
+  public ByteBuffer decryptKeyMetadata(EncryptionManager em) {
+    return EncryptionUtil.decryptSnapshotKeyMetadata(this, em);
   }
 }

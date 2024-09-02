@@ -23,11 +23,9 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.apache.iceberg.encryption.EncryptionUtil;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.io.CloseableIterable;
 import org.apache.iceberg.io.FileIO;
-import org.apache.iceberg.io.InputFile;
 import org.apache.iceberg.relocated.com.google.common.annotations.VisibleForTesting;
 import org.apache.iceberg.relocated.com.google.common.base.MoreObjects;
 import org.apache.iceberg.relocated.com.google.common.base.Objects;
@@ -45,7 +43,7 @@ class BaseSnapshot implements Snapshot {
   private final Map<String, String> summary;
   private final Integer schemaId;
   private final String[] v1ManifestLocations;
-  private ManifestListFile manifestListFile;
+  private final ManifestListFile manifestListFile;
 
   // lazily initialized
   private transient List<ManifestFile> allManifests = null;
@@ -74,7 +72,7 @@ class BaseSnapshot implements Snapshot {
         operation,
         summary,
         schemaId,
-        new BaseManifestListFile(manifestList, null, null, null));
+        new BaseManifestListFile(manifestList, snapshotId, null, null));
   }
 
   BaseSnapshot(
@@ -113,7 +111,7 @@ class BaseSnapshot implements Snapshot {
     this.operation = operation;
     this.summary = summary;
     this.schemaId = schemaId;
-    this.manifestListFile = new BaseManifestListFile(null, null, null, null);
+    this.manifestListFile = new BaseManifestListFile(null, snapshotId, null, null);
     this.v1ManifestLocations = v1ManifestLocations;
   }
 
@@ -172,15 +170,7 @@ class BaseSnapshot implements Snapshot {
 
     if (allManifests == null) {
       // if manifests isn't set, then the snapshotFile is set and should be read to get the list
-      InputFile manifestListInputFile;
-
-      if (manifestListFile.encryptedKeyMetadata() == null) {
-        manifestListInputFile = fileIO.newInputFile(manifestListFile.location());
-      } else { // encrypted manifest list file
-        manifestListInputFile = EncryptionUtil.decryptManifestListFile(manifestListFile, fileIO);
-      }
-
-      this.allManifests = ManifestLists.read(manifestListInputFile);
+      this.allManifests = ManifestLists.read(fileIO.newInputFile(manifestListFile));
     }
 
     if (dataManifests == null || deleteManifests == null) {
