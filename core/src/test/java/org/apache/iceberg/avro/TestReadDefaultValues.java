@@ -37,8 +37,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 public class TestReadDefaultValues {
 
-  @TempDir
-  public Path temp;
+  @TempDir public Path temp;
 
   private static final Object[][] TYPES_WITH_DEFAULTS =
       new Object[][] {
@@ -76,11 +75,11 @@ public class TestReadDefaultValues {
       testFile.delete();
 
       try (FileAppender<Record> writer =
-               Avro.write(Files.localOutput(testFile))
-                   .schema(writerSchema)
-                   .createWriterFunc(GenericAvroWriter::create)
-                   .named("test")
-                   .build()) {
+          Avro.write(Files.localOutput(testFile))
+              .schema(writerSchema)
+              .createWriterFunc(GenericAvroWriter::create)
+              .named("test")
+              .build()) {
         Record record = new Record(AvroSchemaUtil.convert(writerSchema.asStruct()));
         record.put(0, 1);
         writer.add(record);
@@ -88,8 +87,15 @@ public class TestReadDefaultValues {
 
       Schema readerSchema =
           new Schema(
-              Types.NestedField.required("written").withId(999).ofType(Types.IntegerType.get()).build(),
-              Types.NestedField.optional("defaulted").withId(1000).ofType(type).withDefault(defaultValue).build());
+              Types.NestedField.required("written")
+                  .withId(999)
+                  .ofType(Types.IntegerType.get())
+                  .build(),
+              Types.NestedField.optional("defaulted")
+                  .withId(1000)
+                  .ofType(type)
+                  .withDefault(defaultValue)
+                  .build());
 
       Record expectedRecord = new Record(AvroSchemaUtil.convert(readerSchema.asStruct()));
       expectedRecord.put(0, 1);
@@ -117,8 +123,15 @@ public class TestReadDefaultValues {
 
       Schema readerSchema =
           new Schema(
-              Types.NestedField.required("written_1").withId(999).ofType(Types.IntegerType.get()).build(),
-              Types.NestedField.optional("written_2").withId(1000).ofType(type).withDefault(defaultValue).build());
+              Types.NestedField.required("written_1")
+                  .withId(999)
+                  .ofType(Types.IntegerType.get())
+                  .build(),
+              Types.NestedField.optional("written_2")
+                  .withId(1000)
+                  .ofType(type)
+                  .withDefault(defaultValue)
+                  .build());
 
       // Create a record with null value for the column with default value
       Record expectedRecord = new Record(AvroSchemaUtil.convert(readerSchema.asStruct()));
