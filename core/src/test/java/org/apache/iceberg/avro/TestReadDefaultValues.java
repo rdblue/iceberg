@@ -63,9 +63,9 @@ public class TestReadDefaultValues {
 
   @Test
   public void testDefaultAppliedWhenMissingColumn() throws IOException {
-    for (Object[] typeWithDefault : TYPES_WITH_DEFAULTS) {
-      Type type = (Type) typeWithDefault[0];
-      String defaultValueJson = (String) typeWithDefault[1];
+    for (Object[] typeAndDefault : TYPES_WITH_DEFAULTS) {
+      Type type = (Type) typeAndDefault[0];
+      String defaultValueJson = (String) typeAndDefault[1];
       Object defaultValue = SingleValueParser.fromJson(type, defaultValueJson);
 
       // note that this schema does not have column "defaulted"
