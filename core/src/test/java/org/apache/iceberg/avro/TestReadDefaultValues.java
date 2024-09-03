@@ -60,52 +60,6 @@ public class TestReadDefaultValues {
         // Avro doesn't support negative scale
         // {Types.DecimalType.of(9, -20), "\"2E+20\""},
         // Nested type defaults are not currently allowed
-        // {Types.ListType.ofOptional(1, Types.IntegerType.get()), "[1, 2, 3]"},
-//        {
-//          Types.MapType.ofOptional(2, 3, Types.IntegerType.get(), Types.StringType.get()),
-//          "{\"keys\": [1, 2], \"values\": [\"foo\", \"bar\"]}"
-//        },
-//        {
-//          Types.StructType.of(
-//              required(4, "f1", Types.IntegerType.get()),
-//              optional(5, "f2", Types.StringType.get())),
-//          "{\"4\": 1, \"5\": \"bar\"}"
-//        },
-//        // deeply nested complex types
-//        {
-//          Types.ListType.ofOptional(
-//              6,
-//              Types.StructType.of(
-//                  required(7, "f1", Types.IntegerType.get()),
-//                  optional(8, "f2", Types.StringType.get()))),
-//          "[{\"7\": 1, \"8\": \"bar\"}, {\"7\": 2, \"8\": " + "\"foo\"}]"
-//        },
-//        {
-//          Types.MapType.ofOptional(
-//              9,
-//              10,
-//              Types.IntegerType.get(),
-//              Types.StructType.of(
-//                  required(11, "f1", Types.IntegerType.get()),
-//                  optional(12, "f2", Types.StringType.get()))),
-//          "{\"keys\": [1, 2], \"values\": [{\"11\": 1, \"12\": \"bar\"}, {\"11\": 2, \"12\": \"foo\"}]}"
-//        },
-//        {
-//          Types.StructType.of(
-//              required(
-//                  13,
-//                  "f1",
-//                  Types.StructType.of(
-//                      optional(14, "ff1", Types.IntegerType.get()),
-//                      optional(15, "ff2", Types.StringType.get()))),
-//              optional(
-//                  16,
-//                  "f2",
-//                  Types.StructType.of(
-//                      optional(17, "ff1", Types.StringType.get()),
-//                      optional(18, "ff2", Types.IntegerType.get())))),
-//          "{\"13\": {\"14\": 1, \"15\": \"bar\"}, \"16\": {\"17\": \"bar\", \"18\": 1}}"
-//        },
       };
 
   @Test
