@@ -169,7 +169,15 @@ public class StandardEncryptionManager implements EncryptionManager {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
     }
 
-    return unwrapKey(keyData.encryptionKeys.get(keyId).wrappedKey());
+    WrappedEncryptionKey cachedKey = keyData.encryptionKeys.get(keyId);
+    ByteBuffer key = cachedKey.key();
+
+    if (key == null) {
+      key = unwrapKey(cachedKey.wrappedKey());
+      cachedKey.setUnwrappedKey(key);
+    }
+
+    return key;
   }
 
   Collection<WrappedEncryptionKey> keys() {
@@ -194,7 +202,9 @@ public class StandardEncryptionManager implements EncryptionManager {
 
   private void createNewEncryptionKey() {
     long now = System.currentTimeMillis();
-    WrappedEncryptionKey key = new WrappedEncryptionKey(newKeyId(), wrapKey(newKey()), now);
+    ByteBuffer keyBytes = newKey();
+    WrappedEncryptionKey key =
+        new WrappedEncryptionKey(newKeyId(), keyBytes, wrapKey(keyBytes), now);
     keyData.encryptionKeys.put(key.id(), key);
     keyData.currentEncryptionKey = key;
   }

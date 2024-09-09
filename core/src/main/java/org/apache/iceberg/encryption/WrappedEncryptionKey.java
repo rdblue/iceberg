@@ -25,8 +25,10 @@ public class WrappedEncryptionKey implements Serializable {
   private final String keyID;
   private final ByteBuffer wrappedKey;
   private final long timestamp;
+  private ByteBuffer keyBytes;
 
-  public WrappedEncryptionKey(String keyID, ByteBuffer wrappedKey, long timestamp) {
+  public WrappedEncryptionKey(
+      String keyID, ByteBuffer keyBytes, ByteBuffer wrappedKey, long timestamp) {
     this.keyID = keyID;
     this.wrappedKey = wrappedKey;
     this.timestamp = timestamp;
@@ -42,5 +44,13 @@ public class WrappedEncryptionKey implements Serializable {
 
   public long timestamp() {
     return timestamp;
+  }
+
+  public ByteBuffer key() {
+    return keyBytes;
+  }
+
+  public void setUnwrappedKey(ByteBuffer key) {
+    keyBytes = key;
   }
 }
