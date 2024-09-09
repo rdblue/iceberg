@@ -45,8 +45,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import org.apache.iceberg.encryption.EncryptedOutputFile;
 import org.apache.iceberg.encryption.EncryptingFileIO;
-import org.apache.iceberg.encryption.EncryptionManager;
-import org.apache.iceberg.encryption.EncryptionUtil;
 import org.apache.iceberg.events.CreateSnapshotEvent;
 import org.apache.iceberg.events.Listeners;
 import org.apache.iceberg.exceptions.CleanableFailure;
@@ -238,16 +236,13 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
     List<ManifestFile> manifests = apply(base, parentSnapshot);
 
     OutputFile manifestList = manifestListPath();
-
-    EncryptionManager encryptionManager = ops.encryption();
-    EncryptedOutputFile encryptedManifestList = encryptionManager.encrypt(manifestList);
-
     ManifestListWriter writer = null;
     try {
       writer =
           ManifestLists.write(
               ops.current().formatVersion(),
-              encryptedManifestList.encryptingOutputFile(),
+              ops.encryption(),
+              manifestList,
               snapshotId(),
               parentSnapshotId,
               sequenceNumber);
@@ -275,13 +270,6 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
       }
     }
 
-    ManifestListFile manifestListFile =
-        EncryptionUtil.createManifestListFile(
-            manifestList.location(),
-            encryptionManager,
-            encryptedManifestList.keyMetadata(),
-            writer.length());
-
     return new BaseSnapshot(
         sequenceNumber,
         snapshotId(),
@@ -290,7 +278,7 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
         operation(),
         summary(base),
         base.currentSchemaId(),
-        manifestListFile);
+        writer.toManifestListFile());
   }
 
   protected abstract Map<String, String> summary();

@@ -19,24 +19,25 @@
 package org.apache.iceberg;
 
 import java.nio.ByteBuffer;
+import org.apache.iceberg.encryption.EncryptionManager;
 
 public interface ManifestListFile {
 
   /** Location of manifest list file. */
   String location();
 
-  /**
-   * In encrypted tables, the manifest lists are encrypted. Returns key metadata of the encrypted
-   * manifest list file.
-   */
-  ByteBuffer keyMetadata();
+  /** Snapshot ID of the manifest list. */
+  long snapshotId();
 
   /**
    * The manifest list key metadata is encrypted with a "key encryption key" (KEK). Returns the KEK
    * ID for this manifest file.
    */
-  String metadataEncryptionKeyID();
+  String keyMetadataKeyId();
 
   /** Returns the manifest list key metadata, encrypted with its KEK. */
   ByteBuffer encryptedKeyMetadata();
+
+  /** Decrypt and return the encrypted key metadata */
+  ByteBuffer decryptKeyMetadata(EncryptionManager em);
 }

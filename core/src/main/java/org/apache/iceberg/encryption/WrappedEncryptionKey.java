@@ -19,17 +19,16 @@
 package org.apache.iceberg.encryption;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
-public class KeyEncryptionKey implements Serializable {
+public class WrappedEncryptionKey implements Serializable {
   private final String keyID;
-  private final String wrappedKey;
-  private final byte[] key;
+  private final ByteBuffer wrappedKey;
   private final long timestamp;
 
-  public KeyEncryptionKey(String kekID, byte[] newKek, String wrappedNewKek, long timestamp) {
-    this.keyID = kekID;
-    this.key = newKek;
-    this.wrappedKey = wrappedNewKek;
+  public WrappedEncryptionKey(String keyID, ByteBuffer wrappedKey, long timestamp) {
+    this.keyID = keyID;
+    this.wrappedKey = wrappedKey;
     this.timestamp = timestamp;
   }
 
@@ -37,11 +36,7 @@ public class KeyEncryptionKey implements Serializable {
     return keyID;
   }
 
-  public byte[] key() {
-    return key;
-  }
-
-  public String wrappedKey() {
+  public ByteBuffer wrappedKey() {
     return wrappedKey;
   }
 
