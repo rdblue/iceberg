@@ -43,13 +43,13 @@ public class StandardEncryptionManager implements EncryptionManager {
   private final long writerKekTimeout;
 
   // a holder class of metadata that is not available after serialization
-  private class KeyManagementMetadata {
+  private class TransientEncryptionState {
     private final KeyManagementClient kmsClient;
     private final Map<String, WrappedEncryptionKey> encryptionKeys;
     private final LoadingCache<ByteBuffer, ByteBuffer> unwrappedKeyCache;
     private WrappedEncryptionKey currentEncryptionKey;
 
-    private KeyManagementMetadata(KeyManagementClient kmsClient) {
+    private TransientEncryptionState(KeyManagementClient kmsClient) {
       this.kmsClient = kmsClient;
       this.encryptionKeys = Maps.newLinkedHashMap();
       this.unwrappedKeyCache =
@@ -60,12 +60,12 @@ public class StandardEncryptionManager implements EncryptionManager {
     }
   }
 
-  private final transient KeyManagementMetadata keyData;
+  private final transient TransientEncryptionState transientState;
 
   private transient volatile SecureRandom lazyRNG = null;
 
   /**
-   * @deprecated will be removed in 2.0.0. use {@link #StandardEncryptionManager(String, int, List,
+   * @deprecated will be removed in 1.8.0. use {@link #StandardEncryptionManager(String, int, List,
    *     KeyManagementClient, long)} instead.
    */
   @Deprecated
@@ -98,16 +98,16 @@ public class StandardEncryptionManager implements EncryptionManager {
         dataKeyLength);
     Preconditions.checkNotNull(kmsClient, "Invalid KMS client: null");
     this.tableKeyId = tableKeyId;
-    this.keyData = new KeyManagementMetadata(kmsClient);
+    this.transientState = new TransientEncryptionState(kmsClient);
     this.dataKeyLength = dataKeyLength;
     this.writerKekTimeout = writerKekTimeout;
 
     for (WrappedEncryptionKey key : keys) {
-      keyData.encryptionKeys.put(key.id(), key);
+      transientState.encryptionKeys.put(key.id(), key);
 
-      if (keyData.currentEncryptionKey == null
-          || keyData.currentEncryptionKey.timestamp() < key.timestamp()) {
-        keyData.currentEncryptionKey = key;
+      if (transientState.currentEncryptionKey == null
+          || transientState.currentEncryptionKey.timestamp() < key.timestamp()) {
+        transientState.currentEncryptionKey = key;
       }
     }
   }
@@ -145,12 +145,12 @@ public class StandardEncryptionManager implements EncryptionManager {
    */
   @Deprecated
   public ByteBuffer wrapKey(ByteBuffer secretKey) {
-    if (keyData == null) {
+    if (transientState == null) {
       throw new IllegalStateException(
           "Cannot wrap key after called after serialization (missing KMS client)");
     }
 
-    return keyData.kmsClient.wrapKey(secretKey, tableKeyId);
+    return transientState.kmsClient.wrapKey(secretKey, tableKeyId);
   }
 
   /**
@@ -158,33 +158,33 @@ public class StandardEncryptionManager implements EncryptionManager {
    */
   @Deprecated
   public ByteBuffer unwrapKey(ByteBuffer wrappedSecretKey) {
-    if (keyData == null) {
+    if (transientState == null) {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
     }
 
-    return keyData.unwrappedKeyCache.get(wrappedSecretKey);
+    return transientState.unwrappedKeyCache.get(wrappedSecretKey);
   }
 
   public String currentSnapshotKeyId() {
-    if (keyData == null) {
+    if (transientState == null) {
       throw new IllegalStateException("Cannot return the current snapshot key after serialization");
     }
 
-    if (keyData.currentEncryptionKey == null
-        || keyData.currentEncryptionKey.timestamp()
+    if (transientState.currentEncryptionKey == null
+        || transientState.currentEncryptionKey.timestamp()
             < System.currentTimeMillis() - writerKekTimeout) {
       createNewEncryptionKey();
     }
 
-    return keyData.currentEncryptionKey.id();
+    return transientState.currentEncryptionKey.id();
   }
 
   public ByteBuffer unwrapKey(String keyId) {
-    if (keyData == null) {
+    if (transientState == null) {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
     }
 
-    return keyData.unwrappedKeyCache.get(keyData.encryptionKeys.get(keyId).wrappedKey());
+    return transientState.unwrappedKeyCache.get(transientState.encryptionKeys.get(keyId).wrappedKey());
   }
 
   private ByteBuffer newKey() {
@@ -200,7 +200,7 @@ public class StandardEncryptionManager implements EncryptionManager {
   }
 
   private void createNewEncryptionKey() {
-    if (keyData == null) {
+    if (transientState == null) {
       throw new IllegalStateException("Cannot create encryption keys after serialization");
     }
 
@@ -210,9 +210,9 @@ public class StandardEncryptionManager implements EncryptionManager {
         new WrappedEncryptionKey(newKeyId(), wrapped, System.currentTimeMillis());
 
     // update internal tracking
-    keyData.unwrappedKeyCache.put(wrapped, unwrapped);
-    keyData.encryptionKeys.put(key.id(), key);
-    keyData.currentEncryptionKey = key;
+    transientState.unwrappedKeyCache.put(wrapped, unwrapped);
+    transientState.encryptionKeys.put(key.id(), key);
+    transientState.currentEncryptionKey = key;
   }
 
   private class StandardEncryptedOutputFile implements NativeEncryptionOutputFile {
