@@ -23,7 +23,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -141,6 +140,10 @@ public class StandardEncryptionManager implements EncryptionManager {
     return lazyRNG;
   }
 
+  /**
+   * @deprecated will be removed in 1.8.0; use {@link #currentSnapshotKeyId()} instead.
+   */
+  @Deprecated
   public ByteBuffer wrapKey(ByteBuffer secretKey) {
     if (keyData == null) {
       throw new IllegalStateException(
@@ -150,6 +153,10 @@ public class StandardEncryptionManager implements EncryptionManager {
     return keyData.kmsClient.wrapKey(secretKey, tableKeyId);
   }
 
+  /**
+   * @deprecated will be removed in 1.8.0; use {@link #unwrapKey(String)}} instead.
+   */
+  @Deprecated
   public ByteBuffer unwrapKey(ByteBuffer wrappedSecretKey) {
     if (keyData == null) {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
@@ -178,14 +185,6 @@ public class StandardEncryptionManager implements EncryptionManager {
     }
 
     return keyData.unwrappedKeyCache.get(keyData.encryptionKeys.get(keyId).wrappedKey());
-  }
-
-  Collection<WrappedEncryptionKey> keys() {
-    if (keyData == null) {
-      throw new IllegalStateException("Cannot return the current keys after serialization");
-    }
-
-    return keyData.encryptionKeys.values();
   }
 
   private ByteBuffer newKey() {
