@@ -18,12 +18,15 @@
  */
 package org.apache.iceberg.encryption;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.TableProperties;
 import org.apache.iceberg.io.InputFile;
@@ -41,14 +44,19 @@ public class StandardEncryptionManager implements EncryptionManager {
   private final long writerKekTimeout;
 
   // a holder class of metadata that is not available after serialization
-  private static class KeyManagementMetadata {
+  private class KeyManagementMetadata {
     private final KeyManagementClient kmsClient;
     private final Map<String, WrappedEncryptionKey> encryptionKeys;
+    private final LoadingCache<ByteBuffer, ByteBuffer> unwrappedKeyCache;
     private WrappedEncryptionKey currentEncryptionKey;
 
     private KeyManagementMetadata(KeyManagementClient kmsClient) {
       this.kmsClient = kmsClient;
       this.encryptionKeys = Maps.newLinkedHashMap();
+      this.unwrappedKeyCache =
+          Caffeine.newBuilder()
+              .expireAfterWrite(1, TimeUnit.MINUTES)
+              .build(wrappedKey -> kmsClient.unwrapKey(wrappedKey, tableKeyId));
       this.currentEncryptionKey = null;
     }
   }
@@ -147,7 +155,7 @@ public class StandardEncryptionManager implements EncryptionManager {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
     }
 
-    return keyData.kmsClient.unwrapKey(wrappedSecretKey, tableKeyId);
+    return keyData.unwrappedKeyCache.get(wrappedSecretKey);
   }
 
   public String currentSnapshotKeyId() {
@@ -169,7 +177,7 @@ public class StandardEncryptionManager implements EncryptionManager {
       throw new IllegalStateException("Cannot unwrap key after serialization (missing KMS client)");
     }
 
-    return unwrapKey(keyData.encryptionKeys.get(keyId).wrappedKey());
+    return keyData.unwrappedKeyCache.get(keyData.encryptionKeys.get(keyId).wrappedKey());
   }
 
   Collection<WrappedEncryptionKey> keys() {
@@ -193,8 +201,17 @@ public class StandardEncryptionManager implements EncryptionManager {
   }
 
   private void createNewEncryptionKey() {
-    long now = System.currentTimeMillis();
-    WrappedEncryptionKey key = new WrappedEncryptionKey(newKeyId(), wrapKey(newKey()), now);
+    if (keyData == null) {
+      throw new IllegalStateException("Cannot create encryption keys after serialization");
+    }
+
+    ByteBuffer unwrapped = newKey();
+    ByteBuffer wrapped = wrapKey(unwrapped);
+    WrappedEncryptionKey key =
+        new WrappedEncryptionKey(newKeyId(), wrapped, System.currentTimeMillis());
+
+    // update internal tracking
+    keyData.unwrappedKeyCache.put(wrapped, unwrapped);
     keyData.encryptionKeys.put(key.id(), key);
     keyData.currentEncryptionKey = key;
   }
