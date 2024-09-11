@@ -559,6 +559,33 @@ project(':iceberg-azure') {
   }
 }
 
+project(':iceberg-delta') {
+  test {
+    useJUnitPlatform()
+  }
+
+  dependencies {
+    implementation project(path: ':iceberg-bundled-guava', configuration: 'shadow')
+    api project(':iceberg-api')
+    implementation project(':iceberg-common')
+    implementation project(':iceberg-core')
+    implementation project(':iceberg-parquet')
+    implementation platform(libs.jackson.bom)
+    implementation libs.jackson.databind
+
+    api libs.delta.kernel
+    compileOnly libs.delta.kernel.defaults
+    implementation libs.caffeine
+
+    compileOnly(libs.hadoop2.common) {
+      exclude group: 'org.apache.avro', module: 'avro'
+      exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+      exclude group: 'javax.servlet', module: 'servlet-api'
+      exclude group: 'com.google.code.gson', module: 'gson'
+    }
+  }
+}
+
 project(':iceberg-delta-lake') {
   // use integration test since we can take advantages of spark 3.3 to read datafiles of delta lake table
   // and create some tests involving sql query.

@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableSet;
 import org.apache.iceberg.relocated.com.google.common.collect.Maps;
 import org.apache.iceberg.relocated.com.google.common.io.BaseEncoding;
+import org.apache.iceberg.types.Type;
 
 public class JsonUtil {
 
@@ -465,5 +467,40 @@ public class JsonUtil {
       gen.writeStringField(pair.getKey(), pair.getValue());
     }
     gen.writeEndObject();
+  }
+
+  public static void writeValue(Type.PrimitiveType type, Object value, JsonGenerator gen)
+      throws IOException {
+    switch (type.typeId()) {
+      case BOOLEAN:
+        gen.writeBoolean((Boolean) value);
+        break;
+      case INTEGER:
+      case DATE:
+        gen.writeNumber((Integer) value);
+        break;
+      case LONG:
+      case TIME:
+      case TIMESTAMP:
+      case TIMESTAMP_NANO:
+        gen.writeNumber((Long) value);
+        break;
+      case FLOAT:
+        gen.writeNumber((Float) value);
+        break;
+      case DOUBLE:
+        gen.writeNumber((Double) value);
+        break;
+      case STRING:
+      case UUID:
+        // use toString in case the value is CharSequence
+        gen.writeString(value.toString());
+        break;
+        //      case DECIMAL:
+        //        gen.writeNumber((BigDecimal) value);
+        //        break;
+      default:
+        throw new UnsupportedEncodingException("Cannot write unsupported type: " + type);
+    }
   }
 }

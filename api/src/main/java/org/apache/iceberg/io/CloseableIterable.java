@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import org.apache.iceberg.exceptions.RuntimeIOException;
 import org.apache.iceberg.metrics.Counter;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
@@ -72,6 +73,27 @@ public interface CloseableIterable<T> extends Iterable<T>, Closeable {
         return CloseableIterator.withClose(iterable.iterator());
       }
     };
+  }
+
+  static <E, C extends Iterator<E> & Closeable> CloseableIterable<E> fromLambda(
+      Supplier<C> newIterator) {
+    return new LambdaGroup<>(newIterator);
+  }
+
+  class LambdaGroup<E, C extends Iterator<E> & Closeable> extends CloseableGroup
+      implements CloseableIterable<E> {
+    private final Supplier<C> supplier;
+
+    public LambdaGroup(Supplier<C> supplier) {
+      this.supplier = supplier;
+    }
+
+    @Override
+    public CloseableIterator<E> iterator() {
+      C iter = supplier.get();
+      addCloseable(iter);
+      return CloseableIterator.withClose(iter);
+    }
   }
 
   /**

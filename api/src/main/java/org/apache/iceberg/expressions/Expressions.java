@@ -309,6 +309,10 @@ public class Expressions {
     return new UnboundTransform<>(ref(name), transform);
   }
 
+  public static <T> Literal<T> literal(T value) {
+    return Literals.from(value);
+  }
+
   public static <T> UnboundAggregate<T> count(String name) {
     return new UnboundAggregate<>(Operation.COUNT, ref(name));
   }
