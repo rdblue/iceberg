@@ -24,6 +24,9 @@ package org.apache.iceberg.delta;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.iceberg.CatalogProperties;
+import org.apache.iceberg.CatalogUtil;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
@@ -31,9 +34,33 @@ import org.apache.iceberg.catalog.SupportsNamespaces;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.exceptions.NamespaceNotEmptyException;
 import org.apache.iceberg.exceptions.NoSuchNamespaceException;
+import org.apache.iceberg.hadoop.Configurable;
+import org.apache.iceberg.hadoop.HadoopFileIO;
+import org.apache.iceberg.io.FileIO;
+import org.apache.iceberg.io.FileIOTracker;
+import org.apache.iceberg.relocated.com.google.common.base.Joiner;
+import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
+import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
+import org.apache.iceberg.util.LocationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DeltaCatalog implements Catalog, SupportsNamespaces {
-  //private final String location;
+public class DeltaCatalog implements Catalog, SupportsNamespaces, Configurable<Configuration> {
+  private static final Logger LOG = LoggerFactory.getLogger(DeltaCatalog.class);
+  private static final String HIVE_WAREHOUSE_PROP = "hive.metastore.warehouse.dir";
+  private static final Joiner SLASH = Joiner.on("/");
+
+  private Configuration conf = null;
+  private String name = null;
+  private Map<String, String> catalogProperties = null;
+  private String warehouse = null;
+  private FileIO io = null;
+  private FileIOTracker ioTracker = null;
+
+  @Override
+  public String name() {
+    return name;
+  }
 
   @Override
   public List<TableIdentifier> listTables(Namespace namespace) {
@@ -42,23 +69,23 @@ public class DeltaCatalog implements Catalog, SupportsNamespaces {
 
   @Override
   public boolean dropTable(TableIdentifier identifier, boolean purge) {
-    return false;
+    throw new UnsupportedOperationException("Drop is not supported");
   }
 
   @Override
   public void renameTable(TableIdentifier from, TableIdentifier to) {
-
+    throw new UnsupportedOperationException("Rename is not supported");
   }
 
   @Override
-  public Table loadTable(TableIdentifier identifier) {
-    return null;
+  public Table loadTable(TableIdentifier ident) {
+    String tableLocation =
+        SLASH.join(warehouse, SLASH.join(SLASH.join(ident.namespace().levels()), ident.name()));
+    return new DeltaTable(ident, conf, tableLocation);
   }
 
   @Override
-  public void createNamespace(Namespace namespace, Map<String, String> metadata) {
-
-  }
+  public void createNamespace(Namespace namespace, Map<String, String> metadata) {}
 
   @Override
   public List<Namespace> listNamespaces(Namespace namespace) throws NoSuchNamespaceException {
@@ -66,7 +93,8 @@ public class DeltaCatalog implements Catalog, SupportsNamespaces {
   }
 
   @Override
-  public Map<String, String> loadNamespaceMetadata(Namespace namespace) throws NoSuchNamespaceException {
+  public Map<String, String> loadNamespaceMetadata(Namespace namespace)
+      throws NoSuchNamespaceException {
     return Map.of();
   }
 
@@ -76,12 +104,47 @@ public class DeltaCatalog implements Catalog, SupportsNamespaces {
   }
 
   @Override
-  public boolean setProperties(Namespace namespace, Map<String, String> properties) throws NoSuchNamespaceException {
+  public boolean setProperties(Namespace namespace, Map<String, String> properties)
+      throws NoSuchNamespaceException {
     return false;
   }
 
   @Override
-  public boolean removeProperties(Namespace namespace, Set<String> properties) throws NoSuchNamespaceException {
+  public boolean removeProperties(Namespace namespace, Set<String> properties)
+      throws NoSuchNamespaceException {
     return false;
+  }
+
+  @Override
+  public void initialize(String name, Map<String, String> properties) {
+    if (null == conf) {
+      LOG.warn("No Hadoop Configuration was set, using the default environment Configuration");
+      conf = new Configuration();
+    }
+
+    this.name = name;
+    this.catalogProperties = ImmutableMap.copyOf(properties);
+
+    if (properties.containsKey(CatalogProperties.WAREHOUSE_LOCATION)) {
+      this.warehouse =
+          LocationUtil.stripTrailingSlash(properties.get(CatalogProperties.WAREHOUSE_LOCATION));
+      conf.set(HIVE_WAREHOUSE_PROP, warehouse); // keep the Configuration in sync
+    } else {
+      this.warehouse = LocationUtil.stripTrailingSlash(conf.get(HIVE_WAREHOUSE_PROP, null));
+    }
+
+    Preconditions.checkArgument(
+        warehouse != null, "Missing required property: %s", CatalogProperties.WAREHOUSE_LOCATION);
+
+    String ioImpl = properties.get(CatalogProperties.FILE_IO_IMPL);
+    this.io =
+        ioImpl == null ? new HadoopFileIO(conf) : CatalogUtil.loadFileIO(ioImpl, properties, conf);
+
+    this.ioTracker = new FileIOTracker();
+  }
+
+  @Override
+  public void setConf(Configuration conf) {
+    this.conf = conf;
   }
 }

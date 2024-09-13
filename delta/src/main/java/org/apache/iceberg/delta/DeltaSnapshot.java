@@ -84,13 +84,17 @@ class DeltaSnapshot implements Snapshot, HistoryEntry {
       // use the current version as the schema ID to ensure uniqueness
       int schemaId = Math.toIntExact(log.version);
       int lastAssignedId = lastAssignedFieldId();
-      Pair<NameMapping, Integer> updatedMapping = DeltaTypeUtil.updateNameMapping(metadata.getSchema(), nameMapping(), lastAssignedId);
+      Pair<NameMapping, Integer> updatedMapping =
+          DeltaTypeUtil.updateNameMapping(metadata.getSchema(), nameMapping(), lastAssignedId);
 
       // if the updated mapping contains new IDs, then some field IDs were missing
       this.hasMissingFieldIds = updatedMapping.second() != lastAssignedId;
 
       // convert the schema with the updated mapping so that the snapshot can be read
-      this.schema = new Schema(schemaId, DeltaTypeUtil.convert(metadata.getSchema(), updatedMapping.first()).fields());
+      this.schema =
+          new Schema(
+              schemaId,
+              DeltaTypeUtil.convert(metadata.getSchema(), updatedMapping.first()).fields());
     }
 
     return schema;
