@@ -76,8 +76,13 @@ public class DeltaCatalog implements Catalog, SupportsNamespaces, Configurable<C
 
   @Override
   public Table loadTable(TableIdentifier ident) {
-    String tableLocation =
-        SLASH.join(warehouse, SLASH.join(SLASH.join(ident.namespace().levels()), ident.name()));
+    String tableLocation;
+    if (ident.namespace().isEmpty()) {
+      tableLocation = SLASH.join(warehouse, ident.name());
+    } else {
+      tableLocation =
+          SLASH.join(warehouse, SLASH.join(SLASH.join(ident.namespace().levels()), ident.name()));
+    }
     return new DeltaTable(ident, conf, tableLocation);
   }
 

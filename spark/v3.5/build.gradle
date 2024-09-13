@@ -229,6 +229,8 @@ project(":iceberg-spark:iceberg-spark-runtime-${sparkMajorVersion}_${scalaVersio
     api project(':iceberg-api')
     implementation project(":iceberg-spark:iceberg-spark-${sparkMajorVersion}_${scalaVersion}")
     implementation project(":iceberg-spark:iceberg-spark-extensions-${sparkMajorVersion}_${scalaVersion}")
+    implementation project(':iceberg-delta')
+    implementation libs.delta.kernel.defaults
     implementation project(':iceberg-aws')
     implementation project(':iceberg-azure')
     implementation(project(':iceberg-aliyun')) {

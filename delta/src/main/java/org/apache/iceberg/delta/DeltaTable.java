@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.UUID;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.shaded.com.google.common.collect.Maps;
 import org.apache.iceberg.AppendFiles;
@@ -117,6 +118,11 @@ public class DeltaTable implements org.apache.iceberg.Table {
   }
 
   @Override
+  public UUID uuid() {
+    return UUID.fromString(properties().get(TableProperties.UUID));
+  }
+
+  @Override
   public void refresh() {
     this.currentVersionId = deltaTable.getLatestSnapshot(deltaEngine).getVersion(deltaEngine);
     this.currentVersion = snapshots.get(currentVersionId);
@@ -190,9 +196,14 @@ public class DeltaTable implements org.apache.iceberg.Table {
 
   @Override
   public Map<Integer, PartitionSpec> specs() {
-    return ImmutableMap.of(
-        PartitionSpec.unpartitioned().specId(), PartitionSpec.unpartitioned(),
-        spec().specId(), spec());
+    PartitionSpec spec = spec();
+    if (spec.isPartitioned()) {
+      return ImmutableMap.of(
+          PartitionSpec.unpartitioned().specId(), PartitionSpec.unpartitioned(),
+          spec.specId(), spec);
+    } else {
+      return ImmutableMap.of(spec.specId(), spec);
+    }
   }
 
   @Override
