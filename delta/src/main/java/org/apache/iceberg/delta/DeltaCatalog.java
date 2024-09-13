@@ -20,17 +20,13 @@ package org.apache.iceberg.delta;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.iceberg.CatalogProperties;
 import org.apache.iceberg.CatalogUtil;
 import org.apache.iceberg.Table;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
-import org.apache.iceberg.catalog.SupportsNamespaces;
 import org.apache.iceberg.catalog.TableIdentifier;
-import org.apache.iceberg.exceptions.NamespaceNotEmptyException;
-import org.apache.iceberg.exceptions.NoSuchNamespaceException;
 import org.apache.iceberg.hadoop.Configurable;
 import org.apache.iceberg.hadoop.HadoopFileIO;
 import org.apache.iceberg.io.FileIO;
@@ -42,7 +38,7 @@ import org.apache.iceberg.util.LocationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeltaCatalog implements Catalog, SupportsNamespaces, Configurable<Configuration> {
+public class DeltaCatalog implements Catalog, Configurable<Configuration> {
   private static final Logger LOG = LoggerFactory.getLogger(DeltaCatalog.class);
   private static final String HIVE_WAREHOUSE_PROP = "hive.metastore.warehouse.dir";
   private static final Joiner SLASH = Joiner.on("/");
@@ -84,37 +80,6 @@ public class DeltaCatalog implements Catalog, SupportsNamespaces, Configurable<C
           SLASH.join(warehouse, SLASH.join(SLASH.join(ident.namespace().levels()), ident.name()));
     }
     return new DeltaTable(ident, conf, tableLocation);
-  }
-
-  @Override
-  public void createNamespace(Namespace namespace, Map<String, String> metadata) {}
-
-  @Override
-  public List<Namespace> listNamespaces(Namespace namespace) throws NoSuchNamespaceException {
-    return List.of();
-  }
-
-  @Override
-  public Map<String, String> loadNamespaceMetadata(Namespace namespace)
-      throws NoSuchNamespaceException {
-    return Map.of();
-  }
-
-  @Override
-  public boolean dropNamespace(Namespace namespace) throws NamespaceNotEmptyException {
-    return false;
-  }
-
-  @Override
-  public boolean setProperties(Namespace namespace, Map<String, String> properties)
-      throws NoSuchNamespaceException {
-    return false;
-  }
-
-  @Override
-  public boolean removeProperties(Namespace namespace, Set<String> properties)
-      throws NoSuchNamespaceException {
-    return false;
   }
 
   @Override
