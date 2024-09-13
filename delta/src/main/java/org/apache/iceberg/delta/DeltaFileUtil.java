@@ -103,21 +103,22 @@ public class DeltaFileUtil {
 
   public static Row addFile(
       URI tableRoot, Schema schema, PartitionSpec spec, long timestamp, DataFile file) {
-    return SingleAction.createAddFileSingleAction(new GenericRow(
-        AddFile.FULL_SCHEMA,
-        ImmutableMap.of(
-            PATH,
-            tableRoot.relativize(URI.create(file.path().toString())).toString(),
-            PARTITION,
-            toPartitionMap(spec.partitionType(), file.partition()),
-            FILE_SIZE,
-            file.fileSizeInBytes(),
-            MODIFIED_TIMESTAMP,
-            timestamp,
-            IS_DATA_CHANGE,
-            true,
-            STATS,
-            toJsonStats(schema, file))));
+    return SingleAction.createAddFileSingleAction(
+        new GenericRow(
+            AddFile.FULL_SCHEMA,
+            ImmutableMap.of(
+                PATH,
+                tableRoot.relativize(URI.create(file.path().toString())).toString(),
+                PARTITION,
+                toPartitionMap(spec.partitionType(), file.partition()),
+                FILE_SIZE,
+                file.fileSizeInBytes(),
+                MODIFIED_TIMESTAMP,
+                timestamp,
+                IS_DATA_CHANGE,
+                true,
+                STATS,
+                toJsonStats(schema, file))));
   }
 
   private static MapValue toPartitionMap(Types.StructType partitionType, StructLike partition) {

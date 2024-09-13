@@ -72,8 +72,7 @@ public class TestDeltaTypeToType {
 
   @Test
   public void testAtomicTypeConversion() {
-    Type converted =
-        DeltaTypeVisitor.visit(deltaAtomicSchema, new DeltaTypeToType());
+    Type converted = DeltaTypeVisitor.visit(deltaAtomicSchema, new DeltaTypeToType());
     Schema convertedSchema = new Schema(converted.asNestedType().asStructType().fields());
 
     assertThat(convertedSchema.findType(OPTIONAL_BOOLEAN_TYPE))
@@ -85,8 +84,7 @@ public class TestDeltaTypeToType {
 
   @Test
   public void testNestedTypeConversion() {
-    Type converted =
-        DeltaTypeVisitor.visit(deltaNestedSchema, new DeltaTypeToType());
+    Type converted = DeltaTypeVisitor.visit(deltaNestedSchema, new DeltaTypeToType());
     Schema convertedSchema = new Schema(converted.asNestedType().asStructType().fields());
 
     assertThat(convertedSchema.findType(INNER_ATOMIC_SCHEMA)).isInstanceOf(Types.StructType.class);
@@ -185,16 +183,11 @@ public class TestDeltaTypeToType {
 
   @Test
   public void testNullTypeConversion() {
-    assertThatThrownBy(
-            () ->
-                DeltaTypeVisitor.visit(
-                    deltaNullTypeSchema, new DeltaTypeToType()))
+    assertThatThrownBy(() -> DeltaTypeVisitor.visit(deltaNullTypeSchema, new DeltaTypeToType()))
         .isInstanceOf(ValidationException.class)
         .hasMessage(String.format("Not a supported type: %s", new NullType()));
     assertThatThrownBy(
-            () ->
-                DeltaTypeVisitor.visit(
-                    deltaShallowNullTypeSchema, new DeltaTypeToType()))
+            () -> DeltaTypeVisitor.visit(deltaShallowNullTypeSchema, new DeltaTypeToType()))
         .isInstanceOf(ValidationException.class)
         .hasMessage(String.format("Not a supported type: %s", new NullType()));
   }
