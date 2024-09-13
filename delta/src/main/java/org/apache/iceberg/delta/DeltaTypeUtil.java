@@ -18,21 +18,28 @@
  */
 package org.apache.iceberg.delta;
 
+import io.delta.kernel.types.ArrayType;
 import io.delta.kernel.types.BinaryType;
 import io.delta.kernel.types.BooleanType;
 import io.delta.kernel.types.DataType;
 import io.delta.kernel.types.DateType;
 import io.delta.kernel.types.DecimalType;
 import io.delta.kernel.types.DoubleType;
+import io.delta.kernel.types.FieldMetadata;
 import io.delta.kernel.types.FloatType;
 import io.delta.kernel.types.IntegerType;
 import io.delta.kernel.types.LongType;
+import io.delta.kernel.types.MapType;
 import io.delta.kernel.types.StringType;
+import io.delta.kernel.types.StructField;
 import io.delta.kernel.types.StructType;
 import io.delta.kernel.types.TimestampNTZType;
 import io.delta.kernel.types.TimestampType;
+import java.util.List;
+import org.apache.iceberg.mapping.NameMapping;
 import org.apache.iceberg.types.Type;
 import org.apache.iceberg.types.Types;
+import org.apache.iceberg.util.Pair;
 
 /** Utility methods for working with Delta types. */
 public class DeltaTypeUtil {
@@ -41,11 +48,45 @@ public class DeltaTypeUtil {
   /**
    * Convert a Delta table schema to Iceberg.
    *
+   * <p>Note: this will assign missing field IDs during conversion.
+   *
    * @param struct a Delta table's StructType
    * @return an Iceberg StructType
    */
   public static Types.StructType convert(StructType struct) {
-    return DeltaTypeVisitor.visit(struct, new DeltaTypeToType(struct)).asStructType();
+    Pair<NameMapping, Integer> mapping = createNameMapping(struct, highestFieldId(struct));
+    return DeltaTypeVisitor.visit(struct, new DeltaTypeToType(mapping.first())).asStructType();
+  }
+
+  /**
+   * Convert a Delta table schema to Iceberg.
+   *
+   * <p>The {@link NameMapping} is applied to assign any missing field IDs.
+   *
+   * @param struct a Delta table's StructType
+   * @param mapping a {@link NameMapping} that maps missing fields (such as map keys) to IDs
+   * @return an Iceberg StructType
+   */
+  public static Types.StructType convert(StructType struct, NameMapping mapping) {
+    return DeltaTypeVisitor.visit(struct, new DeltaTypeToType(mapping)).asStructType();
+  }
+
+  public static Pair<NameMapping, Integer> createNameMapping(
+      StructType struct, int lastAssignedId) {
+    CreateNameMapping visitor = new CreateNameMapping(lastAssignedId);
+    NameMapping result = NameMapping.of(DeltaTypeVisitor.visit(struct, visitor).fields());
+    int newLastAssignedId = visitor.lastAssignedId();
+
+    return Pair.of(result, newLastAssignedId);
+  }
+
+  public static Pair<NameMapping, Integer> updateNameMapping(
+      StructType struct, NameMapping mapping, int lastAssignedId) {
+    CreateNameMapping visitor = new CreateNameMapping(mapping, lastAssignedId);
+    NameMapping result = NameMapping.of(DeltaTypeVisitor.visit(struct, visitor).fields());
+    int newLastAssignedId = visitor.lastAssignedId();
+
+    return Pair.of(result, newLastAssignedId);
   }
 
   public static DataType convert(Type.PrimitiveType type) {
@@ -81,5 +122,58 @@ public class DeltaTypeUtil {
     }
 
     throw new UnsupportedOperationException("Cannot convert type: " + type);
+  }
+
+  /**
+   * Finds the highest assigned field ID in the Delta type.
+   *
+   * @param struct a Delta struct
+   * @return the highest field ID for any field in the type
+   */
+  private static int highestFieldId(StructType struct) {
+    return DeltaTypeVisitor.visit(struct, HighestFieldId.INSTANCE);
+  }
+
+  private static class HighestFieldId extends DeltaTypeVisitor<Integer> {
+    private static final String FIELD_ID_KEY = "delta.columnMapping.id";
+    private static final HighestFieldId INSTANCE = new HighestFieldId();
+
+    private HighestFieldId() {}
+
+    @Override
+    public Integer struct(StructType struct, List<Integer> fieldResults) {
+      int maxId = 0;
+      for (int fieldId : fieldResults) {
+        maxId = Math.max(maxId, fieldId);
+      }
+
+      return maxId;
+    }
+
+    @Override
+    public Integer field(StructField field, Integer typeResult) {
+      FieldMetadata metadata = field.getMetadata();
+      Object deltaId = metadata.get(FIELD_ID_KEY);
+      if (deltaId instanceof Number) {
+        return Math.max(((Number) deltaId).intValue(), typeResult);
+      } else {
+        return typeResult;
+      }
+    }
+
+    @Override
+    public Integer array(ArrayType array, Integer elementResult) {
+      return elementResult;
+    }
+
+    @Override
+    public Integer map(MapType map, Integer keyResult, Integer valueResult) {
+      return Math.max(keyResult, valueResult);
+    }
+
+    @Override
+    public Integer atomic(DataType atomic) {
+      return 0;
+    }
   }
 }

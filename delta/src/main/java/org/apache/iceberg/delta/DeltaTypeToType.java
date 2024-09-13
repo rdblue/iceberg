@@ -39,7 +39,6 @@ import io.delta.kernel.types.TimestampNTZType;
 import io.delta.kernel.types.TimestampType;
 import java.util.Deque;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.iceberg.exceptions.ValidationException;
 import org.apache.iceberg.mapping.MappedField;
 import org.apache.iceberg.mapping.NameMapping;
@@ -48,7 +47,6 @@ import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.Iterables;
 import org.apache.iceberg.relocated.com.google.common.collect.Lists;
 import org.apache.iceberg.types.Type;
-import org.apache.iceberg.types.TypeUtil;
 import org.apache.iceberg.types.Types;
 
 class DeltaTypeToType extends DeltaTypeVisitor<Type> {
@@ -57,28 +55,17 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
   private static final Joiner DOT = Joiner.on(".");
 
   private final Deque<String> fieldNames = Lists.newLinkedList();
-  private final StructType root;
   private final NameMapping mapping;
-  private final AtomicInteger nextId;
 
   DeltaTypeToType() {
-    this.root = null;
     this.mapping = null;
-    this.nextId = new AtomicInteger(0);
   }
 
-  DeltaTypeToType(StructType root) {
-    this(root, null);
-  }
-
-  DeltaTypeToType(StructType root, NameMapping mapping) {
-    this.root = root;
+  DeltaTypeToType(NameMapping mapping) {
     this.mapping = mapping;
-    // TODO: plumb through lastAssignedFieldId
-    this.nextId = new AtomicInteger(root.fields().size() + 1);
   }
 
-  private int assignOrFindId(String name, TypeUtil.NextID nextId) {
+  private int findId(String name) {
     if (mapping != null) {
       MappedField field = mapping.find(fieldName(name));
       if (field != null) {
@@ -86,11 +73,10 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
       }
     }
 
-    return nextId.get();
-  }
-
-  private int assignOrFindId(String name) {
-    return assignOrFindId(name, nextId::getAndIncrement);
+    throw new IllegalArgumentException(
+        String.format(
+            "Cannot find field ID for field: %s (missing from type and name mapping)",
+            fieldName(name)));
   }
 
   @Override
@@ -98,7 +84,6 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
   public Type struct(StructType struct, List<Type> types) {
     List<StructField> fields = struct.fields();
     List<Types.NestedField> newFields = Lists.newArrayListWithExpectedSize(fields.size());
-    boolean isRoot = root == struct;
     for (int i = 0; i < fields.size(); i += 1) {
       StructField field = fields.get(i);
       FieldMetadata metadata = field.getMetadata();
@@ -107,12 +92,8 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
       int id;
       if (deltaId instanceof Number) {
         id = ((Number) deltaId).intValue();
-      } else if (isRoot) {
-        // for new conversions, use ordinals for ids in the root struct
-        int pos = i; // make i effectively final
-        id = assignOrFindId(field.getName(), () -> pos);
       } else {
-        id = assignOrFindId(field.getName());
+        id = findId(field.getName());
       }
 
       String doc = metadata.contains("comment") ? metadata.get("comment").toString() : null;
@@ -137,7 +118,7 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
 
   @Override
   public Type array(ArrayType array, Type elementType) {
-    int elementId = assignOrFindId("element");
+    int elementId = findId("element");
     if (array.containsNull()) {
       return Types.ListType.ofOptional(elementId, elementType);
     } else {
@@ -147,8 +128,8 @@ class DeltaTypeToType extends DeltaTypeVisitor<Type> {
 
   @Override
   public Type map(MapType map, Type keyType, Type valueType) {
-    int keyId = assignOrFindId("key");
-    int valueId = assignOrFindId("value");
+    int keyId = findId("key");
+    int valueId = findId("value");
     if (map.isValueContainsNull()) {
       return Types.MapType.ofOptional(keyId, valueId, keyType, valueType);
     } else {

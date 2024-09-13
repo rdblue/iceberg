@@ -21,6 +21,7 @@ package org.apache.iceberg.delta;
 import io.delta.kernel.internal.SnapshotImpl;
 import io.delta.kernel.internal.actions.Metadata;
 import io.delta.kernel.internal.snapshot.LogSegment;
+import io.delta.kernel.internal.util.ColumnMapping;
 import java.util.List;
 import java.util.Map;
 import org.apache.iceberg.DataFile;
@@ -31,14 +32,19 @@ import org.apache.iceberg.PartitionSpec;
 import org.apache.iceberg.Schema;
 import org.apache.iceberg.Snapshot;
 import org.apache.iceberg.io.FileIO;
+import org.apache.iceberg.mapping.NameMapping;
+import org.apache.iceberg.mapping.NameMappingParser;
 import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
+import org.apache.iceberg.util.Pair;
 
 class DeltaSnapshot implements Snapshot, HistoryEntry {
   private final SnapshotImpl wrapped;
   private final Metadata metadata;
   private final LogSegment log;
   private Schema schema = null;
+  private NameMapping mapping = null;
+  private boolean hasMissingFieldIds = true;
   private PartitionSpec spec = null;
   private Map<String, String> summary = null;
   private List<DataFile> addedFiles = null;
@@ -64,16 +70,27 @@ class DeltaSnapshot implements Snapshot, HistoryEntry {
     return wrapped;
   }
 
-  public Metadata metadata() {
+  /** Returns whether the snapshot's current table schema can be written by Iceberg. */
+  boolean canWrite() {
+    return columnMappingEnabled() && !hasMissingFieldIds();
+  }
+
+  Metadata metadata() {
     return metadata;
   }
 
   public Schema schema() {
     if (null == schema) {
       // use the current version as the schema ID to ensure uniqueness
-      this.schema =
-          new Schema(
-              Math.toIntExact(snapshotId()), DeltaTypeUtil.convert(metadata.getSchema()).fields());
+      int schemaId = Math.toIntExact(log.version);
+      int lastAssignedId = lastAssignedFieldId();
+      Pair<NameMapping, Integer> updatedMapping = DeltaTypeUtil.updateNameMapping(metadata.getSchema(), nameMapping(), lastAssignedId);
+
+      // if the updated mapping contains new IDs, then some field IDs were missing
+      this.hasMissingFieldIds = updatedMapping.second() != lastAssignedId;
+
+      // convert the schema with the updated mapping so that the snapshot can be read
+      this.schema = new Schema(schemaId, DeltaTypeUtil.convert(metadata.getSchema(), updatedMapping.first()).fields());
     }
 
     return schema;
@@ -216,5 +233,36 @@ class DeltaSnapshot implements Snapshot, HistoryEntry {
   @Override
   public String manifestListLocation() {
     return null;
+  }
+
+  boolean columnMappingEnabled() {
+    return ColumnMapping.COLUMN_MAPPING_MODE_NAME.equals(
+        ColumnMapping.getColumnMappingMode(metadata.getConfiguration()));
+  }
+
+  boolean hasMissingFieldIds() {
+    schema(); // hasMissingFieldIds is set while converting the schema
+    return hasMissingFieldIds;
+  }
+
+  int lastAssignedFieldId() {
+    Map<String, String> config = metadata.getConfiguration();
+    String lastAssignedIdString = config.get(DeltaTable.LAST_ASSIGNED_ID_KEY);
+    if (lastAssignedIdString != null) {
+      return Integer.parseInt(lastAssignedIdString);
+    } else {
+      return 0;
+    }
+  }
+
+  NameMapping nameMapping() {
+    if (null == mapping) {
+      String nameMappingStr = metadata.getConfiguration().get(DeltaTable.NAME_MAPPING_KEY);
+      if (nameMappingStr != null) {
+        this.mapping = NameMappingParser.fromJson(nameMappingStr);
+      }
+    }
+
+    return mapping;
   }
 }

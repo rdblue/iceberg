@@ -31,6 +31,7 @@ import io.delta.kernel.internal.actions.Protocol;
 import io.delta.kernel.internal.actions.SingleAction;
 import io.delta.kernel.internal.util.ColumnMapping;
 import io.delta.kernel.internal.util.VectorUtils;
+import io.delta.kernel.types.FieldMetadata;
 import io.delta.kernel.types.LongType;
 import io.delta.kernel.types.StringType;
 import io.delta.kernel.types.StructField;
@@ -67,13 +68,13 @@ public class TestDeltaTable {
               new StructField(
                   "id",
                   LongType.LONG,
-                  false), //,
-                  //FieldMetadata.builder().putLong("delta.columnMapping.id", 1).build()),
+                  false,
+                  FieldMetadata.builder().putLong("delta.columnMapping.id", 1).build()),
               new StructField(
                   "data",
                   StringType.STRING,
-                  true))); //,
-                  //FieldMetadata.builder().putLong("delta.columnMapping.id", 2).build())));
+                  true,
+                  FieldMetadata.builder().putLong("delta.columnMapping.id", 2).build())));
 
   private Table createDeltaTable(File tempDir) {
     Table deltaTable = Table.forPath(ENGINE, tempDir.toString());
@@ -108,6 +109,8 @@ public class TestDeltaTable {
     Map<String, String> config = Maps.newHashMap(initMetadata.getConfiguration());
     config.put(ColumnMapping.COLUMN_MAPPING_MODE_KEY, ColumnMapping.COLUMN_MAPPING_MODE_NAME);
     config.put("delta.columnMapping.maxColumnId", "2");
+    // enable uniform features
+    config.put("delta.universalFormat.enabledFormats", "iceberg");
 
     Metadata withColumnMapping =
         new Metadata(
