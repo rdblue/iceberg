@@ -53,7 +53,7 @@ public class TypeUtil {
    *
    * @param schema to project fields from
    * @param fieldIds list of explicit fields to extract
-   * @return the schema with all fields fields not selected removed
+   * @return the schema with all fields not selected removed
    */
   public static Schema project(Schema schema, Set<Integer> fieldIds) {
     Preconditions.checkNotNull(schema, "Schema cannot be null");
