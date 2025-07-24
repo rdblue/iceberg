@@ -32,6 +32,7 @@ import org.apache.iceberg.avro.ValueReader;
 import org.apache.iceberg.avro.ValueReaders;
 import org.apache.iceberg.relocated.com.google.common.collect.Lists;
 import org.apache.iceberg.types.Types;
+import org.apache.iceberg.util.ByteBuffers;
 import org.apache.iceberg.util.Pair;
 import org.apache.iceberg.util.UUIDUtil;
 import org.apache.spark.sql.catalyst.InternalRow;
@@ -41,6 +42,7 @@ import org.apache.spark.sql.catalyst.util.ArrayData;
 import org.apache.spark.sql.catalyst.util.GenericArrayData;
 import org.apache.spark.sql.types.Decimal;
 import org.apache.spark.unsafe.types.UTF8String;
+import org.apache.spark.unsafe.types.VariantVal;
 
 public class SparkValueReaders {
 
@@ -56,6 +58,10 @@ public class SparkValueReaders {
 
   static ValueReader<UTF8String> uuids() {
     return UUIDReader.INSTANCE;
+  }
+
+  static ValueReader<VariantVal> variants() {
+    return VariantReader.INSTANCE;
   }
 
   static ValueReader<Decimal> decimal(ValueReader<byte[]> unscaledReader, int scale) {
@@ -158,6 +164,31 @@ public class SparkValueReaders {
     public Decimal read(Decoder decoder, Object reuse) throws IOException {
       byte[] bytes = bytesReader.read(decoder, null);
       return Decimal.apply(new BigDecimal(new BigInteger(bytes), scale));
+    }
+  }
+
+  private static class VariantReader implements ValueReader<VariantVal> {
+    private static final VariantReader INSTANCE = new VariantReader();
+
+    private final ValueReader<ByteBuffer> metadataReader;
+    private final ValueReader<ByteBuffer> valueReader;
+
+    private VariantReader() {
+      this.metadataReader = ValueReaders.byteBuffers();
+      this.valueReader = ValueReaders.byteBuffers();
+    }
+
+    @Override
+    public VariantVal read(Decoder decoder, Object reuse) throws IOException {
+      byte[] metadata = ByteBuffers.toByteArray(metadataReader.read(decoder, null));
+      byte[] value = ByteBuffers.toByteArray(valueReader.read(decoder, null));
+      return new VariantVal(value, metadata);
+    }
+
+    @Override
+    public void skip(Decoder decoder) throws IOException {
+      metadataReader.skip(decoder);
+      valueReader.skip(decoder);
     }
   }
 

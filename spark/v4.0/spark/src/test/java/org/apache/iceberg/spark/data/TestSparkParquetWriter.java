@@ -24,15 +24,14 @@ import static org.apache.iceberg.types.Types.NestedField.optional;
 import static org.apache.iceberg.types.Types.NestedField.required;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 import java.util.Iterator;
-import org.apache.iceberg.Files;
 import org.apache.iceberg.Schema;
+import org.apache.iceberg.inmemory.InMemoryOutputFile;
 import org.apache.iceberg.io.CloseableIterable;
 import org.apache.iceberg.io.FileAppender;
+import org.apache.iceberg.io.OutputFile;
 import org.apache.iceberg.parquet.Parquet;
 import org.apache.iceberg.parquet.ParquetSchemaUtil;
 import org.apache.iceberg.spark.SparkSchemaUtil;
@@ -42,16 +41,22 @@ import org.apache.parquet.column.ParquetProperties;
 import org.apache.parquet.schema.MessageType;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-public class TestSparkParquetWriter {
-  @TempDir private Path temp;
+public class TestSparkParquetWriter extends AvroDataTest {
+  @Override
+  protected boolean supportsVariant() {
+    return true;
+  }
 
-  private static final Schema SCHEMA =
-      new Schema(
-          Types.NestedField.required(1, "id", Types.IntegerType.get()),
-          Types.NestedField.required(2, "id_long", Types.LongType.get()),
-          Types.NestedField.required(3, "v", Types.VariantType.get()));
+  @Override
+  protected void writeAndValidate(Schema schema) throws IOException {
+    writeAndValidate(schema, schema);
+  }
+
+  @Override
+  protected void writeAndValidate(Schema writeSchema, Schema expectedSchema) throws IOException {
+    writeAndValidate(writeSchema, expectedSchema, 100);
+  }
 
   private static final Schema COMPLEX_SCHEMA =
       new Schema(
@@ -99,33 +104,35 @@ public class TestSparkParquetWriter {
 
   @Test
   public void testCorrectness() throws IOException {
-    int numRows = 50_000;
-    Iterable<InternalRow> records = RandomData.generateSpark(COMPLEX_SCHEMA, numRows, 19981);
+    writeAndValidate(COMPLEX_SCHEMA, COMPLEX_SCHEMA, 50_000);
+  }
 
-    File testFile = File.createTempFile("junit", null, temp.toFile());
-    assertThat(testFile.delete()).as("Delete should succeed").isTrue();
+  protected void writeAndValidate(Schema writeSchema, Schema expectedSchema, int numRows)
+      throws IOException {
+    Iterable<InternalRow> records = RandomData.generateSpark(writeSchema, numRows, 19981);
+
+    OutputFile outputFile = new InMemoryOutputFile();
 
     try (FileAppender<InternalRow> writer =
-        Parquet.write(Files.localOutput(testFile))
-            .schema(COMPLEX_SCHEMA)
+        Parquet.write(outputFile)
+            .schema(writeSchema)
             .createWriterFunc(
-                msgType ->
-                    SparkParquetWriters.buildWriter(
-                        SparkSchemaUtil.convert(COMPLEX_SCHEMA), msgType))
+                (schema, msgType) ->
+                    SparkParquetWriters.buildWriter(SparkSchemaUtil.convert(schema), msgType))
             .build()) {
       writer.addAll(records);
     }
 
     try (CloseableIterable<InternalRow> reader =
-        Parquet.read(Files.localInput(testFile))
-            .project(COMPLEX_SCHEMA)
-            .createReaderFunc(type -> SparkParquetReaders.buildReader(COMPLEX_SCHEMA, type))
+        Parquet.read(outputFile.toInputFile())
+            .project(expectedSchema)
+            .createReaderFunc(SparkParquetReaders::buildReader)
             .build()) {
       Iterator<InternalRow> expected = records.iterator();
       Iterator<InternalRow> rows = reader.iterator();
       for (int i = 0; i < numRows; i += 1) {
         assertThat(rows).as("Should have expected number of rows").hasNext();
-        TestHelpers.assertEquals(COMPLEX_SCHEMA, expected.next(), rows.next());
+        TestHelpers.assertEquals(expectedSchema, expected.next(), rows.next());
       }
       assertThat(rows).as("Should not have extra rows").isExhausted();
     }
@@ -133,21 +140,27 @@ public class TestSparkParquetWriter {
 
   @Test
   public void testFpp() throws IOException, NoSuchFieldException, IllegalAccessException {
-    File testFile = File.createTempFile("junit", null, temp.toFile());
+    Schema schema =
+        new Schema(
+            Types.NestedField.required(1, "id", Types.IntegerType.get()),
+            Types.NestedField.required(2, "id_long", Types.LongType.get()));
+
+    OutputFile outputFile = new InMemoryOutputFile();
     try (FileAppender<InternalRow> writer =
-        Parquet.write(Files.localOutput(testFile))
-            .schema(SCHEMA)
+        Parquet.write(outputFile)
+            .schema(schema)
             .set(PARQUET_BLOOM_FILTER_COLUMN_ENABLED_PREFIX + "id", "true")
             .set(PARQUET_BLOOM_FILTER_COLUMN_FPP_PREFIX + "id", "0.05")
             .createWriterFunc(
-                msgType ->
-                    SparkParquetWriters.buildWriter(SparkSchemaUtil.convert(SCHEMA), msgType))
+                (icebergSchema, msgType) ->
+                    SparkParquetWriters.buildWriter(
+                        SparkSchemaUtil.convert(icebergSchema), msgType))
             .build()) {
       // Using reflection to access the private 'props' field in ParquetWriter
       Field propsField = writer.getClass().getDeclaredField("props");
       propsField.setAccessible(true);
       ParquetProperties props = (ParquetProperties) propsField.get(writer);
-      MessageType parquetSchema = ParquetSchemaUtil.convert(SCHEMA, "test");
+      MessageType parquetSchema = ParquetSchemaUtil.convert(schema, "test");
       ColumnDescriptor descriptor = parquetSchema.getColumnDescription(new String[] {"id"});
       double fpp = props.getBloomFilterFPP(descriptor).getAsDouble();
       assertThat(fpp).isEqualTo(0.05);

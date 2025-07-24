@@ -516,6 +516,7 @@ public class SparkParquetReaders {
   /** Variant reader to convert from Variant to Spark VariantVal */
   private static class VariantReader
       extends ParquetVariantReaders.DelegatingValueReader<Variant, VariantVal> {
+    @SuppressWarnings("unchecked")
     private VariantReader(ParquetValueReader<?> reader) {
       super((ParquetValueReader<Variant>) reader);
     }

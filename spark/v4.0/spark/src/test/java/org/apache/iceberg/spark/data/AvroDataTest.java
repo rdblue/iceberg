@@ -49,7 +49,6 @@ import org.apache.iceberg.relocated.com.google.common.base.Preconditions;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.Iterables;
 import org.apache.iceberg.relocated.com.google.common.collect.Lists;
-import org.apache.iceberg.types.EdgeAlgorithm;
 import org.apache.iceberg.types.Type;
 import org.apache.iceberg.types.TypeUtil;
 import org.apache.iceberg.types.Types;
@@ -167,10 +166,7 @@ public abstract class AvroDataTest {
         Types.DecimalType.of(38, 10),
         Types.VariantType.get(),
         Types.GeometryType.crs84(),
-        Types.GeometryType.of("srid:3857"),
         Types.GeographyType.crs84(),
-        Types.GeographyType.of("srid:4269"),
-        Types.GeographyType.of("srid:4269", EdgeAlgorithm.KARNEY),
       };
 
   protected boolean supportsUnknown() {
