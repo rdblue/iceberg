@@ -32,7 +32,6 @@ import org.apache.iceberg.avro.ValueReader;
 import org.apache.iceberg.avro.ValueReaders;
 import org.apache.iceberg.relocated.com.google.common.collect.Lists;
 import org.apache.iceberg.types.Types;
-import org.apache.iceberg.util.ByteBuffers;
 import org.apache.iceberg.util.Pair;
 import org.apache.iceberg.util.UUIDUtil;
 import org.apache.spark.sql.catalyst.InternalRow;
@@ -170,18 +169,18 @@ public class SparkValueReaders {
   private static class VariantReader implements ValueReader<VariantVal> {
     private static final VariantReader INSTANCE = new VariantReader();
 
-    private final ValueReader<ByteBuffer> metadataReader;
-    private final ValueReader<ByteBuffer> valueReader;
+    private final ValueReader<byte[]> metadataReader;
+    private final ValueReader<byte[]> valueReader;
 
     private VariantReader() {
-      this.metadataReader = ValueReaders.byteBuffers();
-      this.valueReader = ValueReaders.byteBuffers();
+      this.metadataReader = ValueReaders.bytes();
+      this.valueReader = ValueReaders.bytes();
     }
 
     @Override
     public VariantVal read(Decoder decoder, Object reuse) throws IOException {
-      byte[] metadata = ByteBuffers.toByteArray(metadataReader.read(decoder, null));
-      byte[] value = ByteBuffers.toByteArray(valueReader.read(decoder, null));
+      byte[] metadata = metadataReader.read(decoder, null);
+      byte[] value = valueReader.read(decoder, null);
       return new VariantVal(value, metadata);
     }
 
