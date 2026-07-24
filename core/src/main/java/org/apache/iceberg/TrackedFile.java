@@ -25,7 +25,7 @@ import java.util.Set;
 import org.apache.iceberg.types.Types;
 
 /** A file tracked by a manifest. */
-interface TrackedFile {
+public interface TrackedFile {
   Types.NestedField TRACKING =
       Types.NestedField.required(
           147, "tracking", Tracking.schema(), "Tracking information for this entry");
