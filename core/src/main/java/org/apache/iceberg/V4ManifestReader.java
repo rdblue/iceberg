@@ -230,12 +230,12 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
     /**
      * Sets the table location used to resolve relative paths.
      *
-     * @param tableLocation active table location
+     * @param newTableLocation active table location
      * @return this for method chaining
      */
-    Builder tableLocation(String tableLocation) {
-      Preconditions.checkArgument(tableLocation != null, "Invalid table location: null");
-      this.tableLocation = tableLocation;
+    Builder tableLocation(String newTableLocation) {
+      Preconditions.checkArgument(newTableLocation != null, "Invalid table location: null");
+      this.tableLocation = newTableLocation;
       return this;
     }
 

@@ -20,8 +20,8 @@ package org.apache.iceberg.types;
 
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.iceberg.Schema;
+import org.apache.iceberg.relocated.com.google.common.collect.Lists;
 import org.apache.iceberg.schema.SchemaWithPartnerVisitor;
 
 public class RestoreColumns extends SchemaWithPartnerVisitor<Type, Type> {
