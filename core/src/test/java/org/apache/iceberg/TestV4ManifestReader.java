@@ -880,6 +880,34 @@ class TestV4ManifestReader {
         .hasMessageContaining("Cannot determine format of manifest");
   }
 
+  @Test
+  public void validationChecksBuilderArguments() {
+    assertThatThrownBy(
+        () ->
+            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                .filter(null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid filter: null");
+
+    assertThatThrownBy(
+        () ->
+            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                .scanMetrics(null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid scan metrics: null");
+
+    assertThatThrownBy(
+        () ->
+            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                .tableLocation(null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid table location: null");
+
+    assertThatThrownBy(() -> V4ManifestReader.builder(UNUSED_IN_FILE, null, UNPARTITIONED_SPECS))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Invalid table schema: null");
+  }
+
   @ParameterizedTest
   @FieldSource("MANIFEST_FORMATS")
   public void resolutionMissingTableLocationFailure(FileFormat format) throws IOException {
@@ -982,34 +1010,6 @@ class TestV4ManifestReader {
                 "s3://other/abs.parquet", "s3://bucket/db/table/data/dv.puffin"),
             unpartitionedDataWithDVFile(
                 "s3://bucket/db/table/data/rel.parquet", "s3://other/abs-dv.puffin"));
-  }
-
-  @Test
-  public void invalidBuilderArguments() {
-    assertThatThrownBy(
-            () ->
-                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                    .filter(null))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Invalid filter: null");
-
-    assertThatThrownBy(
-            () ->
-                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                    .scanMetrics(null))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Invalid scan metrics: null");
-
-    assertThatThrownBy(
-            () ->
-                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                    .tableLocation(null))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Invalid table location: null");
-
-    assertThatThrownBy(() -> V4ManifestReader.builder(UNUSED_IN_FILE, null, UNPARTITIONED_SPECS))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Invalid table schema: null");
   }
 
   private static DeletionVector dv(String location) {
