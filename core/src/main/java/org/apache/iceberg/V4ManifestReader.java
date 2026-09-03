@@ -278,8 +278,7 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
       Preconditions.checkState(
           !scanPlanning, "Cannot use select(Iterable<String>) with forScanPlanning()");
       Preconditions.checkState(
-          requestedProjection == null,
-          "Cannot use select(Iterable<String>) with project(Schema)");
+          requestedProjection == null, "Cannot use select(Iterable<String>) with project(Schema)");
       this.requestedColumns = ImmutableSet.copyOf(newColumns);
       return this;
     }
