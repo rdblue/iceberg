@@ -18,6 +18,7 @@
  */
 package org.apache.iceberg.expressions;
 
+import java.sql.Struct;
 import java.util.List;
 import java.util.Set;
 import org.apache.iceberg.exceptions.ValidationException;
@@ -83,6 +84,21 @@ public class Binder {
    */
   static Expression bind(StructType struct, Expression expr) {
     return Binder.bind(struct, expr, true);
+  }
+
+  public static Set<Integer> boundReferences(StructType struct, Expression expr, boolean caseSensitive) {
+    if (null == expr) {
+      return ImmutableSet.of();
+    }
+
+    ReferenceVisitor visitor = new ReferenceVisitor();
+    if (isBound(expr)) {
+      ExpressionVisitors.visit(expr, visitor);
+    } else {
+      ExpressionVisitors.visit(bind(struct, expr, caseSensitive), visitor);
+    }
+
+    return visitor.references;
   }
 
   public static Set<Integer> boundReferences(
