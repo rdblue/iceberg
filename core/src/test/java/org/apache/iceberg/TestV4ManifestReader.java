@@ -883,23 +883,23 @@ class TestV4ManifestReader {
   @Test
   public void validationChecksBuilderArguments() {
     assertThatThrownBy(
-        () ->
-            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                .filter(null))
+            () ->
+                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                    .filter(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid filter: null");
 
     assertThatThrownBy(
-        () ->
-            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                .scanMetrics(null))
+            () ->
+                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                    .scanMetrics(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid scan metrics: null");
 
     assertThatThrownBy(
-        () ->
-            V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
-                .tableLocation(null))
+            () ->
+                V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+                    .tableLocation(null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Invalid table location: null");
 
