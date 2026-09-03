@@ -19,14 +19,12 @@
 package org.apache.iceberg;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import org.apache.iceberg.expressions.Binder;
 import org.apache.iceberg.expressions.Evaluator;
 import org.apache.iceberg.expressions.Expression;
 import org.apache.iceberg.expressions.Expressions;
-import org.apache.iceberg.expressions.InclusiveMetricsEvaluator;
 import org.apache.iceberg.expressions.Projections;
 import org.apache.iceberg.io.CloseableGroup;
 import org.apache.iceberg.io.CloseableIterable;
@@ -64,7 +62,6 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
   private final InputFile file;
   private final Schema readSchema;
   private final String tableLocation;
-  private final InclusiveMetricsEvaluator statsFilter;
   private final Map<Integer, Pair<Evaluator, StructProjection>> partitionFilters; // by spec ID
   private final boolean includeAll;
   private final Set<Integer> requestedStatsFieldIds;
@@ -74,7 +71,6 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
       InputFile file,
       Schema readSchema,
       String tableLocation,
-      InclusiveMetricsEvaluator statsFilter,
       Map<Integer, Pair<Evaluator, StructProjection>> partitionFilters,
       boolean includeAll,
       Set<Integer> requestedStatsFieldIds,
@@ -82,7 +78,6 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
     this.file = file;
     this.readSchema = readSchema;
     this.tableLocation = tableLocation;
-    this.statsFilter = statsFilter;
     this.partitionFilters = partitionFilters;
     this.includeAll = includeAll;
     this.requestedStatsFieldIds = requestedStatsFieldIds;
@@ -342,7 +337,6 @@ class V4ManifestReader extends CloseableGroup implements CloseableIterable<Track
           file,
           readSchema(!partitionFilters.isEmpty()),
           tableLocation,
-          new InclusiveMetricsEvaluator(tableSchema, rowFilter, caseSensitive),
           partitionFilters,
           includeAll,
           requestedStatsFieldIds,
