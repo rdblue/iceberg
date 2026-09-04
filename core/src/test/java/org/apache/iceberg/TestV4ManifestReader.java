@@ -714,6 +714,7 @@ class TestV4ManifestReader {
     // stats for the filter's columns are resolved against the table schema
     V4ManifestReader.Builder builder =
         V4ManifestReader.builder(UNUSED_IN_FILE, TABLE_SCHEMA, UNPARTITIONED_SPECS)
+            .forScanPlanning()
             .filter(Expressions.equal("missing", 34))
             .metricsConfig(METRICS_CONFIG);
 
