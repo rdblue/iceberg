@@ -33,7 +33,7 @@ public class InternalParquet {
   }
 
   private static Parquet.WriteBuilder writeInternal(OutputFile outputFile) {
-    return Parquet.write(outputFile).createWriterFunc(InternalWriter::createWriter);
+    return Parquet.write(outputFile).createWriterFunc(InternalWriter::createWriter).overwrite();
   }
 
   private static Parquet.ReadBuilder readInternal(InputFile inputFile) {

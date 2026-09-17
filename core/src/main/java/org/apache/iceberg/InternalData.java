@@ -53,7 +53,7 @@ public class InternalData {
   private static void registerSupportedFormats() {
     InternalData.register(
         FileFormat.AVRO,
-        outputFile -> Avro.write(outputFile).createWriterFunc(InternalWriter::create),
+        outputFile -> Avro.write(outputFile).createWriterFunc(InternalWriter::create).overwrite(),
         inputFile -> Avro.read(inputFile).createResolvingReader(InternalReader::create));
 
     register("org.apache.iceberg.InternalParquet");
